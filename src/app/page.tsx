@@ -39,9 +39,8 @@ function SortableRow({ scene, template }: { scene: Scene; template: string }) {
     <tr
       ref={setNodeRef}
       style={style}
-      className={`border-b border-neutral-800/50 transition-colors group ${
-        isDragging ? 'bg-neutral-800 shadow-xl shadow-black/50 opacity-90' : 'bg-neutral-900 hover:bg-neutral-800/20'
-      }`}
+      className={`border-b border-neutral-800/50 transition-colors group ${isDragging ? 'bg-neutral-800 shadow-xl shadow-black/50 opacity-90' : 'bg-neutral-900 hover:bg-neutral-800/20'
+        }`}
     >
       <td className="px-4 py-4 text-center">
         <button {...attributes} {...listeners} className="text-neutral-600 hover:text-neutral-300 cursor-grab active:cursor-grabbing outline-none">
@@ -51,7 +50,7 @@ function SortableRow({ scene, template }: { scene: Scene; template: string }) {
       <td className="px-4 py-4 font-mono text-cyan-400">
         {scene.startTime && format(scene.startTime, 'HH:mm')} - {scene.endTime && format(scene.endTime, 'HH:mm')}
       </td>
-      
+
       {/* 템플릿별 동적 컬럼 렌더링 */}
       {template === 'film' && (
         <td className="px-4 py-4 font-medium">
@@ -69,7 +68,7 @@ function SortableRow({ scene, template }: { scene: Scene; template: string }) {
       {template === 'ad' && (
         <td className="px-4 py-4 font-medium">
           {scene.visualRef ? (
-            <img src={scene.visualRef} alt="Storyboard" className="w-16 h-10 object-cover rounded border border-neutral-700" />
+            <img src={scene.visualRef} alt="Storyboard" className="w-16 h-10 object-cover bg-white rounded border border-neutral-700" />
           ) : (
             <div className="w-16 h-10 bg-neutral-800 rounded flex items-center justify-center border border-neutral-700">
                <ImageIcon className="w-4 h-4 text-neutral-600" />
@@ -106,17 +105,17 @@ export default function Home() {
         backgroundColor: '#171717', // 다크모드 배경색 유지 (bg-neutral-900)
       });
       const imgData = canvas.toDataURL('image/png');
-      
+
       // 2. 가로 방향(landscape) PDF 객체 생성 (일촬표는 표 형태라 가로가 적합)
       const pdf = new jsPDF({
-        orientation: 'landscape', 
+        orientation: 'landscape',
         unit: 'mm',
         format: 'a4',
       });
-      
+
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      
+
       // 3. 이미지 삽입 및 다운로드 트리거
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`CallSheet_${template}_${format(new Date(), 'yyyyMMdd')}.pdf`);
@@ -197,10 +196,10 @@ export default function Home() {
             새로운 일정 추가 <span className="text-xs bg-indigo-500/20 text-indigo-300 px-2 py-1 rounded border border-indigo-500/30">{template.toUpperCase()} MODE</span>
           </h3>
           <div className="grid grid-cols-12 gap-4">
-            
+
             {/* 공통 필드: 장소 */}
             <input placeholder="장소 (예: 철수네 거실, 메인 스테이지)" className="col-span-3 bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" value={newSceneParams.location} onChange={(e) => setNewSceneParams({ ...newSceneParams, location: e.target.value })} />
-            
+
             {/* 템플릿별 동적 필드 */}
             {template === 'film' && (
               <>
@@ -236,20 +235,20 @@ export default function Home() {
               <div className="col-span-12 mt-2 p-4 bg-neutral-950/50 rounded-lg border border-neutral-800">
                 <p className="text-sm text-neutral-400 mb-3 flex items-center gap-2">
                   <span className="bg-indigo-500 w-2 h-2 rounded-full animate-pulse"></span>
-                  AI 100가지 연출 DB 추천 (가상 더미)
+                  고품질 AI 콘티 썸네일 (실제 생성본)
                 </p>
-                <div className="flex gap-4">
+                <div className="flex gap-4 overflow-x-auto pb-2">
                   {[
-                    { id: 'sb_1', name: '네거티브 스페이스', url: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=300&q=80' },
-                    { id: 'sb_2', name: '익스트림 클로즈업', url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80' },
-                    { id: 'sb_3', name: '오버 더 숄더 뷰', url: 'https://images.unsplash.com/photo-1522771731478-4463fe5d46c7?auto=format&fit=crop&w=300&q=80' },
+                    { id: 'sb_1', name: '더치 앵글 (Dutch)', url: '/storyboards/dutch_angle.png' },
+                    { id: 'sb_2', name: '익스트림 클로즈업', url: '/storyboards/extreme_closeup.png' },
+                    { id: 'sb_3', name: '오버 더 숄더 (OTS)', url: '/storyboards/over_shoulder.png' },
                   ].map(sb => (
                     <div 
                       key={sb.id} 
                       onClick={() => setNewSceneParams({...newSceneParams, visualRef: sb.url})}
-                      className={`cursor-pointer border-2 rounded-lg overflow-hidden transition-all ${newSceneParams.visualRef === sb.url ? 'border-indigo-500 scale-105 shadow-lg shadow-indigo-500/20' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                      className={`cursor-pointer border-2 rounded-lg overflow-hidden transition-all shrink-0 ${newSceneParams.visualRef === sb.url ? 'border-indigo-500 scale-105 shadow-lg shadow-indigo-500/20' : 'border-transparent opacity-60 hover:opacity-100'}`}
                     >
-                      <img src={sb.url} alt={sb.name} className="w-32 h-20 object-cover" />
+                      <img src={sb.url} alt={sb.name} className="w-32 h-20 object-cover bg-white" />
                       <div className="bg-neutral-900 text-xs text-center py-1.5 text-neutral-300 font-medium">{sb.name}</div>
                     </div>
                   ))}
@@ -276,7 +275,7 @@ export default function Home() {
                   <tr>
                     <th className="px-4 py-4 font-medium w-12 text-center">순서</th>
                     <th className="px-4 py-4 font-medium w-32">예상 시간</th>
-                    
+
                     {/* 동적 테이블 헤더 */}
                     {template === 'film' && <th className="px-4 py-4 font-medium w-24">씬 정보</th>}
                     {template === 'event' && <th className="px-4 py-4 font-medium w-24">식순 구분</th>}
