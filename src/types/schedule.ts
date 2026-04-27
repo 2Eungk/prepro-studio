@@ -15,6 +15,7 @@ export interface Scene {
   dayNight?: 'DAY' | 'NIGHT' | 'SUNSET';
   cast?: string;
   cutCount?: number;
+  pageCount?: number;
 
   // [행사/스케치 모드 전용]
   eventSection?: string; // 예: 1부, 2부, 리허설 등
@@ -24,21 +25,30 @@ export interface Scene {
   visualRef?: string;    // 콘티 이미지 URL
   lightingNote?: string; // 조명 톤앤매너
   clientMemo?: string;   // 클라이언트/감독 코멘트
+  status?: 'pending' | 'done' | 'ng'; // 촬영 상태 추가
 }
 
 export interface ScheduleState {
   template: TemplateType;
+  shootingDate: string; // YYYY-MM-DD
+  location: string;    // 촬영지 주소/명칭
   callTime: Date | null;
   shootingStartTime: Date | null;
   scenes: Scene[];
   
   // Actions
   setTemplate: (template: TemplateType) => void;
+  setShootingDate: (date: string) => void;
+  setLocation: (location: string) => void;
   setCallTime: (time: Date | null) => void;
   setShootingStartTime: (time: Date | null) => void;
   addScene: (scene: Omit<Scene, 'id' | 'startTime' | 'endTime'>) => void;
+  addScenes: (scenes: Omit<Scene, 'id' | 'startTime' | 'endTime'>[]) => void;
   updateScene: (id: string, updates: Partial<Scene>) => void;
   deleteScene: (id: string) => void;
   reorderScenes: (activeId: string, overId: string) => void;
   calculateTimes: () => void;
+  optimizeSchedule: () => void;
+  loadSampleData: () => void;
+  importData: (data: Partial<ScheduleState>) => void;
 }
