@@ -8,8 +8,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: "Pretendard", "Apple SD Gothic Neo", "Inter", "SF Pro Display", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "SF Mono", "Menlo", "Consolas", ui-monospace, monospace;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,4 +23,122 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.pdf-export-root.is-pdf-export {
+  overflow: visible !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: #0a0a0a !important;
+  color: #e5e5e5 !important;
+}
+
+.pdf-export-root.is-pdf-export,
+.pdf-export-root.is-pdf-export * {
+  border-color: #262626 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  outline-color: #4f46e5 !important;
+}
+
+.pdf-export-root.is-pdf-export * {
+  background-image: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.pdf-export-root.is-pdf-export table,
+.pdf-export-root.is-pdf-export thead,
+.pdf-export-root.is-pdf-export tbody {
+  background: #111111 !important;
+}
+
+.pdf-export-root.is-pdf-export tr {
+  background: #171717 !important;
+}
+
+.pdf-export-root.is-pdf-export thead tr,
+.pdf-export-root.is-pdf-export .bg-neutral-950,
+.pdf-export-root.is-pdf-export .bg-neutral-950\/50,
+.pdf-export-root.is-pdf-export .bg-neutral-950\/70 {
+  background: #0a0a0a !important;
+}
+
+.pdf-export-root.is-pdf-export .bg-neutral-900,
+.pdf-export-root.is-pdf-export .bg-neutral-900\/50,
+.pdf-export-root.is-pdf-export .bg-neutral-900\/70 {
+  background: #171717 !important;
+}
+
+.pdf-export-root.is-pdf-export .text-cyan-400,
+.pdf-export-root.is-pdf-export .text-cyan-300 {
+  color: #22d3ee !important;
+}
+
+.pdf-export-root.is-pdf-export .text-amber-300,
+.pdf-export-root.is-pdf-export .text-amber-200\/90 {
+  color: #fcd34d !important;
+}
+
+.pdf-export-root.is-pdf-export .text-indigo-300,
+.pdf-export-root.is-pdf-export .text-indigo-400 {
+  color: #a5b4fc !important;
+}
+
+.pdf-export-root.is-pdf-export .text-red-300,
+.pdf-export-root.is-pdf-export .text-red-400 {
+  color: #fca5a5 !important;
+}
+
+.pdf-export-root.is-pdf-export .text-green-300,
+.pdf-export-root.is-pdf-export .text-green-400 {
+  color: #86efac !important;
+}
+
+.pdf-export-root.is-pdf-export .text-neutral-100,
+.pdf-export-root.is-pdf-export .text-neutral-200,
+.pdf-export-root.is-pdf-export .text-neutral-300,
+.pdf-export-root.is-pdf-export .text-neutral-400 {
+  color: #e5e5e5 !important;
+}
+
+.pdf-export-root.is-pdf-export .text-neutral-500,
+.pdf-export-root.is-pdf-export .text-neutral-600 {
+  color: #a3a3a3 !important;
+}
+
+.pdf-export-root.is-pdf-export .pdf-order-index {
+  display: inline-flex !important;
+  min-width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid rgba(115, 115, 115, 0.45);
+  background: rgba(23, 23, 23, 0.82);
+  font-size: 11px;
+  font-weight: 800;
+  color: #d4d4d4;
+}
+
+.pdf-export-root.is-pdf-export [data-pdf-ignore="true"] {
+  display: none !important;
+}
+
+.pdf-export-root.is-pdf-export .pdf-shot-frame {
+  width: 96px !important;
+  height: 54px !important;
+  min-width: 96px !important;
+  max-width: 96px !important;
+  object-fit: contain !important;
+}
+
+.pdf-export-root.is-pdf-export .pdf-shot-frame img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
+
+.pdf-export-root.is-pdf-export table {
+  table-layout: fixed;
 }

@@ -1,7 +1,22 @@
 export type TemplateType = 'film' | 'event' | 'ad';
 
+export type StoryboardCategory = 'WIDE' | 'MEDIUM' | 'CLOSEUP' | 'ANGLE' | 'LENS' | 'COMPOSITION' | 'SUBJECT' | 'LIGHTING';
+
+export interface StoryboardShot {
+  id: string;
+  name: string;
+  category: StoryboardCategory;
+  description: string;
+  url: string;
+  keywords: string[];
+}
+
 export interface Scene {
   id: string;
+  dayId?: string;
+  locationId?: string;
+  castIds?: string[];
+  crewIds?: string[];
   // [공통 필드]
   location: string;
   description: string;
@@ -28,27 +43,96 @@ export interface Scene {
   status?: 'pending' | 'done' | 'ng'; // 촬영 상태 추가
 }
 
+export interface ShootDay {
+  id: string;
+  date: string;
+  callTime?: Date | null;
+  firstShotTime?: Date | null;
+  locationIds: string[];
+  notes?: string;
+}
+
+export interface ProductionLocation {
+  id: string;
+  name: string;
+  address?: string;
+  type: 'studio' | 'indoor' | 'outdoor';
+  permitStatus: 'ok' | 'pending' | 'none';
+  contact?: string;
+  notes?: string;
+  weatherQuery?: string;
+  weatherLabel?: string;
+  weatherLatitude?: number;
+  weatherLongitude?: number;
+}
+
+export interface Person {
+  id: string;
+  name: string;
+  category: 'cast' | 'crew';
+  role?: string;
+  phone?: string;
+  callTime?: string;
+  notes?: string;
+}
+
+export interface BreakItem {
+  id: string;
+  dayId?: string;
+  type: 'meal' | 'move' | 'setup' | 'rest' | 'custom';
+  label: string;
+  estimatedMinutes: number;
+  locationId?: string;
+  startTime?: Date;
+  endTime?: Date;
+}
+
 export interface ScheduleState {
   template: TemplateType;
   shootingDate: string; // YYYY-MM-DD
   location: string;    // 촬영지 주소/명칭
+  weatherLabel?: string;
+  weatherLatitude?: number;
+  weatherLongitude?: number;
   callTime: Date | null;
   shootingStartTime: Date | null;
+  days: ShootDay[];
+  locations: ProductionLocation[];
+  people: Person[];
+  breaks: BreakItem[];
   scenes: Scene[];
+  timelineOrder: string[];
   
   // Actions
   setTemplate: (template: TemplateType) => void;
   setShootingDate: (date: string) => void;
   setLocation: (location: string) => void;
+  setWeatherTarget: (target: { location: string; label?: string; latitude?: number; longitude?: number }) => void;
   setCallTime: (time: Date | null) => void;
   setShootingStartTime: (time: Date | null) => void;
+  addShootDay: (date?: string) => string;
+  updateShootDay: (id: string, updates: Partial<ShootDay>) => void;
+  deleteShootDay: (id: string) => void;
+  addProductionLocation: (location: Omit<ProductionLocation, 'id'>) => string;
+  updateProductionLocation: (id: string, updates: Partial<ProductionLocation>) => void;
+  deleteProductionLocation: (id: string) => void;
+  addPerson: (person: Omit<Person, 'id'>) => string;
+  updatePerson: (id: string, updates: Partial<Person>) => void;
+  deletePerson: (id: string) => void;
+  addBreak: (item: Omit<BreakItem, 'id' | 'startTime' | 'endTime'>) => void;
+  updateBreak: (id: string, updates: Partial<BreakItem>) => void;
+  deleteBreak: (id: string) => void;
   addScene: (scene: Omit<Scene, 'id' | 'startTime' | 'endTime'>) => void;
   addScenes: (scenes: Omit<Scene, 'id' | 'startTime' | 'endTime'>[]) => void;
   updateScene: (id: string, updates: Partial<Scene>) => void;
   deleteScene: (id: string) => void;
+  duplicateScene: (id: string) => void;
   reorderScenes: (activeId: string, overId: string) => void;
+  reorderTimeline: (activeId: string, overId: string) => void;
+  restoreTimelineOrder: (order: string[]) => void;
   calculateTimes: () => void;
-  optimizeSchedule: () => void;
+  optimizeSchedule: (dayId?: string) => void;
   loadSampleData: () => void;
   importData: (data: Partial<ScheduleState>) => void;
+  resetProject: () => void;
 }
