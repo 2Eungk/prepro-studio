@@ -1,15 +1,17 @@
 'use client';
 
 import { useScheduleStore } from '@/store/scheduleStore';
-import type { BreakItem, Person, PlanningDocument, ProductionLocation, ScheduleState, Scene, ShootDay, TemplateType } from '@/types/schedule';
+import type { BreakItem, Person, PlanningDocument, ProductionLocation, ScheduleState, Scene, ShootDay, StoryboardCategory, TemplateType } from '@/types/schedule';
 import { format, addMinutes, subMinutes } from 'date-fns';
-import { Plus, GripVertical, Clock, Film, MonitorPlay, Camera, Image as ImageIcon, Download, Cloud, Sunrise, Sunset, MapPin, Calendar as CalendarIcon, CheckCircle2, XCircle, Circle, FileText, Umbrella, Wind, Sparkles, Upload, Database, Brain, Save, FolderOpen, Share2, Search, KeyRound, Wand2, Clipboard, ArrowRight, ShieldCheck, RefreshCw, Users, Music2, Calculator } from 'lucide-react';
+import { Plus, GripVertical, Clock, Film, MonitorPlay, Camera, Image as ImageIcon, Download, Cloud, Sunrise, Sunset, MapPin, Calendar as CalendarIcon, CheckCircle2, XCircle, Circle, FileText, Umbrella, Wind, Sparkles, Upload, Database, Brain, Search, KeyRound, Wand2, Clipboard, ArrowRight, ShieldCheck, RefreshCw, Users, Music2, Calculator } from 'lucide-react';
 import { useState, useRef, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { storyboardDb, recommendShots } from '@/data/storyboardDb';
 import AdBanner from '@/components/AdBanner';
+import AppHeader from '@/components/header/AppHeader';
+import StoryboardGalleryModal from '@/components/modals/StoryboardGalleryModal';
 import {
   DndContext,
   closestCenter,
@@ -2445,7 +2447,7 @@ export default function Home() {
   }, [planning.sections, planningScheduleSource.fieldId, planningScheduleSource.sectionId]);
 
   const recommendations = useMemo(() => recommendShots(newSceneParams.description), [newSceneParams.description]);
-  const [sbCategory, setSbCategory] = useState('ALL');
+  const [sbCategory, setSbCategory] = useState<StoryboardCategory | 'ALL'>('ALL');
   const [sbSearch, setSbSearch] = useState('');
   const [showGallery, setShowGallery] = useState(false);
 
@@ -4382,323 +4384,47 @@ export default function Home() {
   return (
     <div className="prepro-shell min-h-screen bg-black text-white p-6 md:p-10 font-sans selection:bg-indigo-500/30 overflow-x-hidden">
       <div className="max-w-7xl mx-auto space-y-8">
-        {/* === HEADER SECTION === */}
-        <header className="flex flex-col gap-8">
-          {/* Row 1: Brand & Global Actions */}
-          <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5 pb-6 border-b border-neutral-900">
-            <div className="flex items-center gap-5 min-w-0">
-              <div className="shrink-0 rounded-xl border border-neutral-800 bg-neutral-950 p-3 text-indigo-300">
-                <Film className="w-8 h-8 text-current" />
-              </div>
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-3">
-                  <h1 className="text-3xl font-black uppercase leading-none text-neutral-100">PrePro Studio</h1>
-                  <span className="shrink-0 rounded-md border border-neutral-800 bg-neutral-950 px-2 py-0.5 text-[10px] font-black text-neutral-500 whitespace-nowrap">v1.3</span>
-                </div>
-                <p className="mt-1 text-xs font-bold text-neutral-500">
-                  기획서 · 촬영표 · 콜시트 · 콘티 · 리포트 <span className="text-neutral-700">•</span> <span className="text-neutral-400">무로그인 BYOK 프로덕션 툴</span>
-                </p>
-                <div className="mt-3 flex flex-wrap items-center gap-1.5">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-teal-400/20 bg-teal-400/10 px-2.5 py-1 text-[10px] font-black text-teal-100">
-                    <CheckCircle2 className="h-3 w-3" />
-                    {autoSaveLabel}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-800 bg-neutral-950 px-2.5 py-1 text-[10px] font-black text-neutral-500">
-                    <Save className="h-3 w-3" />
-                    이 브라우저에만 저장
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-800 bg-neutral-950 px-2.5 py-1 text-[10px] font-black text-neutral-500">
-                    <KeyRound className="h-3 w-3" />
-                    {apiStorageLabel}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 rounded-xl border border-neutral-800 bg-neutral-950 p-1.5 sm:flex sm:flex-wrap sm:items-center xl:justify-end">
-              <button
-                onClick={() => confirm('현재 프로젝트를 비우고 새로 시작할까요? 자동 저장된 데이터도 초기화됩니다.') && resetProject()}
-                className="prepro-btn prepro-btn--ghost"
-                title="새 프로젝트"
-              >
-                <Plus className="h-4 w-4" />
-                <span>새로</span>
-              </button>
-              <button
-                onClick={handleExportJSON}
-                className={`prepro-btn ${fileStatus === '백업 저장됨' ? 'prepro-btn--secondary' : 'prepro-btn--ghost'}`}
-                title="JSON 백업 파일로 내보내기"
-              >
-                <Save className="h-4 w-4" />
-                <span>{fileStatus === '백업 저장됨' ? '백업됨' : '백업'}</span>
-              </button>
-              <label
-                className={`prepro-btn cursor-pointer ${fileStatus && fileStatus !== '백업 저장됨' ? 'prepro-btn--secondary' : 'prepro-btn--ghost'}`}
-                title="JSON 백업 파일 가져오기"
-              >
-                <FolderOpen className="h-4 w-4" />
-                <span>{fileStatus && fileStatus !== '백업 저장됨' ? fileStatus : '가져오기'}</span>
-                <input type="file" className="hidden" accept=".json" onChange={handleImportJSON} />
-              </label>
-              <button
-                onClick={handleCopyShareLink}
-                className={`prepro-btn ${shareStatus ? 'prepro-btn--secondary' : 'prepro-btn--ghost'}`}
-                title="공유 링크 복사"
-              >
-                <Share2 className="h-4 w-4" />
-                <span>{shareStatus || '공유'}</span>
-              </button>
-              <div className="mx-1 hidden h-5 w-px bg-neutral-800 sm:block"></div>
-              <button 
-                onClick={() => setIsReportMode(!isReportMode)}
-                className={`prepro-btn col-span-2 sm:col-span-1 ${isReportMode ? 'prepro-btn--secondary' : 'prepro-btn--quiet'}`}
-              >
-                <FileText className="w-4 h-4" />
-                {isReportMode ? '리포트 모드 ON' : '리포트 모드 OFF'}
-              </button>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-teal-400/25 bg-[linear-gradient(135deg,rgba(94,215,207,0.12),rgba(242,161,75,0.055)_62%,rgba(255,255,255,0.025))] p-4">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <div className="flex min-w-0 gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-teal-300/25 bg-black/35 text-teal-100">
-                  <ShieldCheck className="h-5 w-5" />
-                </div>
-                <div className="min-w-0">
-                  <div className="text-sm font-black text-neutral-100">회원가입 없이, 작업 데이터는 이 브라우저에만 저장됩니다.</div>
-                  <p className="mt-1 text-xs font-bold leading-relaxed text-neutral-500">
-                    서버 DB에 프로젝트를 저장하지 않습니다. 다른 기기에서 열거나 공유하기 전에는 JSON 백업을 내려받아 보관하세요.
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 sm:flex sm:shrink-0">
-                <button
-                  type="button"
-                  onClick={handleExportJSON}
-                  className="prepro-btn prepro-btn--secondary"
-                  title="현재 프로젝트를 JSON 백업 파일로 저장"
-                >
-                  <Save className="h-4 w-4" />
-                  JSON 백업
-                </button>
-                <label
-                  className="prepro-btn prepro-btn--quiet cursor-pointer"
-                  title="저장해 둔 JSON 백업 파일 가져오기"
-                >
-                  <FolderOpen className="h-4 w-4" />
-                  백업 복원
-                  <input type="file" className="hidden" accept=".json" onChange={handleImportJSON} />
-                </label>
-              </div>
-            </div>
-          </div>
-
-        </header>
-
-        <nav className="sticky top-0 z-30 -mx-2 overflow-x-auto border-y border-neutral-900 bg-black/90 px-2 py-2 backdrop-blur custom-scrollbar">
-          <div className="inline-flex min-w-max items-stretch gap-1.5">
-            {mainWorkspaceGroups.map((group) => {
-              const groupTabs = mainWorkspaceTabs.filter((tab) => tab.group === group);
-              const groupIsActive = groupTabs.some((tab) => tab.id === activeTab);
-
-              return (
-                <div key={group} className="flex min-w-max items-stretch gap-1 rounded-xl border border-neutral-900 bg-neutral-950/45 p-1">
-                  <div className={`flex w-7 shrink-0 items-center justify-center rounded-lg border text-[9px] font-black ${
-                    groupIsActive
-                      ? 'border-teal-400/25 bg-teal-400/10 text-teal-100'
-                      : 'border-transparent text-neutral-700'
-                  }`}>
-                    {group}
-                  </div>
-                  {groupTabs.map((tab) => {
-                    const Icon = tab.Icon;
-                    const isActive = activeTab === tab.id;
-
-                    return (
-                      <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        aria-current={isActive ? 'page' : undefined}
-                        className={`relative flex min-h-11 min-w-[148px] items-center gap-2 rounded-lg border px-3 py-2 text-left transition-all lg:min-w-[164px] ${
-                          isActive
-                            ? 'border-teal-400/35 bg-neutral-900 text-white'
-                            : 'border-transparent bg-transparent text-neutral-500 hover:bg-neutral-950 hover:text-neutral-200'
-                        }`}
-                      >
-                        {isActive && <span className="absolute inset-y-2 left-0 w-px bg-teal-300/80" />}
-                        <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-teal-200' : 'text-neutral-600'}`} />
-                        <span className="min-w-0 flex-1">
-                          <span className="block whitespace-nowrap text-sm font-black leading-none">{tab.label}</span>
-                          <span className={`mt-1 hidden truncate text-[10px] font-bold 2xl:block ${isActive ? 'text-neutral-400' : 'text-neutral-700'}`}>
-                            {tab.caption}
-                          </span>
-                        </span>
-                        <span className={`ml-auto shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-black ${
-                          isActive ? 'bg-black/50 text-teal-100' : 'bg-neutral-950 text-neutral-600'
-                        }`}>
-                          {tab.metric}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </div>
-        </nav>
-
-        <div className="space-y-5">
-          <section className="rounded-2xl border border-neutral-900 bg-neutral-950/70 p-4">
-            <div className="grid gap-4 xl:grid-cols-[minmax(220px,0.72fr)_minmax(420px,0.86fr)_auto] xl:items-center">
-              <div className="min-w-0">
-                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-600">{workspaceLanguage.setupLabel}</div>
-                <div className="mt-1 flex flex-wrap items-center gap-2 text-sm font-bold text-neutral-300">
-                  <span>{templateLabel}</span>
-                  <span className="text-neutral-700">/</span>
-                  <span>{weatherLabel || location || '날씨 위치 미정'}</span>
-                  <span className="text-neutral-700">/</span>
-                  <span>{activeShootingDate}</span>
-                </div>
-              </div>
-              <div className="prepro-segment grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 xl:max-w-[760px]">
-                {productionTemplateOptions.map((option) => {
-                  const Icon = option.icon;
-                  const selected = template === option.id;
-
-                  return (
-                    <button
-                      key={option.id}
-                      type="button"
-                      onClick={() => handleTemplateChange(option.id)}
-                      className={`prepro-segment__item ${selected ? 'is-active' : ''}`}
-                      title={option.name}
-                    >
-                      <Icon className="h-3.5 w-3.5 shrink-0" />
-                      <span className="truncate">{option.shortName}</span>
-                    </button>
-                  );
-                })}
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowProjectSetup((value) => !value)}
-                className="prepro-btn prepro-btn--secondary h-11"
-              >
-                {showProjectSetup ? '설정 접기' : '날짜/날씨 설정'}
-                <RefreshCw className={`h-3.5 w-3.5 transition-transform ${showProjectSetup ? 'rotate-180' : ''}`} />
-              </button>
-            </div>
-          </section>
-
-          {/* Row 2: Production Settings */}
-          {showProjectSetup && <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(360px,1fr)_minmax(320px,0.55fr)]">
-            {/* 1. Location & Date Setting */}
-            <div className="bg-neutral-900/50 p-4 rounded-[2rem] border border-neutral-800/50 flex flex-col gap-3 min-w-0">
-              <div className="flex items-center gap-4 bg-neutral-950 border border-neutral-800 rounded-2xl px-5 py-3 group focus-within:border-indigo-500/50 transition-all">
-                <MapPin className="w-5 h-5 shrink-0 text-neutral-600 group-focus-within:text-indigo-400" />
-                <div className="flex flex-col flex-1 min-w-0">
-                  <label htmlFor="weather-location" className="text-[9px] text-neutral-600 font-black uppercase tracking-widest">날씨 위치</label>
-                  <div className="mt-1 flex items-center gap-2 rounded-xl border border-neutral-800 bg-black/40 px-3 py-2 transition-all group-focus-within:border-indigo-500/60">
-                    <input
-                      id="weather-location"
-                      className="w-full min-w-0 bg-transparent text-sm font-black text-neutral-100 placeholder:text-neutral-700 focus:outline-none"
-                      value={location}
-                      onChange={(e) => {
-                        setLocation(e.target.value);
-                        setGlobalWeatherResults([]);
-                        setGlobalWeatherError('');
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          searchGlobalWeatherLocation();
-                        }
-                      }}
-                      placeholder="주소나 장소명 입력 후 Enter"
-                    />
-                    <button
-                      type="button"
-                      onClick={searchGlobalWeatherLocation}
-                      disabled={isSearchingGlobalWeather || !location.trim()}
-                      className="prepro-btn prepro-btn--quiet h-8 shrink-0 px-3 text-[10px]"
-                    >
-                      {isSearchingGlobalWeather ? '검색중' : '검색'}
-                    </button>
-                  </div>
-                  <span className="mt-1 text-[10px] text-neutral-700">
-                    {weatherLatitude && weatherLongitude
-                      ? `선택됨: ${weatherLabel || location}`
-                      : '예: 서울시 강남구, 부산 해운대, 제주 서귀포, Tokyo'}
-                  </span>
-                  {globalWeatherError && <span className="mt-1 text-[10px] font-bold text-red-400">{globalWeatherError}</span>}
-                  {globalWeatherResults.length > 0 && (
-                    <div className="mt-2 max-h-40 overflow-y-auto rounded-xl border border-neutral-800 bg-black/80 p-2 custom-scrollbar">
-                      {globalWeatherResults.map((candidate) => (
-                        <button
-                          key={`${candidate.latitude}:${candidate.longitude}:${candidate.label}`}
-                          type="button"
-                          onClick={() => selectGlobalWeatherLocation(candidate)}
-                          className="flex w-full items-start gap-2 rounded-lg px-3 py-2 text-left transition-colors hover:bg-neutral-900"
-                        >
-                          <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-indigo-300" />
-                          <span className="min-w-0">
-                            <span className="block truncate text-[11px] font-black text-neutral-200">{candidate.label}</span>
-                            <span className="mt-0.5 block font-mono text-[9px] text-neutral-600">{candidate.latitude.toFixed(4)}, {candidate.longitude.toFixed(4)}</span>
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {weatherQuickLocations.map((city) => (
-                      <button
-                        key={city.value}
-                        type="button"
-                        onClick={() => {
-                          setLocation(city.value);
-                          setGlobalWeatherResults([]);
-                          setGlobalWeatherError('');
-                        }}
-                        className={`rounded-full border px-2.5 py-1 text-[10px] font-black transition-all ${
-                          sameText(location, city.value) || sameText(location, city.label)
-                            ? 'border-teal-400/40 bg-teal-400/12 text-teal-100'
-                            : 'border-neutral-800 bg-neutral-900 text-neutral-500 hover:border-neutral-700 hover:text-neutral-300'
-                        }`}
-                      >
-                        {city.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 bg-neutral-950 border border-neutral-800 rounded-2xl px-5 py-3 group focus-within:border-indigo-500/50 transition-all">
-                <CalendarIcon className="w-5 h-5 shrink-0 text-neutral-600 group-focus-within:text-indigo-400" />
-                <div className="flex flex-col flex-1 min-w-0">
-                  <span className="text-[9px] text-neutral-600 font-black uppercase tracking-widest">촬영일</span>
-                  <input type="date" className="bg-transparent border-none text-sm focus:outline-none text-neutral-200 font-bold [color-scheme:dark] min-w-0" value={activeShootingDate} onChange={(e) => handleActiveDayDateChange(e.target.value)} />
-                </div>
-              </div>
-            </div>
-
-            {/* 3. AI Analysis & Sample Loader */}
-            <div className="bg-neutral-900/50 p-4 rounded-[2rem] border border-neutral-800/50 grid grid-cols-1 gap-3 min-w-0">
-              <button 
-                onClick={() => setShowAnalyzer(true)}
-                className="prepro-btn prepro-btn--primary min-h-14 w-full text-sm group"
-              >
-                <Brain className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                {template === 'event' ? 'AI 식순 정리 실행' : template === 'ad' ? 'AI 광고 구성 분석 실행' : template === 'musicvideo' ? 'AI MV 타임코드 콘티 실행' : template === 'dance' ? 'AI 타임코드 콘티 실행' : 'AI 시나리오 분석기 실행'}
-              </button>
-              <button 
-                onClick={handleLoadSampleData}
-                className="prepro-btn prepro-btn--secondary min-h-14 w-full"
-              >
-                <Database className="w-4 h-4" />
-                {template === 'event' ? '행사 샘플 로드' : template === 'ad' ? '광고 샘플 로드' : template === 'musicvideo' ? 'MV 샘플 로드' : template === 'dance' ? '댄스 샘플 로드' : '단편 샘플 로드'}
-              </button>
-            </div>
-          </div>}
+        <AppHeader
+          activeShootingDate={activeShootingDate}
+          activeTab={activeTab}
+          apiStorageLabel={apiStorageLabel}
+          autoSaveLabel={autoSaveLabel}
+          fileStatus={fileStatus}
+          globalWeatherError={globalWeatherError}
+          globalWeatherResults={globalWeatherResults}
+          isReportMode={isReportMode}
+          isSearchingGlobalWeather={isSearchingGlobalWeather}
+          location={location}
+          mainWorkspaceGroups={mainWorkspaceGroups}
+          mainWorkspaceTabs={mainWorkspaceTabs}
+          shareStatus={shareStatus}
+          showProjectSetup={showProjectSetup}
+          template={template}
+          templateLabel={templateLabel}
+          weatherLabel={weatherLabel}
+          weatherLatitude={weatherLatitude}
+          weatherLongitude={weatherLongitude}
+          weatherQuickLocations={weatherQuickLocations}
+          workspaceLanguage={workspaceLanguage}
+          onActiveDayDateChange={handleActiveDayDateChange}
+          onCopyShareLink={handleCopyShareLink}
+          onExportJSON={handleExportJSON}
+          onImportJSON={handleImportJSON}
+          onLoadSampleData={handleLoadSampleData}
+          onResetProject={resetProject}
+          onSearchGlobalWeatherLocation={searchGlobalWeatherLocation}
+          onSelectGlobalWeatherLocation={selectGlobalWeatherLocation}
+          onSetActiveTab={setActiveTab}
+          onSetGlobalWeatherError={setGlobalWeatherError}
+          onSetGlobalWeatherResults={setGlobalWeatherResults}
+          onSetIsReportMode={setIsReportMode}
+          onSetLocation={setLocation}
+          onSetShowAnalyzer={setShowAnalyzer}
+          onSetShowProjectSetup={setShowProjectSetup}
+          onTemplateChange={handleTemplateChange}
+          productionTemplateOptions={productionTemplateOptions}
+          sameText={sameText}
+        />
 
           <section className="rounded-2xl border border-neutral-900 bg-neutral-950/75 p-3">
             <div className="grid gap-3 lg:grid-cols-[minmax(280px,1fr)_auto] lg:items-center">
@@ -8020,106 +7746,23 @@ export default function Home() {
           </div>
         )}
 
-        {/* 스토리보드 갤러리 모달 */}
-        {showGallery && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10">
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowGallery(false)}></div>
-            <div className="relative bg-neutral-900 w-full max-w-6xl h-full max-h-[85vh] rounded-3xl border border-neutral-800 shadow-2xl overflow-hidden flex flex-col">
-              <div className="p-6 border-b border-neutral-800 flex items-center justify-between bg-neutral-900/50 backdrop-blur-sm sticky top-0 z-10">
-                <div>
-                  <h2 className="text-xl font-bold flex items-center gap-2 text-white">
-                    <Sparkles className="w-5 h-5 text-indigo-400" /> 시네마틱 앵글 {storyboardDb.length}종 갤러리
-                  </h2>
-                  <p className="text-xs text-neutral-500 mt-1">{copy.storyboardDescription}</p>
-                </div>
-                <button onClick={() => setShowGallery(false)} className="p-2 hover:bg-neutral-800 rounded-full transition-colors text-neutral-400">
-                  <XCircle className="w-6 h-6" />
-                </button>
-              </div>
-
-              <div className="p-6 space-y-6 flex-1 overflow-y-auto custom-scrollbar">
-                <div className="flex flex-col md:flex-row gap-4 items-center justify-between sticky top-0 bg-neutral-900 py-2 z-10">
-                  <div className="flex gap-2 overflow-x-auto pb-2 w-full md:w-auto custom-scrollbar">
-                    {storyboardCategoryOptions.map(cat => (
-                      <button
-                        key={cat.id}
-                        onClick={() => setSbCategory(cat.id)}
-                        className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap ${sbCategory === cat.id ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'bg-neutral-800 text-neutral-400 hover:text-neutral-200 border border-neutral-700'}`}
-                      >
-                        {cat.label}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="relative w-full md:w-80">
-                    <input 
-                      type="text" 
-                      placeholder="앵글 명칭 또는 키워드 검색..." 
-                      className="w-full bg-neutral-800 border border-neutral-700 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition-all text-white"
-                      value={sbSearch}
-                      onChange={(e) => setSbSearch(e.target.value)}
-                    />
-                    <Sparkles className="w-4 h-4 text-neutral-500 absolute left-3.5 top-3" />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  {filteredStoryboards.map(sb => {
-                    const isRecommended = recommendations.some(r => r.id === sb.id);
-                    const isSelected = newSceneParams.visualRef === sb.url;
-                    
-                    return (
-                      <div 
-                        key={sb.id} 
-                        onClick={() => {
-                          applyStoryboardToSceneForm(sb, !showSceneForm);
-                          setShowGallery(false);
-                        }}
-                        className={`group relative cursor-pointer border-2 rounded-2xl overflow-hidden transition-all h-full flex flex-col ${isSelected ? 'border-indigo-500 scale-[1.02] shadow-xl shadow-indigo-500/20' : 'border-neutral-800 hover:border-neutral-600'}`}
-                      >
-                        {isRecommended && (
-                          <div className="absolute top-2 left-2 bg-indigo-500 text-[10px] text-white px-2 py-0.5 rounded-full font-bold z-20 flex items-center gap-1 shadow-lg border border-white/20">
-                            <Sparkles className="w-2.5 h-2.5" /> 추천
-                          </div>
-                        )}
-                        <div className="w-full aspect-video bg-white overflow-hidden relative">
-                           <Image 
-                            src={sb.url} 
-                            alt={sb.name} 
-                            width={320}
-                            height={180}
-                            loading="lazy"
-                            unoptimized
-                            className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105" 
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = storyboardFallback(sb.name);
-                            }}
-                          />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <Plus className="w-8 h-8 text-white scale-75 group-hover:scale-100 transition-transform" />
-                          </div>
-                        </div>
-                        <div className={`p-3 text-center flex-1 flex flex-col items-center justify-center gap-1 ${isSelected ? 'bg-indigo-500 text-white' : 'bg-neutral-900 group-hover:bg-neutral-800'}`}>
-                          <p className="text-[11px] font-bold leading-tight">{sb.name}</p>
-                          <p className={`text-[9px] ${isSelected ? 'text-indigo-100' : 'text-neutral-500'} line-clamp-1`}>{sb.description}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-              
-              <div className="p-6 border-t border-neutral-800 flex justify-between items-center bg-neutral-900/50">
-                <p className="text-xs text-neutral-500">전체 {storyboardDb.length}종 중 {filteredStoryboards.length}개 표시 중</p>
-                <button 
-                  onClick={() => setShowGallery(false)}
-                  className="bg-neutral-800 hover:bg-neutral-700 text-white px-6 py-2 rounded-xl text-sm font-bold transition-all"
-                >
-                  닫기
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <StoryboardGalleryModal
+          category={sbCategory}
+          categoryOptions={storyboardCategoryOptions}
+          copyDescription={copy.storyboardDescription}
+          filteredStoryboards={filteredStoryboards}
+          isOpen={showGallery}
+          recommendedStoryboards={recommendations}
+          search={sbSearch}
+          selectedVisualRef={newSceneParams.visualRef}
+          showSceneForm={showSceneForm}
+          totalCount={storyboardDb.length}
+          onApplyStoryboard={applyStoryboardToSceneForm}
+          onClose={() => setShowGallery(false)}
+          onFallbackImage={storyboardFallback}
+          onSetCategory={setSbCategory}
+          onSetSearch={setSbSearch}
+        />
         <footer className="mt-12 border-t border-neutral-900 pt-6 text-xs font-bold text-neutral-700">
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <span>PrePro Studio © 2026. All rights reserved.</span>
@@ -8128,6 +7771,5 @@ export default function Home() {
         </footer>
     </main>
   </div>
-</div>
   );
 }
