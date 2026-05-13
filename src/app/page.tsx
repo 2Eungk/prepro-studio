@@ -16,6 +16,8 @@ import LocationsPanel from '@/components/sections/LocationsPanel';
 import PeoplePanel from '@/components/sections/PeoplePanel';
 import ReportPanel from '@/components/sections/ReportPanel';
 import StoryboardPanel from '@/components/sections/StoryboardPanel';
+import ScheduleSetupPanel from '@/components/sections/schedule/ScheduleSetupPanel';
+import ScheduleExportHeader from '@/components/sections/schedule/ScheduleExportHeader';
 import StoryboardGalleryModal from '@/components/modals/StoryboardGalleryModal';
 import { BreakModal, LocationModal, PersonModal } from '@/components/modals/ProductionModals';
 import {
@@ -5609,68 +5611,22 @@ export default function Home() {
 
           {activeTab === 'schedule' && (
           <>
-          {hasFilmSampleInsideDance && (
-            <div className="mb-5 flex flex-col gap-4 rounded-3xl border border-teal-400/30 bg-teal-400/10 p-5 md:flex-row md:items-center md:justify-between">
-              <div>
-                <div className="text-sm font-black text-teal-100">현재 일정이 영화 샘플 형식입니다.</div>
-                <p className="mt-1 text-xs font-bold leading-relaxed text-teal-100/60">
-                  댄스커버는 씬/대사 대신 타임코드, 가사, 포커스 멤버, 안무/카메라 기준으로 보는 편이 맞습니다.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={handleLoadSampleData}
-                className="prepro-btn prepro-btn--primary h-11 shrink-0"
-              >
-                댄스 샘플로 교체
-              </button>
-            </div>
-          )}
-          {/* Weather & Sun Intel */}
-          <div className="space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-3 px-1">
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-600">날씨 조회 기준</p>
-                <p className="text-sm font-bold text-neutral-300">{location || '상단 날씨 위치를 입력하세요'} · {activeShootingDate}</p>
-              </div>
-              <button
-                onClick={() => newSceneParams.location && setLocation(newSceneParams.location)}
-                disabled={!newSceneParams.location}
-                className="rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-xs font-bold text-neutral-500 transition-all hover:border-indigo-500/40 hover:text-indigo-300 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                {copy.locationWeatherButton}
-              </button>
-            </div>
-            <WeatherWidget
-              location={location}
-              date={activeShootingDate}
-              target={typeof weatherLatitude === 'number' && typeof weatherLongitude === 'number'
-                ? { latitude: weatherLatitude, longitude: weatherLongitude, label: weatherLabel || location }
-                : undefined}
-            />
-          </div>
-
-          {/* Time Settings Card */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-1.5 rounded-[2.5rem] bg-neutral-900/30 border border-neutral-900/50 backdrop-blur-md">
-            <div className="bg-neutral-950 border border-neutral-800 rounded-[2rem] p-6 flex items-center gap-6 group hover:border-indigo-500/30 transition-all">
-              <div className="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
-                <Clock className="w-7 h-7" />
-              </div>
-              <div className="flex-1 space-y-1">
-                <label className="text-[10px] font-black text-neutral-600 uppercase tracking-widest">콜 타임</label>
-                <input type="time" className="w-full bg-transparent border-none text-2xl font-black focus:outline-none [color-scheme:dark]" value={activeCallTime ? format(activeCallTime, 'HH:mm') : ''} onChange={(e) => handleTimeChange('call', e.target.value)} />
-              </div>
-            </div>
-            <div className="bg-neutral-950 border border-neutral-800 rounded-[2rem] p-6 flex items-center gap-6 group hover:border-neutral-700 transition-all">
-              <div className="w-14 h-14 bg-neutral-800 rounded-2xl flex items-center justify-center text-neutral-300 group-hover:text-indigo-300 transition-colors">
-                <Camera className="w-7 h-7" />
-              </div>
-              <div className="flex-1 space-y-1">
-                <label className="text-[10px] font-black text-neutral-600 uppercase tracking-widest">촬영 시작</label>
-                <input type="time" className="w-full bg-transparent border-none text-2xl font-black focus:outline-none [color-scheme:dark]" value={activeShootingStartTime ? format(activeShootingStartTime, 'HH:mm') : ''} onChange={(e) => handleTimeChange('shoot', e.target.value)} />
-              </div>
-            </div>
-          </div>
+          <ScheduleSetupPanel
+            activeCallTime={activeCallTime}
+            activeShootingDate={activeShootingDate}
+            activeShootingStartTime={activeShootingStartTime}
+            hasFilmSampleInsideDance={hasFilmSampleInsideDance}
+            location={location}
+            locationWeatherButtonLabel={copy.locationWeatherButton}
+            sceneLocation={newSceneParams.location}
+            weatherLabel={weatherLabel}
+            weatherLatitude={weatherLatitude}
+            weatherLongitude={weatherLongitude}
+            WeatherWidget={WeatherWidget}
+            onLoadSampleData={handleLoadSampleData}
+            onSetWeatherFromSceneLocation={() => newSceneParams.location && setLocation(newSceneParams.location)}
+            onTimeChange={handleTimeChange}
+          />
 
           {/* Add Scene Form */}
           {showSceneForm && (
@@ -6468,50 +6424,25 @@ export default function Home() {
           )}
 
           <div ref={pdfRef} className="pdf-export-root relative overflow-hidden rounded-2xl border border-neutral-900 bg-black lg:overflow-x-auto custom-scrollbar">
-            <div className="pdf-export-header flex flex-col gap-4 border-b border-neutral-900 bg-neutral-950/90 px-4 py-5 sm:px-6 md:flex-row md:items-end md:justify-between lg:min-w-[960px]">
-              <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-indigo-300">{templateLabel}</div>
-                <h3 className="mt-1 text-2xl font-black text-neutral-100">{pdfKindLabel}</h3>
-                <p className="mt-1 text-xs font-bold text-neutral-500">Day {activeDayIndex + 1} · {activeShootingDate} · {location || '촬영지 미정'}</p>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-right text-xs sm:grid-cols-4">
-                {[
-                  { label: copy.totalItemLabel, value: `${activeDayScenes.length}` },
-                  { label: '총 운영', value: `${timelineStats.totalMinutes}분` },
-                  { label: '예상 종료', value: timelineStats.wrapTime ? format(timelineStats.wrapTime, 'HH:mm') : '-' },
-                  { label: '장소', value: `${locations.length}` },
-                ].map((item) => (
-                  <div key={item.label} className="rounded-xl border border-neutral-800 bg-black/60 px-3 py-2">
-                    <div className="text-[9px] font-black uppercase tracking-widest text-neutral-600">{item.label}</div>
-                    <div className="mt-1 text-base font-black text-neutral-200">{item.value}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {isScheduleFiltered && (
-              <div className="border-b border-neutral-900 bg-indigo-500/5 px-6 py-3 text-xs font-bold text-indigo-300">
-                필터 적용됨 · {filteredSceneCount}/{activeDayScenes.length}개 {copy.itemPlural} 표시
-              </div>
-            )}
-            {isReportMode && (
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-3 border-b border-neutral-900 bg-neutral-950/70 p-5">
-                {[
-                  { label: '완료', value: `${reportStats.done}개`, tone: 'text-green-400' },
-                  { label: 'NG', value: `${reportStats.ng}개`, tone: 'text-red-400' },
-                  { label: '대기', value: `${reportStats.pending}개`, tone: 'text-neutral-300' },
-                  { label: template === 'event' ? '운영 시간' : isMusicTimelineTemplate ? '총 구간' : '총 촬영', value: `${reportStats.totalMinutes}분`, tone: 'text-cyan-400' },
-                  { label: '완료율', value: `${reportStats.completionRate}%`, tone: 'text-indigo-400' },
-                ].map((item) => (
-                  <div key={item.label} className="rounded-xl border border-neutral-800 bg-black/60 px-4 py-3">
-                    <div className="text-[10px] uppercase tracking-widest text-neutral-500 font-black">{item.label}</div>
-                    <div className={`mt-1 text-xl font-black ${item.tone}`}>{item.value}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-            <div className="border-b border-neutral-900 bg-black/40 px-6 py-2 text-right text-[10px] font-bold text-neutral-600">
-              Created with PrePro Studio
-            </div>
+            <ScheduleExportHeader
+              activeDayIndex={activeDayIndex}
+              activeShootingDate={activeShootingDate}
+              displayedSceneCount={activeDayScenes.length}
+              filteredSceneCount={filteredSceneCount}
+              isMusicTimelineTemplate={isMusicTimelineTemplate}
+              isReportMode={isReportMode}
+              isScheduleFiltered={isScheduleFiltered}
+              itemPluralLabel={copy.itemPlural}
+              location={location}
+              locationsCount={locations.length}
+              pdfKindLabel={pdfKindLabel}
+              reportStats={reportStats}
+              template={template}
+              templateLabel={templateLabel}
+              totalItemLabel={copy.totalItemLabel}
+              totalMinutes={timelineStats.totalMinutes}
+              wrapTimeLabel={timelineStats.wrapTime ? format(timelineStats.wrapTime, 'HH:mm') : '-'}
+            />
             <div className="mobile-timeline-cards space-y-3 p-3 lg:hidden">
               {activeDayScenes.length > 0 && (
                 <MobileFieldControlBar
