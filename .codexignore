@@ -1,0 +1,18 @@
+.git/
+.next/
+.vercel/
+node_modules/
+coverage/
+out/
+build/
+
+*.log
+*.tsbuildinfo
+.DS_Store
+
+# Heavy generated/static media. Keep source files in the repo, but do not feed them to AI context/indexing.
+public/*.png
+public/*.jpg
+public/*.jpeg
+public/*.webp
+public/*.gif

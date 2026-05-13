@@ -1,0 +1,17 @@
+.git/
+.next/
+.vercel/
+node_modules/
+coverage/
+out/
+build/
+
+*.log
+*.tsbuildinfo
+.DS_Store
+
+public/*.png
+public/*.jpg
+public/*.jpeg
+public/*.webp
+public/*.gif

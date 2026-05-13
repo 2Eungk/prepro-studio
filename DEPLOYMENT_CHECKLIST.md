@@ -32,6 +32,16 @@ Required pass conditions:
 - ESLint passes.
 - Storyboard DB reports 130 sequential 16:9 PNG files.
 - Next.js production build completes.
+- GitHub Actions `Release Check` passes on the target branch.
+
+## 3.5 Security QA
+
+- Confirm the GitHub Actions `Secret Scan` workflow passes on the target branch.
+- Optional local scan, if Gitleaks is installed:
+
+```bash
+npm run security:gitleaks
+```
 
 ## 4. Environment
 

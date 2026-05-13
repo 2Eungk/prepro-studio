@@ -34,9 +34,23 @@ This runs:
 - `npm run check:storyboards`
 - `npm run build`
 
+GitHub Actions also runs this check on every push and pull request through `.github/workflows/release-check.yml`.
+
+## Secret Scanning
+
+GitHub Actions runs Gitleaks on every push, pull request, manual dispatch, and a daily scheduled scan. The workflow is defined in `.github/workflows/secret-scan.yml` and uses `.gitleaks.toml`.
+
+For a local scan, install Gitleaks first, then run:
+
+```bash
+npm run security:gitleaks
+```
+
+Do not commit `.env.local`, API keys, OAuth secrets, AdSense IDs, deployment tokens, or real BYOK test keys.
+
 ## Storyboard Assets
 
-Storyboard references are stored in `src/data/storyboardDb.ts` and mapped to `public/shot_01.png` through `public/shot_130.png`.
+Storyboard references are stored in `src/data/storyboardDb.ts` and mapped to `public/shot_01.png` through the current `public/shot_*.png` asset set.
 
 ```bash
 npm run check:storyboards
@@ -57,3 +71,9 @@ NEXT_PUBLIC_ADSENSE_MIDDLE_SLOT=
 ## Deployment
 
 See [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md) before publishing.
+
+## License and Usage
+
+PrePro Studio is proprietary software. The source code, UI design, production workflow, generated storyboard assets, PDF/export templates, and documentation may not be copied, redistributed, commercially reused, white-labeled, or deployed as a derivative service without prior written permission.
+
+See [LICENSE](./LICENSE) for details.

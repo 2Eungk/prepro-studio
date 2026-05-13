@@ -2,9 +2,32 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "PrePro Studio | 올인원 영상 제작 일촬표 & 콘티 매니저",
-  description: "영상 제작자를 위한 스마트한 프리프로덕션 도구. 영화, 드라마, 광고, 행사 등 장르별 맞춤형 일촬표 자동 생성 및 AI 콘티 매칭 서비스.",
-  keywords: ["일촬표", "프리프로덕션", "영상제작", "스토리보드", "콘티", "촬영준비", "Call Sheet", "Pre-production"],
+  title: "PrePro Studio | 기획서·촬영표·콜시트·콘티 제작 툴",
+  description: "영화, 광고, 뮤직비디오, 댄스커버, 행사 촬영을 위한 무로그인 BYOK 프리프로덕션 툴. 기획서, 촬영표, 콜시트, 장소/날씨, 예산, 콘티, 리포트를 한 번에 정리합니다.",
+  keywords: ["일촬표", "콜시트", "프리프로덕션", "영상제작", "스토리보드", "콘티", "촬영준비", "뮤직비디오", "댄스커버", "Call Sheet", "Pre-production"],
+  metadataBase: new URL("https://prepro-studio.vercel.app"),
+  openGraph: {
+    title: "PrePro Studio | No-login Production Planning Suite",
+    description: "영화, 광고, MV, 댄스커버, 행사 촬영의 기획서, 촬영표, 콜시트, 콘티, 예산, 리포트를 한 번에 정리합니다.",
+    url: "https://prepro-studio.vercel.app",
+    siteName: "PrePro Studio",
+    images: [
+      {
+        url: "/og-image.png?v=20260512",
+        width: 1200,
+        height: 630,
+        alt: "PrePro Studio preview image",
+      },
+    ],
+    locale: "ko_KR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PrePro Studio | No-login Production Planning Suite",
+    description: "영화, 광고, MV, 댄스커버, 행사 촬영의 기획서, 촬영표, 콜시트, 콘티, 예산, 리포트를 한 번에 정리합니다.",
+    images: ["/og-image.png?v=20260512"],
+  },
 };
 
 import GoogleAdSense from "@/components/GoogleAdSense";

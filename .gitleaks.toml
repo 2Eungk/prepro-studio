@@ -1,0 +1,4 @@
+title = "PrePro Studio Gitleaks Configuration"
+
+[extend]
+useDefault = true

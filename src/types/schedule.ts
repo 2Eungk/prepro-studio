@@ -1,4 +1,4 @@
-export type TemplateType = 'film' | 'event' | 'ad';
+export type TemplateType = 'film' | 'event' | 'ad' | 'dance' | 'musicvideo';
 
 export type StoryboardCategory = 'WIDE' | 'MEDIUM' | 'CLOSEUP' | 'ANGLE' | 'LENS' | 'COMPOSITION' | 'SUBJECT' | 'LIGHTING';
 
@@ -31,6 +31,15 @@ export interface Scene {
   cast?: string;
   cutCount?: number;
   pageCount?: number;
+  props?: string;
+  costume?: string;
+  soundNote?: string;
+  specialInstruction?: string;
+  insertNote?: string;
+  continuityNote?: string;
+  takeNote?: string;
+  lensNote?: string;
+  slateNote?: string;
 
   // [행사/스케치 모드 전용]
   eventSection?: string; // 예: 1부, 2부, 리허설 등
@@ -40,6 +49,14 @@ export interface Scene {
   visualRef?: string;    // 콘티 이미지 URL
   lightingNote?: string; // 조명 톤앤매너
   clientMemo?: string;   // 클라이언트/감독 코멘트
+
+  // [댄스커버 모드 전용]
+  musicCue?: string;     // 예: 00:12 / Verse 1
+  lyrics?: string;       // 해당 구간 가사
+  choreoNote?: string;   // 안무 포인트 / 동선
+  focusMember?: string;  // 포커스 멤버
+  shotSize?: string;     // FS / CS / LS / MS 등
+  formation?: string;    // 대형 / 위치 변화
   status?: 'pending' | 'done' | 'ng'; // 촬영 상태 추가
 }
 
@@ -64,6 +81,12 @@ export interface ProductionLocation {
   weatherLabel?: string;
   weatherLatitude?: number;
   weatherLongitude?: number;
+  storyFit?: string;
+  visualCheck?: string;
+  soundCheck?: string;
+  powerCheck?: string;
+  accessCheck?: string;
+  weatherRisk?: string;
 }
 
 export interface Person {
@@ -87,6 +110,20 @@ export interface BreakItem {
   endTime?: Date;
 }
 
+export interface PlanningDocument {
+  projectTitle: string;
+  projectType: TemplateType;
+  productionScale: 'lean' | 'standard' | 'premium';
+  projectFormat?: 'short_film' | 'feature_film' | 'series';
+  purpose: string;
+  oneLiner: string;
+  audience: string;
+  coreMessage: string;
+  sections: Record<string, Record<string, string>>;
+  aiDraft?: string;
+  aiUpdatedAt?: string;
+}
+
 export interface ScheduleState {
   template: TemplateType;
   shootingDate: string; // YYYY-MM-DD
@@ -102,6 +139,7 @@ export interface ScheduleState {
   breaks: BreakItem[];
   scenes: Scene[];
   timelineOrder: string[];
+  planning: PlanningDocument;
   
   // Actions
   setTemplate: (template: TemplateType) => void;
@@ -132,6 +170,9 @@ export interface ScheduleState {
   restoreTimelineOrder: (order: string[]) => void;
   calculateTimes: () => void;
   optimizeSchedule: (dayId?: string) => void;
+  updatePlanning: (updates: Partial<PlanningDocument>) => void;
+  updatePlanningField: (sectionId: string, fieldId: string, value: string) => void;
+  resetPlanning: (template?: TemplateType) => void;
   loadSampleData: () => void;
   importData: (data: Partial<ScheduleState>) => void;
   resetProject: () => void;

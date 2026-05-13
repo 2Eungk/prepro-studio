@@ -15,3 +15,15 @@ If private reporting is not available, open a GitHub issue with a minimal descri
 PrePro Studio stores project data in the browser's local storage by default. Shared links may encode project schedule data into the URL hash, so only share generated links with people who should see that production information.
 
 Never commit `.env`, `.env.local`, API keys, AdSense IDs, OAuth secrets, or deployment tokens to this repository.
+
+## Secret Scanning
+
+This repository runs Gitleaks in GitHub Actions for every push and pull request. The scan checks git history with `fetch-depth: 0` and fails the workflow when a committed secret is detected.
+
+Local manual scan:
+
+```bash
+npm run security:gitleaks
+```
+
+If a real secret is ever committed, rotate/revoke it first. Removing it from the latest commit is not enough because it can remain in git history.
