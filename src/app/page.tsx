@@ -18,6 +18,8 @@ import ReportPanel from '@/components/sections/ReportPanel';
 import StoryboardPanel from '@/components/sections/StoryboardPanel';
 import ScheduleSetupPanel from '@/components/sections/schedule/ScheduleSetupPanel';
 import ScheduleExportHeader from '@/components/sections/schedule/ScheduleExportHeader';
+import MobileScheduleList from '@/components/sections/schedule/MobileScheduleList';
+import DesktopScheduleEmptyRow from '@/components/sections/schedule/DesktopScheduleEmptyRow';
 import StoryboardGalleryModal from '@/components/modals/StoryboardGalleryModal';
 import { BreakModal, LocationModal, PersonModal } from '@/components/modals/ProductionModals';
 import {
@@ -6443,75 +6445,36 @@ export default function Home() {
               totalMinutes={timelineStats.totalMinutes}
               wrapTimeLabel={timelineStats.wrapTime ? format(timelineStats.wrapTime, 'HH:mm') : '-'}
             />
-            <div className="mobile-timeline-cards space-y-3 p-3 lg:hidden">
-              {activeDayScenes.length > 0 && (
-                <MobileFieldControlBar
-                  focusScene={mobileFieldFocus.scene}
-                  focusRowNumber={mobileFieldFocus.rowNumber}
-                  nextBreakLabel={mobileFieldFocus.nextBreakLabel}
-                  copyItemPlural={copy.itemPlural}
-                  reportStats={reportStats}
-                  isReportMode={isReportMode}
-                  statusFilter={scheduleStatusFilter}
-                  onToggleReportMode={() => setIsReportMode((value) => !value)}
-                  onSetStatusFilter={setScheduleStatusFilter}
-                  onGoReport={() => setActiveTab('report')}
-                />
-              )}
-              {filteredTimelineRows.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-neutral-800 bg-neutral-950/80 p-6 text-center">
-                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-900">
-                    <Plus className="h-6 w-6 text-neutral-600" />
-                  </div>
-                  <h3 className="text-base font-black text-neutral-200">{isScheduleFiltered ? '필터 결과가 없습니다' : '아직 추가된 일정이 없습니다'}</h3>
-                  <p className="mt-2 text-sm font-bold leading-relaxed text-neutral-600">{isScheduleFiltered ? '검색어나 필터 조건을 조금 넓혀보세요.' : copy.emptyHint}</p>
-                  <div className="mt-5 flex flex-wrap justify-center gap-2">
-                    {isScheduleFiltered && (
-                      <button onClick={resetScheduleFilters} className="prepro-btn prepro-btn--secondary h-9">
-                        필터 초기화
-                      </button>
-                    )}
-                    <button onClick={openNewSceneForm} className="prepro-btn prepro-btn--primary h-9">
-                      <Plus className="h-3.5 w-3.5" /> 직접 추가
-                    </button>
-                    <button onClick={handleLoadSampleData} className="prepro-btn prepro-btn--quiet h-9">
-                      샘플
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                filteredTimelineRows.map((row, index) => {
-                  if (row.type === 'scene') {
-                    return (
-                      <MobileTimelineSceneCard
-                        key={`mobile-${row.id}`}
-                        scene={row.scene}
-                        template={template}
-                        isReportMode={isReportMode}
-                        rowNumber={index + 1}
-                        onEdit={() => openSceneEditor(row.scene)}
-                        onDuplicate={() => handleDuplicateScene(row.scene)}
-                        onDelete={() => handleDeleteScene(row.scene)}
-                      />
-                    );
-                  }
-
-                  return (
-                    <MobileTimelineBreakCard
-                      key={`mobile-${row.id}`}
-                      item={row.breakItem}
-                      locationName={locations.find((locationItem) => locationItem.id === row.breakItem.locationId)?.name || ''}
-                      rowNumber={index + 1}
-                      onEdit={() => openBreakModal(row.breakItem)}
-                      onDelete={() => {
-                        deleteBreak(row.breakItem.id);
-                        setOptimizationSummary(null);
-                      }}
-                    />
-                  );
-                })
-              )}
-            </div>
+            <MobileScheduleList
+              activeDaySceneCount={activeDayScenes.length}
+              copyEmptyHint={copy.emptyHint}
+              copyItemPlural={copy.itemPlural}
+              filteredTimelineRows={filteredTimelineRows}
+              isReportMode={isReportMode}
+              isScheduleFiltered={isScheduleFiltered}
+              mobileFieldFocus={mobileFieldFocus}
+              reportStats={reportStats}
+              scheduleStatusFilter={scheduleStatusFilter}
+              template={template}
+              getBreakLocationName={(item) => locations.find((locationItem) => locationItem.id === item.locationId)?.name || ''}
+              MobileFieldControlBar={MobileFieldControlBar}
+              MobileTimelineBreakCard={MobileTimelineBreakCard}
+              MobileTimelineSceneCard={MobileTimelineSceneCard}
+              onDeleteBreak={(item) => {
+                deleteBreak(item.id);
+                setOptimizationSummary(null);
+              }}
+              onDeleteScene={handleDeleteScene}
+              onDuplicateScene={handleDuplicateScene}
+              onEditBreak={openBreakModal}
+              onEditScene={openSceneEditor}
+              onGoReport={() => setActiveTab('report')}
+              onLoadSampleData={handleLoadSampleData}
+              onNewScene={openNewSceneForm}
+              onResetFilters={resetScheduleFilters}
+              onSetStatusFilter={setScheduleStatusFilter}
+              onToggleReportMode={() => setIsReportMode((value) => !value)}
+            />
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleTimelineDragEnd}>
               <table className="desktop-schedule-table hidden w-full text-sm text-left lg:table">
                 <thead className="bg-neutral-950 text-neutral-500 uppercase text-[11px] border-b border-neutral-900">
@@ -6553,48 +6516,15 @@ export default function Home() {
                 <SortableContext items={filteredTimelineRows.map((row) => row.id)} strategy={verticalListSortingStrategy}>
                   <tbody className="divide-y divide-neutral-900">
                     {filteredTimelineRows.length === 0 ? (
-                      <tr>
-                        <td colSpan={7} className="px-6 py-24 text-center">
-                          <div className="max-w-md mx-auto space-y-6">
-                            <div className="bg-neutral-900/50 p-8 rounded-3xl border border-dashed border-neutral-800">
-                              <div className="w-16 h-16 bg-neutral-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <Plus className="w-8 h-8 text-neutral-600" />
-                              </div>
-                              <h3 className="text-lg font-bold text-neutral-200">{isScheduleFiltered ? '필터 결과가 없습니다' : '아직 추가된 일정이 없습니다'}</h3>
-                              <p className="text-sm text-neutral-500 mt-2">{isScheduleFiltered ? '검색어나 필터 조건을 조금 넓혀보세요.' : copy.emptyHint}</p>
-                              <div className="flex flex-wrap gap-3 justify-center mt-6">
-                                {isScheduleFiltered && (
-                                  <button
-                                    onClick={resetScheduleFilters}
-                                    className="prepro-btn prepro-btn--secondary h-9"
-                                  >
-                                    필터 초기화
-                                  </button>
-                                )}
-                                <button
-                                  onClick={openNewSceneForm}
-                                  className="prepro-btn prepro-btn--primary h-9"
-                                >
-                                  <Plus className="w-3.5 h-3.5" /> 직접 추가
-                                </button>
-                                <button
-                                  onClick={() => setShowAnalyzer(true)}
-                                  className="prepro-btn prepro-btn--secondary h-9"
-                                >
-                                  <Brain className="w-3.5 h-3.5" /> {template === 'event' ? '식순 정리' : template === 'ad' ? '구성 분석' : template === 'musicvideo' ? 'MV 콘티' : template === 'dance' ? '타임코드 콘티' : '시나리오 분석'}
-                                </button>
-                                <button 
-                                  onClick={handleLoadSampleData}
-                                  className="prepro-btn prepro-btn--ghost h-9"
-                                >
-                                  {template === 'event' ? '행사 샘플' : template === 'ad' ? '광고 샘플' : template === 'musicvideo' ? 'MV 샘플' : template === 'dance' ? '댄스 샘플' : '샘플 데이터'}
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    ) : (
+                      <DesktopScheduleEmptyRow
+                        copyEmptyHint={copy.emptyHint}
+                        isScheduleFiltered={isScheduleFiltered}
+                        template={template}
+                        onLoadSampleData={handleLoadSampleData}
+                        onNewScene={openNewSceneForm}
+                        onOpenAnalyzer={() => setShowAnalyzer(true)}
+                        onResetFilters={resetScheduleFilters}
+                      />                    ) : (
                       <>
                         {filteredTimelineRows.map((row, index) => {
                           if (row.type === 'scene') {
