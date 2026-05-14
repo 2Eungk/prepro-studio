@@ -20,6 +20,7 @@ import ScheduleSetupPanel from '@/components/sections/schedule/ScheduleSetupPane
 import ScheduleExportHeader from '@/components/sections/schedule/ScheduleExportHeader';
 import MobileScheduleList from '@/components/sections/schedule/MobileScheduleList';
 import DesktopScheduleTable from '@/components/sections/schedule/DesktopScheduleTable';
+import EventSceneFields from '@/components/sections/schedule/EventSceneFields';
 import QuickStoryboardPicker from '@/components/sections/schedule/QuickStoryboardPicker';
 import ScheduleControlsPanel from '@/components/sections/schedule/ScheduleControlsPanel';
 import MusicShotPresetPanel from '@/components/sections/schedule/MusicShotPresetPanel';
@@ -5542,28 +5543,18 @@ export default function Home() {
                 )}
 
                 {template === 'event' && (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{copy.eventSectionLabel}</label>
-                        <input placeholder="예: 1부 오프닝" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.eventSection} onChange={(e) => setNewSceneParams({ ...newSceneParams, eventSection: e.target.value })} />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{copy.gearLabel}</label>
-                        <input placeholder="예: 짐벌, 삼각대" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.cameraGear} onChange={(e) => setNewSceneParams({ ...newSceneParams, cameraGear: e.target.value })} />
-                      </div>
-                    </div>
-                    <PersonPickerField
-                      label="진행 / 연사 / 담당"
-                      people={people}
-                      value={newSceneParams.cast || ''}
-                      placeholder="예: 사회자, 대표 연사"
-                      emptyActionLabel="인원 추가"
-                      addChipLabel="+ 인원"
-                      onAddPerson={() => openPersonModal()}
-                      onChange={(cast) => setNewSceneParams({ ...newSceneParams, cast })}
-                    />
-                  </div>
+                  <EventSceneFields
+                    eventSectionLabel={copy.eventSectionLabel}
+                    gearLabel={copy.gearLabel}
+                    people={people}
+                    values={{
+                      eventSection: newSceneParams.eventSection,
+                      cameraGear: newSceneParams.cameraGear,
+                      cast: newSceneParams.cast || '',
+                    }}
+                    onAddPerson={() => openPersonModal()}
+                    onChange={(values) => setNewSceneParams({ ...newSceneParams, ...values })}
+                  />
                 )}
 
                 {isMusicTimelineTemplate && (
