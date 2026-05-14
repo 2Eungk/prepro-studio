@@ -21,6 +21,8 @@ import ScheduleExportHeader from '@/components/sections/schedule/ScheduleExportH
 import MobileScheduleList from '@/components/sections/schedule/MobileScheduleList';
 import DesktopScheduleTable from '@/components/sections/schedule/DesktopScheduleTable';
 import ScheduleControlsPanel from '@/components/sections/schedule/ScheduleControlsPanel';
+import SceneFormHeader from '@/components/sections/schedule/SceneFormHeader';
+import SceneLocationField from '@/components/sections/schedule/SceneLocationField';
 import StoryboardGalleryModal from '@/components/modals/StoryboardGalleryModal';
 import { BreakModal, LocationModal, PersonModal } from '@/components/modals/ProductionModals';
 import ScriptAnalyzer, { type AnalyzedScene } from '@/components/modals/ScriptAnalyzer';
@@ -5469,63 +5471,24 @@ export default function Home() {
           <>
           <div id="scene-form" className="bg-neutral-900/40 border border-neutral-900 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden group scroll-mt-6">
             <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none"></div>
-            <div className="flex flex-col md:flex-row items-end md:items-center justify-between mb-10 gap-4">
-              <div className="flex flex-col gap-3">
-                <h3 className="text-2xl font-black flex flex-wrap items-center gap-4">
-                  <div className="w-2 h-8 bg-indigo-600 rounded-full"></div>
-                  {copy.formTitle}
-                  <span className="text-[10px] bg-indigo-500/20 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/30 font-black tracking-widest">{copy.modeLabel}</span>
-                  <span className={`text-[10px] px-3 py-1 rounded-full border font-black tracking-widest ${
-                    canSaveScene
-                      ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
-                      : 'border-amber-500/30 bg-amber-500/10 text-amber-300'
-                  }`}>
-                    {canSaveScene ? '저장 가능' : `${sceneFormMissingFields.join(', ')} 필요`}
-                  </span>
-                </h3>
-                <p className="text-xs font-bold text-neutral-600">
-                  {canSaveScene ? '선택한 샷과 기본 제작값이 채워졌습니다.' : '장소와 진행 내용만 채우면 바로 일정에 넣을 수 있습니다.'}
-                </p>
-              </div>
-              <button
-                onClick={resetSceneForm}
-                className="rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-2 text-xs font-bold text-neutral-500 transition-all hover:border-neutral-700 hover:text-neutral-300"
-              >
-                닫기
-              </button>
-            </div>
+            <SceneFormHeader
+              title={copy.formTitle}
+              modeLabel={copy.modeLabel}
+              canSave={canSaveScene}
+              missingFields={sceneFormMissingFields}
+              onClose={resetSceneForm}
+            />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               <div className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">장소 <span className="text-indigo-500">*</span></label>
-                  <div className="grid grid-cols-[1fr_auto] gap-2">
-                    <select
-                      className="w-full bg-neutral-950 border border-neutral-800 rounded-2xl px-5 py-4 text-sm font-bold focus:outline-none focus:border-indigo-500 transition-all appearance-none"
-                      value={newSceneParams.locationId || locations.find((item) => item.name === newSceneParams.location)?.id || ''}
-                      onChange={(e) => {
-                        const selected = locations.find((item) => item.id === e.target.value);
-                        setNewSceneParams({ ...newSceneParams, location: selected?.name || '', locationId: selected?.id || '' });
-                      }}
-                    >
-                      <option value="">장소 DB에서 선택</option>
-                      {locations.map((item) => (
-                        <option key={item.id} value={item.id}>{item.name}</option>
-                      ))}
-                    </select>
-                    <button
-                      type="button"
-                      onClick={() => openLocationModal()}
-                      className="rounded-2xl border border-neutral-800 bg-neutral-950 px-4 text-xs font-black text-neutral-400 hover:border-indigo-500/40 hover:text-indigo-300"
-                    >
-                      추가
-                    </button>
-                  </div>
-                  <input list="location-list" placeholder="직접 입력하면 저장 시 장소 DB에 자동 추가" className="w-full bg-neutral-950 border border-neutral-800 rounded-2xl px-6 py-4 text-sm font-bold focus:outline-none focus:border-indigo-500 transition-all" value={newSceneParams.location} onChange={(e) => {
-                    const matched = locations.find((item) => sameText(item.name, e.target.value));
-                    setNewSceneParams({ ...newSceneParams, location: e.target.value, locationId: matched?.id || '' });
-                  }} />
-                </div>
+                <SceneLocationField
+                  location={newSceneParams.location}
+                  locationId={newSceneParams.locationId}
+                  locations={locations}
+                  sameText={sameText}
+                  onAddLocation={() => openLocationModal()}
+                  onChange={(next) => setNewSceneParams({ ...newSceneParams, ...next })}
+                />
 
                 {template === 'film' && (
                   <>
