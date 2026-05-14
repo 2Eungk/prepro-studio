@@ -26,6 +26,7 @@ import FilmSceneFields from '@/components/sections/schedule/FilmSceneFields';
 import MusicSceneFields from '@/components/sections/schedule/MusicSceneFields';
 import QuickStoryboardPicker from '@/components/sections/schedule/QuickStoryboardPicker';
 import ScheduleControlsPanel from '@/components/sections/schedule/ScheduleControlsPanel';
+import SceneDescriptionTimingFields from '@/components/sections/schedule/SceneDescriptionTimingFields';
 import SceneBreakdownFieldset from '@/components/sections/schedule/SceneBreakdownFieldset';
 import SceneFormHeader from '@/components/sections/schedule/SceneFormHeader';
 import SceneLocationField from '@/components/sections/schedule/SceneLocationField';
@@ -5568,15 +5569,17 @@ export default function Home() {
 
               {/* 오른쪽 파트: 내용 & 시간 & 추가 버튼 */}
               <div className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{copy.descriptionLabel} <span className="text-indigo-500">*</span></label>
-                  <textarea 
-                    placeholder={copy.descriptionPlaceholder}
-                    className="w-full h-32 bg-neutral-950 border border-neutral-800 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-indigo-500 transition-all resize-none" 
-                    value={newSceneParams.description} 
-                    onChange={(e) => setNewSceneParams({ ...newSceneParams, description: e.target.value })} 
-                  />
-                </div>
+                <SceneDescriptionTimingFields
+                  description={newSceneParams.description}
+                  descriptionLabel={copy.descriptionLabel}
+                  descriptionPlaceholder={copy.descriptionPlaceholder}
+                  estimatedMinutes={newSceneParams.estimatedMinutes}
+                  isEditing={Boolean(editingScene)}
+                  canSave={canSaveScene}
+                  onChangeDescription={(description) => setNewSceneParams({ ...newSceneParams, description })}
+                  onChangeEstimatedMinutes={(estimatedMinutes) => setNewSceneParams({ ...newSceneParams, estimatedMinutes })}
+                  onSave={handleSaveScene}
+                />
 
                 {template === 'film' && (
                   <SceneBreakdownFieldset
@@ -5594,25 +5597,6 @@ export default function Home() {
                     })}
                   />
                 )}
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">예상 소요 시간</label>
-                    <div className="relative">
-                      <input type="number" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none" value={newSceneParams.estimatedMinutes} onChange={(e) => setNewSceneParams({ ...newSceneParams, estimatedMinutes: Number(e.target.value) })} />
-                      <span className="absolute right-4 top-3.5 text-[10px] font-black text-neutral-600 uppercase">분</span>
-                    </div>
-                  </div>
-                  <div className="flex items-end">
-                    <button 
-                      onClick={handleSaveScene} 
-                      disabled={!canSaveScene}
-                      className="w-full h-[52px] bg-indigo-600 hover:bg-indigo-500 disabled:bg-neutral-900 disabled:text-neutral-700 text-white rounded-2xl font-black text-xs tracking-widest transition-all shadow-xl shadow-indigo-500/20"
-                    >
-                      {editingScene ? '변경사항 저장' : '일정에 추가'}
-                    </button>
-                  </div>
-                </div>
 
                 <SceneStoryboardField
                   itemLabel={copy.item}
