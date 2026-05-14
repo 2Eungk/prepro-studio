@@ -21,6 +21,7 @@ import ScheduleExportHeader from '@/components/sections/schedule/ScheduleExportH
 import MobileScheduleList from '@/components/sections/schedule/MobileScheduleList';
 import DesktopScheduleTable from '@/components/sections/schedule/DesktopScheduleTable';
 import ScheduleControlsPanel from '@/components/sections/schedule/ScheduleControlsPanel';
+import PersonPickerField from '@/components/sections/schedule/PersonPickerField';
 import SceneFormHeader from '@/components/sections/schedule/SceneFormHeader';
 import SceneLocationField from '@/components/sections/schedule/SceneLocationField';
 import StoryboardGalleryModal from '@/components/modals/StoryboardGalleryModal';
@@ -5511,38 +5512,17 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">출연진</label>
-                        <div className="min-h-[50px] rounded-xl border border-neutral-800 bg-neutral-950 p-3">
-                          {people.filter((person) => person.category === 'cast').length === 0 ? (
-                            <button type="button" onClick={() => openPersonModal()} className="text-xs font-bold text-indigo-400 hover:text-indigo-300">출연진 추가</button>
-                          ) : (
-                            <div className="flex flex-wrap gap-2">
-                              {people.filter((person) => person.category === 'cast').map((person) => {
-                                const selectedNames = new Set((newSceneParams.cast || '').split(',').map((name) => name.trim()).filter(Boolean));
-                                const checked = selectedNames.has(person.name);
-                                return (
-                                  <button
-                                    type="button"
-                                    key={person.id}
-                                    onClick={() => {
-                                      const nextNames = new Set(selectedNames);
-                                      if (checked) nextNames.delete(person.name);
-                                      else nextNames.add(person.name);
-                                      setNewSceneParams({ ...newSceneParams, cast: Array.from(nextNames).join(', ') });
-                                    }}
-                                    className={`rounded-full border px-3 py-1 text-[11px] font-bold transition-all ${checked ? 'border-indigo-400 bg-indigo-500 text-white' : 'border-neutral-800 bg-neutral-900 text-neutral-500 hover:text-neutral-300'}`}
-                                  >
-                                    {person.name}
-                                  </button>
-                                );
-                              })}
-                              <button type="button" onClick={() => openPersonModal()} className="rounded-full border border-neutral-800 px-3 py-1 text-[11px] font-bold text-neutral-500 hover:text-indigo-300">+ 인원</button>
-                            </div>
-                          )}
-                        </div>
-                        <input placeholder="예: 철수, 영희" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.cast || ''} onChange={(e) => setNewSceneParams({ ...newSceneParams, cast: e.target.value })} />
-                      </div>
+                      <PersonPickerField
+                        label="출연진"
+                        people={people}
+                        category="cast"
+                        value={newSceneParams.cast || ''}
+                        placeholder="예: 철수, 영희"
+                        emptyActionLabel="출연진 추가"
+                        addChipLabel="+ 인원"
+                        onAddPerson={() => openPersonModal()}
+                        onChange={(cast) => setNewSceneParams({ ...newSceneParams, cast })}
+                      />
                       <div className="grid grid-cols-2 gap-2">
                         <div className="space-y-2">
                           <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">컷 수</label>
@@ -5569,38 +5549,16 @@ export default function Home() {
                         <input placeholder="예: 짐벌, 삼각대" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.cameraGear} onChange={(e) => setNewSceneParams({ ...newSceneParams, cameraGear: e.target.value })} />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">진행 / 연사 / 담당</label>
-                      <div className="min-h-[50px] rounded-xl border border-neutral-800 bg-neutral-950 p-3">
-                        {people.length === 0 ? (
-                          <button type="button" onClick={() => openPersonModal()} className="text-xs font-bold text-indigo-400 hover:text-indigo-300">인원 추가</button>
-                        ) : (
-                          <div className="flex flex-wrap gap-2">
-                            {people.map((person) => {
-                              const selectedNames = new Set((newSceneParams.cast || '').split(',').map((name) => name.trim()).filter(Boolean));
-                              const checked = selectedNames.has(person.name);
-                              return (
-                                <button
-                                  type="button"
-                                  key={person.id}
-                                  onClick={() => {
-                                    const nextNames = new Set(selectedNames);
-                                    if (checked) nextNames.delete(person.name);
-                                    else nextNames.add(person.name);
-                                    setNewSceneParams({ ...newSceneParams, cast: Array.from(nextNames).join(', ') });
-                                  }}
-                                  className={`rounded-full border px-3 py-1 text-[11px] font-bold transition-all ${checked ? 'border-indigo-400 bg-indigo-500 text-white' : 'border-neutral-800 bg-neutral-900 text-neutral-500 hover:text-neutral-300'}`}
-                                >
-                                  {person.name}
-                                </button>
-                              );
-                            })}
-                            <button type="button" onClick={() => openPersonModal()} className="rounded-full border border-neutral-800 px-3 py-1 text-[11px] font-bold text-neutral-500 hover:text-indigo-300">+ 인원</button>
-                          </div>
-                        )}
-                      </div>
-                      <input placeholder="예: 사회자, 대표 연사" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.cast || ''} onChange={(e) => setNewSceneParams({ ...newSceneParams, cast: e.target.value })} />
-                    </div>
+                    <PersonPickerField
+                      label="진행 / 연사 / 담당"
+                      people={people}
+                      value={newSceneParams.cast || ''}
+                      placeholder="예: 사회자, 대표 연사"
+                      emptyActionLabel="인원 추가"
+                      addChipLabel="+ 인원"
+                      onAddPerson={() => openPersonModal()}
+                      onChange={(cast) => setNewSceneParams({ ...newSceneParams, cast })}
+                    />
                   </div>
                 )}
 
@@ -5667,38 +5625,17 @@ export default function Home() {
                         <input placeholder={template === 'musicvideo' ? '아티스트 / 오브젝트' : '센터 / 멤버명'} className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.focusMember} onChange={(e) => setNewSceneParams({ ...newSceneParams, focusMember: e.target.value })} />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{template === 'musicvideo' ? '아티스트 / 출연' : '멤버'}</label>
-                      <div className="min-h-[50px] rounded-xl border border-neutral-800 bg-neutral-950 p-3">
-                        {people.filter((person) => person.category === 'cast').length === 0 ? (
-                          <button type="button" onClick={() => openPersonModal()} className="text-xs font-bold text-indigo-400 hover:text-indigo-300">멤버 추가</button>
-                        ) : (
-                          <div className="flex flex-wrap gap-2">
-                            {people.filter((person) => person.category === 'cast').map((person) => {
-                              const selectedNames = new Set((newSceneParams.cast || '').split(',').map((name) => name.trim()).filter(Boolean));
-                              const checked = selectedNames.has(person.name);
-                              return (
-                                <button
-                                  type="button"
-                                  key={person.id}
-                                  onClick={() => {
-                                    const nextNames = new Set(selectedNames);
-                                    if (checked) nextNames.delete(person.name);
-                                    else nextNames.add(person.name);
-                                    setNewSceneParams({ ...newSceneParams, cast: Array.from(nextNames).join(', ') });
-                                  }}
-                                  className={`rounded-full border px-3 py-1 text-[11px] font-bold transition-all ${checked ? 'border-indigo-400 bg-indigo-500 text-white' : 'border-neutral-800 bg-neutral-900 text-neutral-500 hover:text-neutral-300'}`}
-                                >
-                                  {person.name}
-                                </button>
-                              );
-                            })}
-                            <button type="button" onClick={() => openPersonModal()} className="rounded-full border border-neutral-800 px-3 py-1 text-[11px] font-bold text-neutral-500 hover:text-indigo-300">+ 멤버</button>
-                          </div>
-                        )}
-                      </div>
-                      <input placeholder="예: A, B, C, D" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.cast || ''} onChange={(e) => setNewSceneParams({ ...newSceneParams, cast: e.target.value })} />
-                    </div>
+                    <PersonPickerField
+                      label={template === 'musicvideo' ? '아티스트 / 출연' : '멤버'}
+                      people={people}
+                      category="cast"
+                      value={newSceneParams.cast || ''}
+                      placeholder="예: A, B, C, D"
+                      emptyActionLabel="멤버 추가"
+                      addChipLabel="+ 멤버"
+                      onAddPerson={() => openPersonModal()}
+                      onChange={(cast) => setNewSceneParams({ ...newSceneParams, cast })}
+                    />
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">가사 / 카운트</label>
@@ -5746,38 +5683,17 @@ export default function Home() {
                         <input type="number" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-3.5 text-sm font-bold focus:outline-none" value={newSceneParams.cutCount || ''} onChange={(e) => setNewSceneParams({ ...newSceneParams, cutCount: e.target.value === '' ? '' : Number(e.target.value) })} />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">모델 / 제품 출연</label>
-                      <div className="min-h-[50px] rounded-xl border border-neutral-800 bg-neutral-950 p-3">
-                        {people.filter((person) => person.category === 'cast').length === 0 ? (
-                          <button type="button" onClick={() => openPersonModal()} className="text-xs font-bold text-indigo-400 hover:text-indigo-300">모델 추가</button>
-                        ) : (
-                          <div className="flex flex-wrap gap-2">
-                            {people.filter((person) => person.category === 'cast').map((person) => {
-                              const selectedNames = new Set((newSceneParams.cast || '').split(',').map((name) => name.trim()).filter(Boolean));
-                              const checked = selectedNames.has(person.name);
-                              return (
-                                <button
-                                  type="button"
-                                  key={person.id}
-                                  onClick={() => {
-                                    const nextNames = new Set(selectedNames);
-                                    if (checked) nextNames.delete(person.name);
-                                    else nextNames.add(person.name);
-                                    setNewSceneParams({ ...newSceneParams, cast: Array.from(nextNames).join(', ') });
-                                  }}
-                                  className={`rounded-full border px-3 py-1 text-[11px] font-bold transition-all ${checked ? 'border-indigo-400 bg-indigo-500 text-white' : 'border-neutral-800 bg-neutral-900 text-neutral-500 hover:text-neutral-300'}`}
-                                >
-                                  {person.name}
-                                </button>
-                              );
-                            })}
-                            <button type="button" onClick={() => openPersonModal()} className="rounded-full border border-neutral-800 px-3 py-1 text-[11px] font-bold text-neutral-500 hover:text-indigo-300">+ 모델</button>
-                          </div>
-                        )}
-                      </div>
-                      <input placeholder="예: 메인 모델" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.cast || ''} onChange={(e) => setNewSceneParams({ ...newSceneParams, cast: e.target.value })} />
-                    </div>
+                    <PersonPickerField
+                      label="모델 / 제품 출연"
+                      people={people}
+                      category="cast"
+                      value={newSceneParams.cast || ''}
+                      placeholder="예: 메인 모델"
+                      emptyActionLabel="모델 추가"
+                      addChipLabel="+ 모델"
+                      onAddPerson={() => openPersonModal()}
+                      onChange={(cast) => setNewSceneParams({ ...newSceneParams, cast })}
+                    />
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">톤앤매너</label>
