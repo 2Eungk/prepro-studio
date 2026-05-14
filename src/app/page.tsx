@@ -19,12 +19,10 @@ import StoryboardPanel from '@/components/sections/StoryboardPanel';
 import ScheduleSetupPanel from '@/components/sections/schedule/ScheduleSetupPanel';
 import ScheduleExportHeader from '@/components/sections/schedule/ScheduleExportHeader';
 import MobileScheduleList from '@/components/sections/schedule/MobileScheduleList';
-import DesktopScheduleEmptyRow from '@/components/sections/schedule/DesktopScheduleEmptyRow';
+import DesktopScheduleTable from '@/components/sections/schedule/DesktopScheduleTable';
 import StoryboardGalleryModal from '@/components/modals/StoryboardGalleryModal';
 import { BreakModal, LocationModal, PersonModal } from '@/components/modals/ProductionModals';
 import {
-  DndContext,
-  closestCenter,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -32,9 +30,7 @@ import {
   type DragEndEvent,
 } from '@dnd-kit/core';
 import {
-  SortableContext,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -6475,93 +6471,33 @@ export default function Home() {
               onSetStatusFilter={setScheduleStatusFilter}
               onToggleReportMode={() => setIsReportMode((value) => !value)}
             />
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleTimelineDragEnd}>
-              <table className="desktop-schedule-table hidden w-full text-sm text-left lg:table">
-                <thead className="bg-neutral-950 text-neutral-500 uppercase text-[11px] border-b border-neutral-900">
-                  <tr>
-                    <th className="px-4 py-3 font-black w-12 text-center">순서</th>
-                    <th className="px-4 py-3 font-black w-32">시간</th>
-
-                    {/* 동적 테이블 헤더 */}
-                    {template === 'film' && (
-                      <>
-                        <th className="px-4 py-3 font-black w-24">{copy.infoColumn}</th>
-                        <th className="px-4 py-3 font-black w-24">콘티</th>
-                      </>
-                    )}
-                    {template === 'event' && (
-                      <>
-                        <th className="px-4 py-3 font-black w-24">식순 구분</th>
-                        <th className="px-4 py-3 font-black w-24">샷 플랜</th>
-                      </>
-                    )}
-                    {isMusicTimelineTemplate && (
-                      <>
-                        <th className="px-4 py-3 font-black w-40">타임코드 / 가사</th>
-                        <th className="px-4 py-3 font-black w-28">{template === 'musicvideo' ? 'MV 레퍼런스' : '레퍼런스'}</th>
-                      </>
-                    )}
-                    {template === 'ad' && (
-                      <>
-                        <th className="px-4 py-3 font-black w-24">{copy.infoColumn}</th>
-                        <th className="px-4 py-3 font-black w-24">콘티</th>
-                      </>
-                    )}
-
-                    <th className="px-4 py-3 font-black w-48">장소</th>
-                    <th className="px-4 py-3 font-black">{copy.contentColumn}</th>
-                    <th className="px-4 py-3 font-black w-24 text-right">분량</th>
-                  </tr>
-                </thead>
-                <SortableContext items={filteredTimelineRows.map((row) => row.id)} strategy={verticalListSortingStrategy}>
-                  <tbody className="divide-y divide-neutral-900">
-                    {filteredTimelineRows.length === 0 ? (
-                      <DesktopScheduleEmptyRow
-                        copyEmptyHint={copy.emptyHint}
-                        isScheduleFiltered={isScheduleFiltered}
-                        template={template}
-                        onLoadSampleData={handleLoadSampleData}
-                        onNewScene={openNewSceneForm}
-                        onOpenAnalyzer={() => setShowAnalyzer(true)}
-                        onResetFilters={resetScheduleFilters}
-                      />                    ) : (
-                      <>
-                        {filteredTimelineRows.map((row, index) => {
-                          if (row.type === 'scene') {
-                            return (
-                              <SortableRow
-                                key={row.id}
-                                scene={row.scene}
-                                template={template}
-                                isReportMode={isReportMode}
-                                rowNumber={index + 1}
-                                onEdit={() => openSceneEditor(row.scene)}
-                                onDuplicate={() => handleDuplicateScene(row.scene)}
-                                onDelete={() => handleDeleteScene(row.scene)}
-                              />
-                            );
-                          }
-
-                          return (
-                            <SortableBreakRow
-                              key={row.id}
-                              item={row.breakItem}
-                              locationName={locations.find((locationItem) => locationItem.id === row.breakItem.locationId)?.name || ''}
-                              rowNumber={index + 1}
-                              onEdit={() => openBreakModal(row.breakItem)}
-                              onDelete={() => {
-                                deleteBreak(row.breakItem.id);
-                                setOptimizationSummary(null);
-                              }}
-                            />
-                          );
-                        })}
-                      </>
-                    )}
-                  </tbody>
-                </SortableContext>
-              </table>
-            </DndContext>
+            <DesktopScheduleTable
+              contentColumnLabel={copy.contentColumn}
+              copyEmptyHint={copy.emptyHint}
+              infoColumnLabel={copy.infoColumn}
+              isMusicTimelineTemplate={isMusicTimelineTemplate}
+              isReportMode={isReportMode}
+              isScheduleFiltered={isScheduleFiltered}
+              sensors={sensors}
+              template={template}
+              timelineRows={filteredTimelineRows}
+              getBreakLocationName={(item) => locations.find((locationItem) => locationItem.id === item.locationId)?.name || ''}
+              onDeleteBreak={(item) => {
+                deleteBreak(item.id);
+                setOptimizationSummary(null);
+              }}
+              onDeleteScene={handleDeleteScene}
+              onDuplicateScene={handleDuplicateScene}
+              onEditBreak={openBreakModal}
+              onEditScene={openSceneEditor}
+              onLoadSampleData={handleLoadSampleData}
+              onNewScene={openNewSceneForm}
+              onOpenAnalyzer={() => setShowAnalyzer(true)}
+              onResetFilters={resetScheduleFilters}
+              onTimelineDragEnd={handleTimelineDragEnd}
+              SortableBreakRow={SortableBreakRow}
+              SortableRow={SortableRow}
+            />
           </div>
         </div>
           </>

@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import type { BreakItem, Scene, TemplateType } from '@/types/schedule';
 import { Plus } from 'lucide-react';
 
@@ -61,9 +62,9 @@ type MobileScheduleListProps = {
   scheduleStatusFilter: 'all' | 'pending' | 'done' | 'ng';
   template: TemplateType;
   getBreakLocationName: (item: BreakItem) => string;
-  MobileFieldControlBar: (props: MobileFieldControlBarProps) => React.ReactNode;
-  MobileTimelineBreakCard: (props: MobileTimelineBreakCardProps) => React.ReactNode;
-  MobileTimelineSceneCard: (props: MobileTimelineSceneCardProps) => React.ReactNode;
+  MobileFieldControlBar: (props: MobileFieldControlBarProps) => ReactNode;
+  MobileTimelineBreakCard: (props: MobileTimelineBreakCardProps) => ReactNode;
+  MobileTimelineSceneCard: (props: MobileTimelineSceneCardProps) => ReactNode;
   onDeleteBreak: (item: BreakItem) => void;
   onDeleteScene: (scene: Scene) => void;
   onDuplicateScene: (scene: Scene) => void;
