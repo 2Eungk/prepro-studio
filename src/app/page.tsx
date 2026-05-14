@@ -21,6 +21,7 @@ import StoryboardPanel from '@/components/sections/StoryboardPanel';
 import AnalyzerResultPreview from '@/components/sections/schedule/AnalyzerResultPreview';
 import DanceCoverageBanner from '@/components/sections/schedule/DanceCoverageBanner';
 import ScheduleSetupPanel from '@/components/sections/schedule/ScheduleSetupPanel';
+import ShootDaySelector from '@/components/sections/schedule/ShootDaySelector';
 import ScheduleExportHeader from '@/components/sections/schedule/ScheduleExportHeader';
 import MobileScheduleList from '@/components/sections/schedule/MobileScheduleList';
 import { MobileFieldControlBar, MobileTimelineBreakCard, MobileTimelineSceneCard } from '@/components/sections/schedule/MobileTimelineCards';
@@ -3520,55 +3521,17 @@ export default function Home() {
               <DanceCoverageBanner stats={danceCoverageStats} template={template} />
             )}
 
-            <section className="rounded-2xl border border-neutral-900 bg-neutral-950/70 p-4">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-600">촬영일 구성</div>
-                  <div className="mt-1 text-sm font-bold text-neutral-300">
-                    Day {activeDayIndex + 1} · {activeShootingDate} · {activeDayScenes.length}개 {copy.itemPlural}
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {projectDays.map((day, index) => {
-                    const isSelected = day.id === activeDay.id;
-                    const daySceneCount = scenes.filter((scene) => (scene.dayId || projectDays[0]?.id) === day.id).length;
-
-                    return (
-                      <button
-                        key={day.id}
-                        type="button"
-                        onClick={() => setActiveDayId(day.id)}
-                        className={`rounded-xl border px-4 py-3 text-left transition-all ${
-                          isSelected
-                            ? 'border-neutral-600 bg-neutral-900 text-white'
-                            : 'border-neutral-800 bg-black text-neutral-500 hover:border-neutral-700 hover:text-neutral-300'
-                        }`}
-                      >
-                        <div className="text-[10px] font-black uppercase tracking-widest">Day {index + 1}</div>
-                        <div className="mt-1 text-xs font-bold">{day.date}</div>
-                        <div className={`mt-1 text-[10px] font-bold ${isSelected ? 'text-neutral-400' : 'text-neutral-600'}`}>{daySceneCount}개</div>
-                      </button>
-                    );
-                  })}
-                  <button
-                    type="button"
-                    onClick={handleAddShootDay}
-                    className="inline-flex min-h-[72px] items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-900 px-4 text-xs font-black text-neutral-400 transition-all hover:border-indigo-500/40 hover:text-indigo-300"
-                  >
-                    <Plus className="h-4 w-4" /> 날짜 추가
-                  </button>
-                  {projectDays.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={handleDeleteActiveDay}
-                      className="inline-flex min-h-[72px] items-center rounded-xl border border-red-500/20 px-4 text-xs font-black text-red-300 transition-all hover:bg-red-500/10"
-                    >
-                      현재 날짜 삭제
-                    </button>
-                  )}
-                </div>
-              </div>
-            </section>
+            <ShootDaySelector
+              activeDayId={activeDay.id}
+              activeDayIndex={activeDayIndex}
+              activeShootingDate={activeShootingDate}
+              itemPluralLabel={copy.itemPlural}
+              projectDays={projectDays}
+              scenes={scenes}
+              onAddDay={handleAddShootDay}
+              onDeleteActiveDay={handleDeleteActiveDay}
+              onSelectDay={setActiveDayId}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {workflowSteps.map((step) => {
