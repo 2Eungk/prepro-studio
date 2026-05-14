@@ -18,6 +18,7 @@ import { defaultPlanningAiSettings, type PlanningAiSettings } from '@/components
 import PlanningPanel from '@/components/sections/planning/PlanningPanel';
 import ReportPanel from '@/components/sections/ReportPanel';
 import StoryboardPanel from '@/components/sections/StoryboardPanel';
+import AnalyzerResultPreview from '@/components/sections/schedule/AnalyzerResultPreview';
 import ScheduleSetupPanel from '@/components/sections/schedule/ScheduleSetupPanel';
 import ScheduleExportHeader from '@/components/sections/schedule/ScheduleExportHeader';
 import MobileScheduleList from '@/components/sections/schedule/MobileScheduleList';
@@ -4750,38 +4751,19 @@ export default function Home() {
             </div>
           )}
 
-          {/* AI Analysis Preview (Extracted Scenes) */}
-          {extractedScenes.length > 0 && (
-            <div className="bg-indigo-950/20 border border-indigo-500/30 rounded-3xl p-8 shadow-2xl shadow-indigo-500/10 animate-in slide-in-from-top-4 duration-500">
-              <div className="flex items-center justify-between mb-6">
-                <h4 className="font-black text-indigo-200 flex items-center gap-3">
-                  <Sparkles className="w-5 h-5 text-indigo-400 animate-pulse" />
-                  {copy.analyzerResult}: {extractedScenes.length}개의 {copy.itemPlural} 감지됨
-                </h4>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 max-h-64 overflow-y-auto custom-scrollbar pr-4">
-                {extractedScenes.map((s, i) => (
-                  <div key={i} className="bg-neutral-950/50 p-4 rounded-2xl border border-neutral-900 text-[11px] group hover:border-indigo-500/30 transition-colors">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-black text-indigo-500">{s.sceneNumber}</span>
-                      <span className="text-neutral-600 font-bold uppercase tracking-widest">{s.intExt} • {s.dayNight}</span>
-                    </div>
-                    <div className="text-neutral-200 font-bold mb-1 truncate">{s.location}</div>
-                    <div className="text-neutral-600 truncate">{s.cast || '출연 없음'}</div>
-                  </div>
-                ))}
-              </div>
-              <div className="flex gap-4 justify-end">
-                <button onClick={() => setExtractedScenes([])} className="px-6 py-2.5 text-sm font-bold text-neutral-500 hover:text-neutral-300 transition-colors">취소</button>
-                <button
-                  onClick={() => { addScenes(extractedScenes.map((scene) => ({ ...scene, dayId: activeDay.id }))); setOptimizationSummary(null); setExtractedScenes([]); setShowAnalyzer(false); }}
-                  className="prepro-btn prepro-btn--primary h-12 px-8 text-sm"
-                >
-                  {copy.addResult}
-                </button>
-              </div>
-            </div>
-          )}
+          <AnalyzerResultPreview
+            addResultLabel={copy.addResult}
+            analyzerResultLabel={copy.analyzerResult}
+            itemPluralLabel={copy.itemPlural}
+            scenes={extractedScenes}
+            onCancel={() => setExtractedScenes([])}
+            onConfirm={() => {
+              addScenes(extractedScenes.map((scene) => ({ ...scene, dayId: activeDay.id })));
+              setOptimizationSummary(null);
+              setExtractedScenes([]);
+              setShowAnalyzer(false);
+            }}
+          />
 
           {activeTab === 'planning' && (
             <PlanningPanel
