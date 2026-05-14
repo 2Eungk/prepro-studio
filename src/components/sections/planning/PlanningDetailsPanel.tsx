@@ -3,14 +3,14 @@
 import { Wand2 } from 'lucide-react';
 import type { PlanningWorkspaceTab } from './PlanningBriefPanel';
 
-type PlanningFieldDefinition = {
+export type PlanningFieldDefinition = {
   id: string;
   label: string;
   placeholder: string;
   kind?: 'short' | 'long' | 'list';
 };
 
-type PlanningSectionDefinition = {
+export type PlanningSectionDefinition = {
   id: string;
   title: string;
   caption: string;

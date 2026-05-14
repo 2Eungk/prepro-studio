@@ -5,21 +5,21 @@ import { ArrowRight, CheckCircle2, Circle, Clipboard, Film, RefreshCw, ShieldChe
 
 export type PlanningWorkspaceTab = 'brief' | 'details' | 'ai';
 
-type PlanningCheckItem = {
+export type PlanningCheckItem = {
   label: string;
   ok: boolean;
   tab: PlanningWorkspaceTab;
   anchorId: string;
 };
 
-type ShortFilmReadinessItem = {
+export type ShortFilmReadinessItem = {
   id: string;
   label: string;
   detail: string;
   status: 'ok' | 'warning' | 'critical';
 };
 
-type ShortFilmReadinessSummary = {
+export type ShortFilmReadinessSummary = {
   critical: number;
   warning: number;
   ok: number;
