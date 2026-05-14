@@ -22,9 +22,9 @@ import ScheduleExportHeader from '@/components/sections/schedule/ScheduleExportH
 import MobileScheduleList from '@/components/sections/schedule/MobileScheduleList';
 import DesktopScheduleTable from '@/components/sections/schedule/DesktopScheduleTable';
 import EventSceneFields from '@/components/sections/schedule/EventSceneFields';
+import MusicSceneFields from '@/components/sections/schedule/MusicSceneFields';
 import QuickStoryboardPicker from '@/components/sections/schedule/QuickStoryboardPicker';
 import ScheduleControlsPanel from '@/components/sections/schedule/ScheduleControlsPanel';
-import MusicShotPresetPanel from '@/components/sections/schedule/MusicShotPresetPanel';
 import PersonPickerField from '@/components/sections/schedule/PersonPickerField';
 import SceneBreakdownFieldset from '@/components/sections/schedule/SceneBreakdownFieldset';
 import SceneFormHeader from '@/components/sections/schedule/SceneFormHeader';
@@ -5559,64 +5559,23 @@ export default function Home() {
                 )}
 
                 {isMusicTimelineTemplate && (
-                  <div className="space-y-4">
-                    <MusicShotPresetPanel
-                      template={template}
-                      focusMember={newSceneParams.focusMember}
-                      onApply={(preset) => setNewSceneParams({ ...newSceneParams, ...preset })}
-                    />
-                    <div className="grid grid-cols-4 gap-3">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">구간 번호</label>
-                        <input placeholder={template === 'musicvideo' ? 'MV#1' : 'D#1'} className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.sceneNumber} onChange={(e) => setNewSceneParams({ ...newSceneParams, sceneNumber: e.target.value })} />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">타임코드</label>
-                        <input placeholder="00:12" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.musicCue} onChange={(e) => setNewSceneParams({ ...newSceneParams, musicCue: e.target.value })} />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">샷 사이즈</label>
-                        <select className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500 appearance-none" value={newSceneParams.shotSize} onChange={(e) => setNewSceneParams({ ...newSceneParams, shotSize: e.target.value })}>
-                          <option value="">선택</option><option value="FS">FS</option><option value="LS">LS</option><option value="MS">MS</option><option value="CS">CS</option><option value="CU">CU</option><option value="SIDE">SIDE</option>
-                        </select>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">포커스</label>
-                        <input placeholder={template === 'musicvideo' ? '아티스트 / 오브젝트' : '센터 / 멤버명'} className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.focusMember} onChange={(e) => setNewSceneParams({ ...newSceneParams, focusMember: e.target.value })} />
-                      </div>
-                    </div>
-                    <PersonPickerField
-                      label={template === 'musicvideo' ? '아티스트 / 출연' : '멤버'}
-                      people={people}
-                      category="cast"
-                      value={newSceneParams.cast || ''}
-                      placeholder="예: A, B, C, D"
-                      emptyActionLabel="멤버 추가"
-                      addChipLabel="+ 멤버"
-                      onAddPerson={() => openPersonModal()}
-                      onChange={(cast) => setNewSceneParams({ ...newSceneParams, cast })}
-                    />
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">가사 / 카운트</label>
-                        <textarea className="h-24 w-full resize-none bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" placeholder="Do it do it Chu..." value={newSceneParams.lyrics} onChange={(e) => setNewSceneParams({ ...newSceneParams, lyrics: e.target.value })} />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">대형 / 동선</label>
-                        <textarea className="h-24 w-full resize-none bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" placeholder="센터 이동, 좌우 벌림, 엔딩 포즈" value={newSceneParams.formation} onChange={(e) => setNewSceneParams({ ...newSceneParams, formation: e.target.value })} />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">안무 포인트</label>
-                        <input placeholder="킬링파트 손동작, 점프, 턴" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.choreoNote} onChange={(e) => setNewSceneParams({ ...newSceneParams, choreoNote: e.target.value })} />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">카메라 플랜</label>
-                        <input placeholder="정면 풀샷, CS 펀치인, 사이드 컷" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.cameraGear} onChange={(e) => setNewSceneParams({ ...newSceneParams, cameraGear: e.target.value })} />
-                      </div>
-                    </div>
-                  </div>
+                  <MusicSceneFields
+                    people={people}
+                    template={template}
+                    values={{
+                      sceneNumber: newSceneParams.sceneNumber,
+                      musicCue: newSceneParams.musicCue,
+                      shotSize: newSceneParams.shotSize,
+                      focusMember: newSceneParams.focusMember,
+                      cast: newSceneParams.cast || '',
+                      lyrics: newSceneParams.lyrics,
+                      formation: newSceneParams.formation,
+                      choreoNote: newSceneParams.choreoNote,
+                      cameraGear: newSceneParams.cameraGear,
+                    }}
+                    onAddPerson={() => openPersonModal()}
+                    onChange={(values) => setNewSceneParams({ ...newSceneParams, ...values })}
+                  />
                 )}
 
                 {template === 'ad' && (
