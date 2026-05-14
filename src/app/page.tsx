@@ -16,6 +16,7 @@ import LocationsPanel from '@/components/sections/LocationsPanel';
 import PeoplePanel from '@/components/sections/PeoplePanel';
 import ReportPanel from '@/components/sections/ReportPanel';
 import StoryboardPanel from '@/components/sections/StoryboardPanel';
+import AdSceneFields from '@/components/sections/schedule/AdSceneFields';
 import ScheduleSetupPanel from '@/components/sections/schedule/ScheduleSetupPanel';
 import ScheduleExportHeader from '@/components/sections/schedule/ScheduleExportHeader';
 import MobileScheduleList from '@/components/sections/schedule/MobileScheduleList';
@@ -5619,51 +5620,20 @@ export default function Home() {
                 )}
 
                 {template === 'ad' && (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-4 gap-3">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">컷 번호</label>
-                        <input placeholder="C#1" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.sceneNumber} onChange={(e) => setNewSceneParams({ ...newSceneParams, sceneNumber: e.target.value })} />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">INT/EXT</label>
-                        <select className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500 appearance-none" value={newSceneParams.intExt} onChange={(e) => setNewSceneParams({ ...newSceneParams, intExt: e.target.value as NonNullable<Scene['intExt']> })}>
-                          <option value="INT">INT</option><option value="EXT">EXT</option>
-                        </select>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">시간대</label>
-                        <select className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500 appearance-none" value={newSceneParams.dayNight} onChange={(e) => setNewSceneParams({ ...newSceneParams, dayNight: e.target.value as NonNullable<Scene['dayNight']> })}>
-                          <option value="DAY">DAY</option><option value="NIGHT">NIGHT</option><option value="SUNSET">SUNSET</option>
-                        </select>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">컷 수</label>
-                        <input type="number" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-3.5 text-sm font-bold focus:outline-none" value={newSceneParams.cutCount || ''} onChange={(e) => setNewSceneParams({ ...newSceneParams, cutCount: e.target.value === '' ? '' : Number(e.target.value) })} />
-                      </div>
-                    </div>
-                    <PersonPickerField
-                      label="모델 / 제품 출연"
-                      people={people}
-                      category="cast"
-                      value={newSceneParams.cast || ''}
-                      placeholder="예: 메인 모델"
-                      emptyActionLabel="모델 추가"
-                      addChipLabel="+ 모델"
-                      onAddPerson={() => openPersonModal()}
-                      onChange={(cast) => setNewSceneParams({ ...newSceneParams, cast })}
-                    />
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">톤앤매너</label>
-                        <input placeholder="예: 화사하게, 시네마틱" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.lightingNote} onChange={(e) => setNewSceneParams({ ...newSceneParams, lightingNote: e.target.value })} />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">클라이언트 메모</label>
-                        <input placeholder="제품 로고 강조" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.clientMemo} onChange={(e) => setNewSceneParams({ ...newSceneParams, clientMemo: e.target.value })} />
-                      </div>
-                    </div>
-                  </div>
+                  <AdSceneFields
+                    people={people}
+                    values={{
+                      sceneNumber: newSceneParams.sceneNumber,
+                      intExt: newSceneParams.intExt,
+                      dayNight: newSceneParams.dayNight,
+                      cutCount: newSceneParams.cutCount,
+                      cast: newSceneParams.cast || '',
+                      lightingNote: newSceneParams.lightingNote,
+                      clientMemo: newSceneParams.clientMemo,
+                    }}
+                    onAddPerson={() => openPersonModal()}
+                    onChange={(values) => setNewSceneParams({ ...newSceneParams, ...values })}
+                  />
                 )}
               </div>
 
