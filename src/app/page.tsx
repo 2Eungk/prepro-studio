@@ -3,7 +3,7 @@
 import { useScheduleStore } from '@/store/scheduleStore';
 import type { BreakItem, Person, PlanningDocument, ProductionLocation, ScheduleState, Scene, ShootDay, StoryboardCategory, TemplateType } from '@/types/schedule';
 import { format, addMinutes, subMinutes } from 'date-fns';
-import { Plus, GripVertical, Clock, Film, MonitorPlay, Camera, Image as ImageIcon, Download, Cloud, Sunrise, Sunset, MapPin, Calendar as CalendarIcon, CheckCircle2, XCircle, Circle, FileText, Umbrella, Wind, Sparkles, Upload, Database, Brain, KeyRound, Wand2, Clipboard, ArrowRight, ShieldCheck, RefreshCw, Users, Music2, Calculator } from 'lucide-react';
+import { Plus, GripVertical, Clock, Film, MonitorPlay, Camera, Image as ImageIcon, Download, Cloud, Sunrise, Sunset, MapPin, Calendar as CalendarIcon, CheckCircle2, XCircle, Circle, FileText, Umbrella, Wind, Sparkles, Database, Brain, KeyRound, Wand2, Clipboard, ArrowRight, ShieldCheck, RefreshCw, Users, Music2, Calculator } from 'lucide-react';
 import { useState, useRef, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import html2canvas from 'html2canvas';
@@ -25,6 +25,7 @@ import MusicShotPresetPanel from '@/components/sections/schedule/MusicShotPreset
 import PersonPickerField from '@/components/sections/schedule/PersonPickerField';
 import SceneFormHeader from '@/components/sections/schedule/SceneFormHeader';
 import SceneLocationField from '@/components/sections/schedule/SceneLocationField';
+import SceneStoryboardField from '@/components/sections/schedule/SceneStoryboardField';
 import StoryboardGalleryModal from '@/components/modals/StoryboardGalleryModal';
 import { BreakModal, LocationModal, PersonModal } from '@/components/modals/ProductionModals';
 import ScriptAnalyzer, { type AnalyzedScene } from '@/components/modals/ScriptAnalyzer';
@@ -5736,76 +5737,20 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <div>
-                      <div className="text-[10px] font-black uppercase tracking-widest text-neutral-500">{copy.storyboardLabel}</div>
-                      <div className="mt-1 text-sm font-bold text-neutral-200">
-                        {selectedStoryboard?.name || (newSceneParams.visualRef.startsWith('data:') ? '내 이미지' : `${copy.storyboardLabel} 없음`)}
-                      </div>
-                    </div>
-                    <div className="flex shrink-0 gap-2">
-                      {newSceneParams.visualRef && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setNewSceneParams({ ...newSceneParams, visualRef: '' });
-                            setCustomImageStatus('');
-                          }}
-                          className="prepro-btn prepro-btn--quiet h-9"
-                        >
-                          해제
-                        </button>
-                      )}
-                      <label className="prepro-btn prepro-btn--secondary h-9 cursor-pointer">
-                        <Upload className="h-3.5 w-3.5" />
-                        내 이미지
-                        <input
-                          type="file"
-                          className="hidden"
-                          accept="image/png,image/jpeg,image/webp"
-                          onChange={(event) => {
-                            handleCustomStoryboardUpload(event.target.files?.[0]);
-                            event.target.value = '';
-                          }}
-                        />
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => setShowGallery(true)}
-                        className="prepro-btn prepro-btn--primary h-9"
-                      >
-                        {copy.storyboardLabel} 변경
-                      </button>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="relative aspect-video w-36 shrink-0 overflow-hidden rounded-xl border border-neutral-800 bg-white">
-                      {newSceneParams.visualRef ? (
-                        <Image
-                          src={newSceneParams.visualRef}
-                          alt={selectedStoryboard?.name || copy.storyboardLabel}
-                          width={320}
-                          height={180}
-                          unoptimized
-                          className="h-full w-full object-contain"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = storyboardFallback(selectedStoryboard?.name || copy.storyboardLabel);
-                          }}
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-neutral-900">
-                          <ImageIcon className="h-6 w-6 text-neutral-700" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="space-y-1 text-xs leading-relaxed text-neutral-500">
-                      <p>갤러리에서 고르거나 직접 만든 이미지를 올리면 이 {copy.item}에 바로 연결됩니다.</p>
-                      <p className="text-[10px] font-bold text-neutral-700">업로드 이미지는 브라우저/JSON 안에만 저장됩니다.</p>
-                      {customImageStatus && <p className="text-[10px] font-black text-teal-200">{customImageStatus}</p>}
-                    </div>
-                  </div>
-                </div>
+                <SceneStoryboardField
+                  itemLabel={copy.item}
+                  storyboardLabel={copy.storyboardLabel}
+                  visualRef={newSceneParams.visualRef}
+                  selectedStoryboard={selectedStoryboard}
+                  customImageStatus={customImageStatus}
+                  onClear={() => {
+                    setNewSceneParams({ ...newSceneParams, visualRef: '' });
+                    setCustomImageStatus('');
+                  }}
+                  onUpload={handleCustomStoryboardUpload}
+                  onOpenGallery={() => setShowGallery(true)}
+                  onFallbackImage={storyboardFallback}
+                />
               </div>
             </div>
           </div>
