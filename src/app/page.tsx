@@ -22,10 +22,10 @@ import ScheduleExportHeader from '@/components/sections/schedule/ScheduleExportH
 import MobileScheduleList from '@/components/sections/schedule/MobileScheduleList';
 import DesktopScheduleTable from '@/components/sections/schedule/DesktopScheduleTable';
 import EventSceneFields from '@/components/sections/schedule/EventSceneFields';
+import FilmSceneFields from '@/components/sections/schedule/FilmSceneFields';
 import MusicSceneFields from '@/components/sections/schedule/MusicSceneFields';
 import QuickStoryboardPicker from '@/components/sections/schedule/QuickStoryboardPicker';
 import ScheduleControlsPanel from '@/components/sections/schedule/ScheduleControlsPanel';
-import PersonPickerField from '@/components/sections/schedule/PersonPickerField';
 import SceneBreakdownFieldset from '@/components/sections/schedule/SceneBreakdownFieldset';
 import SceneFormHeader from '@/components/sections/schedule/SceneFormHeader';
 import SceneLocationField from '@/components/sections/schedule/SceneLocationField';
@@ -5498,49 +5498,19 @@ export default function Home() {
                 />
 
                 {template === 'film' && (
-                  <>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">씬 번호</label>
-                        <input placeholder="S#1" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500" value={newSceneParams.sceneNumber} onChange={(e) => setNewSceneParams({ ...newSceneParams, sceneNumber: e.target.value })} />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">INT/EXT</label>
-                        <select className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500 appearance-none" value={newSceneParams.intExt} onChange={(e) => setNewSceneParams({ ...newSceneParams, intExt: e.target.value as NonNullable<Scene['intExt']> })}>
-                          <option value="INT">INT</option><option value="EXT">EXT</option>
-                        </select>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">시간대</label>
-                        <select className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-indigo-500 appearance-none" value={newSceneParams.dayNight} onChange={(e) => setNewSceneParams({ ...newSceneParams, dayNight: e.target.value as NonNullable<Scene['dayNight']> })}>
-                          <option value="DAY">DAY</option><option value="NIGHT">NIGHT</option><option value="SUNSET">SUNSET</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <PersonPickerField
-                        label="출연진"
-                        people={people}
-                        category="cast"
-                        value={newSceneParams.cast || ''}
-                        placeholder="예: 철수, 영희"
-                        emptyActionLabel="출연진 추가"
-                        addChipLabel="+ 인원"
-                        onAddPerson={() => openPersonModal()}
-                        onChange={(cast) => setNewSceneParams({ ...newSceneParams, cast })}
-                      />
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="space-y-2">
-                          <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">컷 수</label>
-                          <input type="number" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-3.5 text-sm font-bold focus:outline-none" value={newSceneParams.cutCount || ''} onChange={(e) => setNewSceneParams({ ...newSceneParams, cutCount: e.target.value === '' ? '' : Number(e.target.value) })} />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">페이지</label>
-                          <input type="number" step="0.1" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-3.5 text-sm font-bold focus:outline-none" value={newSceneParams.pageCount || ''} onChange={(e) => setNewSceneParams({ ...newSceneParams, pageCount: e.target.value === '' ? '' : Number(e.target.value) })} />
-                        </div>
-                      </div>
-                    </div>
-                  </>
+                  <FilmSceneFields
+                    people={people}
+                    values={{
+                      sceneNumber: newSceneParams.sceneNumber,
+                      intExt: newSceneParams.intExt,
+                      dayNight: newSceneParams.dayNight,
+                      cast: newSceneParams.cast || '',
+                      cutCount: newSceneParams.cutCount,
+                      pageCount: newSceneParams.pageCount,
+                    }}
+                    onAddPerson={() => openPersonModal()}
+                    onChange={(values) => setNewSceneParams({ ...newSceneParams, ...values })}
+                  />
                 )}
 
                 {template === 'event' && (
