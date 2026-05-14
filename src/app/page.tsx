@@ -16,21 +16,12 @@ import LocationsPanel from '@/components/sections/LocationsPanel';
 import PeoplePanel from '@/components/sections/PeoplePanel';
 import ReportPanel from '@/components/sections/ReportPanel';
 import StoryboardPanel from '@/components/sections/StoryboardPanel';
-import AdSceneFields from '@/components/sections/schedule/AdSceneFields';
 import ScheduleSetupPanel from '@/components/sections/schedule/ScheduleSetupPanel';
 import ScheduleExportHeader from '@/components/sections/schedule/ScheduleExportHeader';
 import MobileScheduleList from '@/components/sections/schedule/MobileScheduleList';
 import DesktopScheduleTable from '@/components/sections/schedule/DesktopScheduleTable';
-import EventSceneFields from '@/components/sections/schedule/EventSceneFields';
-import FilmSceneFields from '@/components/sections/schedule/FilmSceneFields';
-import MusicSceneFields from '@/components/sections/schedule/MusicSceneFields';
-import QuickStoryboardPicker from '@/components/sections/schedule/QuickStoryboardPicker';
 import ScheduleControlsPanel from '@/components/sections/schedule/ScheduleControlsPanel';
-import SceneDescriptionTimingFields from '@/components/sections/schedule/SceneDescriptionTimingFields';
-import SceneBreakdownFieldset from '@/components/sections/schedule/SceneBreakdownFieldset';
-import SceneFormHeader from '@/components/sections/schedule/SceneFormHeader';
-import SceneLocationField from '@/components/sections/schedule/SceneLocationField';
-import SceneStoryboardField from '@/components/sections/schedule/SceneStoryboardField';
+import SceneFormPanel from '@/components/sections/schedule/SceneFormPanel';
 import StoryboardGalleryModal from '@/components/modals/StoryboardGalleryModal';
 import { BreakModal, LocationModal, PersonModal } from '@/components/modals/ProductionModals';
 import ScriptAnalyzer, { type AnalyzedScene } from '@/components/modals/ScriptAnalyzer';
@@ -5476,164 +5467,79 @@ export default function Home() {
 
           {/* Add Scene Form */}
           {showSceneForm && (
-          <>
-          <div id="scene-form" className="bg-neutral-900/40 border border-neutral-900 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden group scroll-mt-6">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none"></div>
-            <SceneFormHeader
-              title={copy.formTitle}
-              modeLabel={copy.modeLabel}
+            <SceneFormPanel
               canSave={canSaveScene}
+              categoryOptions={storyboardCategoryOptions}
+              copy={{
+                descriptionLabel: copy.descriptionLabel,
+                descriptionPlaceholder: copy.descriptionPlaceholder,
+                eventSectionLabel: copy.eventSectionLabel,
+                formTitle: copy.formTitle,
+                gearLabel: copy.gearLabel,
+                item: copy.item,
+                modeLabel: copy.modeLabel,
+                storyboardLabel: copy.storyboardLabel,
+              }}
+              customImageStatus={customImageStatus}
+              editorStoryboardOptions={editorStoryboardOptions}
+              filteredStoryboardCount={filteredStoryboards.length}
+              isEditing={Boolean(editingScene)}
+              isMusicTimelineTemplate={isMusicTimelineTemplate}
+              locations={locations}
               missingFields={sceneFormMissingFields}
+              people={people}
+              recommendedStoryboards={recommendations}
+              sameText={sameText}
+              sbCategory={sbCategory}
+              sbSearch={sbSearch}
+              selectedStoryboard={selectedStoryboard}
+              storyboardCount={storyboardDb.length}
+              template={template}
+              values={{
+                location: newSceneParams.location,
+                locationId: newSceneParams.locationId,
+                description: newSceneParams.description,
+                estimatedMinutes: newSceneParams.estimatedMinutes,
+                sceneNumber: newSceneParams.sceneNumber,
+                intExt: newSceneParams.intExt,
+                dayNight: newSceneParams.dayNight,
+                cast: newSceneParams.cast || '',
+                cutCount: newSceneParams.cutCount,
+                pageCount: newSceneParams.pageCount,
+                eventSection: newSceneParams.eventSection,
+                cameraGear: newSceneParams.cameraGear,
+                visualRef: newSceneParams.visualRef,
+                lightingNote: newSceneParams.lightingNote,
+                clientMemo: newSceneParams.clientMemo,
+                musicCue: newSceneParams.musicCue,
+                lyrics: newSceneParams.lyrics,
+                choreoNote: newSceneParams.choreoNote,
+                focusMember: newSceneParams.focusMember,
+                shotSize: newSceneParams.shotSize,
+                formation: newSceneParams.formation,
+                props: newSceneParams.props,
+                costume: newSceneParams.costume,
+                soundNote: newSceneParams.soundNote,
+                specialInstruction: newSceneParams.specialInstruction,
+                insertNote: newSceneParams.insertNote,
+                continuityNote: newSceneParams.continuityNote,
+              }}
+              onAddLocation={() => openLocationModal()}
+              onAddPerson={() => openPersonModal()}
+              onApplyStoryboard={applyStoryboardToSceneForm}
+              onChange={(values) => setNewSceneParams({ ...newSceneParams, ...values })}
+              onClearStoryboard={() => {
+                setNewSceneParams({ ...newSceneParams, visualRef: '' });
+                setCustomImageStatus('');
+              }}
               onClose={resetSceneForm}
+              onFallbackImage={storyboardFallback}
+              onOpenGallery={() => setShowGallery(true)}
+              onSetCategory={setSbCategory}
+              onSetSearch={setSbSearch}
+              onSave={handleSaveScene}
+              onUploadStoryboard={handleCustomStoryboardUpload}
             />
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              <div className="space-y-6">
-                <SceneLocationField
-                  location={newSceneParams.location}
-                  locationId={newSceneParams.locationId}
-                  locations={locations}
-                  sameText={sameText}
-                  onAddLocation={() => openLocationModal()}
-                  onChange={(next) => setNewSceneParams({ ...newSceneParams, ...next })}
-                />
-
-                {template === 'film' && (
-                  <FilmSceneFields
-                    people={people}
-                    values={{
-                      sceneNumber: newSceneParams.sceneNumber,
-                      intExt: newSceneParams.intExt,
-                      dayNight: newSceneParams.dayNight,
-                      cast: newSceneParams.cast || '',
-                      cutCount: newSceneParams.cutCount,
-                      pageCount: newSceneParams.pageCount,
-                    }}
-                    onAddPerson={() => openPersonModal()}
-                    onChange={(values) => setNewSceneParams({ ...newSceneParams, ...values })}
-                  />
-                )}
-
-                {template === 'event' && (
-                  <EventSceneFields
-                    eventSectionLabel={copy.eventSectionLabel}
-                    gearLabel={copy.gearLabel}
-                    people={people}
-                    values={{
-                      eventSection: newSceneParams.eventSection,
-                      cameraGear: newSceneParams.cameraGear,
-                      cast: newSceneParams.cast || '',
-                    }}
-                    onAddPerson={() => openPersonModal()}
-                    onChange={(values) => setNewSceneParams({ ...newSceneParams, ...values })}
-                  />
-                )}
-
-                {isMusicTimelineTemplate && (
-                  <MusicSceneFields
-                    people={people}
-                    template={template}
-                    values={{
-                      sceneNumber: newSceneParams.sceneNumber,
-                      musicCue: newSceneParams.musicCue,
-                      shotSize: newSceneParams.shotSize,
-                      focusMember: newSceneParams.focusMember,
-                      cast: newSceneParams.cast || '',
-                      lyrics: newSceneParams.lyrics,
-                      formation: newSceneParams.formation,
-                      choreoNote: newSceneParams.choreoNote,
-                      cameraGear: newSceneParams.cameraGear,
-                    }}
-                    onAddPerson={() => openPersonModal()}
-                    onChange={(values) => setNewSceneParams({ ...newSceneParams, ...values })}
-                  />
-                )}
-
-                {template === 'ad' && (
-                  <AdSceneFields
-                    people={people}
-                    values={{
-                      sceneNumber: newSceneParams.sceneNumber,
-                      intExt: newSceneParams.intExt,
-                      dayNight: newSceneParams.dayNight,
-                      cutCount: newSceneParams.cutCount,
-                      cast: newSceneParams.cast || '',
-                      lightingNote: newSceneParams.lightingNote,
-                      clientMemo: newSceneParams.clientMemo,
-                    }}
-                    onAddPerson={() => openPersonModal()}
-                    onChange={(values) => setNewSceneParams({ ...newSceneParams, ...values })}
-                  />
-                )}
-              </div>
-
-              {/* 오른쪽 파트: 내용 & 시간 & 추가 버튼 */}
-              <div className="space-y-6">
-                <SceneDescriptionTimingFields
-                  description={newSceneParams.description}
-                  descriptionLabel={copy.descriptionLabel}
-                  descriptionPlaceholder={copy.descriptionPlaceholder}
-                  estimatedMinutes={newSceneParams.estimatedMinutes}
-                  isEditing={Boolean(editingScene)}
-                  canSave={canSaveScene}
-                  onChangeDescription={(description) => setNewSceneParams({ ...newSceneParams, description })}
-                  onChangeEstimatedMinutes={(estimatedMinutes) => setNewSceneParams({ ...newSceneParams, estimatedMinutes })}
-                  onSave={handleSaveScene}
-                />
-
-                {template === 'film' && (
-                  <SceneBreakdownFieldset
-                    values={{
-                      props: newSceneParams.props,
-                      costume: newSceneParams.costume,
-                      soundNote: newSceneParams.soundNote,
-                      specialInstruction: newSceneParams.specialInstruction,
-                      insertNote: newSceneParams.insertNote,
-                      continuityNote: newSceneParams.continuityNote,
-                    }}
-                    onChange={(field, value) => setNewSceneParams({
-                      ...newSceneParams,
-                      [field]: value,
-                    })}
-                  />
-                )}
-
-                <SceneStoryboardField
-                  itemLabel={copy.item}
-                  storyboardLabel={copy.storyboardLabel}
-                  visualRef={newSceneParams.visualRef}
-                  selectedStoryboard={selectedStoryboard}
-                  customImageStatus={customImageStatus}
-                  onClear={() => {
-                    setNewSceneParams({ ...newSceneParams, visualRef: '' });
-                    setCustomImageStatus('');
-                  }}
-                  onUpload={handleCustomStoryboardUpload}
-                  onOpenGallery={() => setShowGallery(true)}
-                  onFallbackImage={storyboardFallback}
-                />
-              </div>
-            </div>
-          </div>
-
-          <QuickStoryboardPicker
-            category={sbCategory}
-            categoryOptions={storyboardCategoryOptions}
-            filteredCount={filteredStoryboards.length}
-            options={editorStoryboardOptions}
-            recommendedStoryboards={recommendations}
-            search={sbSearch}
-            selectedUrl={newSceneParams.visualRef}
-            storyboardCount={storyboardDb.length}
-            storyboardLabel={copy.storyboardLabel}
-            template={template}
-            onApplyStoryboard={applyStoryboardToSceneForm}
-            onFallbackImage={storyboardFallback}
-            onOpenGallery={() => setShowGallery(true)}
-            onSetCategory={setSbCategory}
-            onSetSearch={setSbSearch}
-          />
-          </>
           )}
 
         {/* Middle Ad Slot */}
