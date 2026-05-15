@@ -28,6 +28,7 @@ import { MobileFieldControlBar, MobileTimelineBreakCard, MobileTimelineSceneCard
 import DesktopScheduleTable from '@/components/sections/schedule/DesktopScheduleTable';
 import { SortableBreakRow, SortableRow } from '@/components/sections/schedule/DesktopTimelineRows';
 import ScheduleControlsPanel from '@/components/sections/schedule/ScheduleControlsPanel';
+import ScheduleDashboardSummary from '@/components/sections/schedule/ScheduleDashboardSummary';
 import SceneFormPanel from '@/components/sections/schedule/SceneFormPanel';
 import {
   getLocationWeatherQuery,
@@ -3117,6 +3118,16 @@ export default function Home() {
     { id: 2, label: workspaceLanguage.workflowBuildLabel, detail: copy.modeLabel },
     { id: 3, label: workspaceLanguage.workflowConfirmLabel, detail: `${scenes.length}개 ${copy.itemPlural}` },
   ];
+  const dashboardMetrics = [
+    { label: copy.totalItemLabel, value: `${scenes.length}` },
+    { label: '촬영일', value: `${Math.max(days.length, 1)}` },
+    { label: copy.pageLabel, value: template === 'event' ? `${reportStats.totalMinutes}분` : template === 'ad' ? `${reportStats.cutCount || scenes.length}` : (reportStats.pageCount ? reportStats.pageCount.toFixed(1) : '-') },
+    { label: `Day ${activeDayIndex + 1} 운영`, value: `${timelineStats.totalMinutes}분` },
+    { label: '예상 종료', value: timelineStats.wrapTime ? format(timelineStats.wrapTime, 'HH:mm') : '-' },
+    { label: '장소', value: `${locations.length}` },
+    { label: copy.peopleLabel, value: `${reportStats.castCount}` },
+    { label: '스태프', value: `${reportStats.crewCount}` },
+  ];
   const gettingStartedCards = [
     {
       label: '샘플로 둘러보기',
@@ -3533,100 +3544,14 @@ export default function Home() {
               onSelectDay={setActiveDayId}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {workflowSteps.map((step) => {
-                const isActive = activeStep === step.id;
-                const isDone = activeStep > step.id;
-
-                return (
-                  <div
-                    key={step.id}
-                    className={`flex items-center gap-4 rounded-2xl border px-5 py-4 transition-all ${
-                      isActive
-                        ? 'border-neutral-700 bg-neutral-900 text-white'
-                        : isDone
-                          ? 'border-neutral-800 bg-neutral-900/70 text-neutral-300'
-                          : 'border-neutral-900 bg-neutral-950/70 text-neutral-600'
-                    }`}
-                  >
-                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-black ${
-                      isDone ? 'bg-green-500/15 text-green-400' : isActive ? 'bg-neutral-800 text-indigo-300' : 'bg-neutral-900 text-neutral-600'
-                    }`}>
-                      {isDone ? <CheckCircle2 className="w-4 h-4" /> : step.id}
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-sm font-black whitespace-nowrap [word-break:keep-all]">{step.label}</div>
-                      <div className="text-[11px] text-neutral-500 truncate">{step.detail}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3">
-              {[
-                { label: copy.totalItemLabel, value: `${scenes.length}` },
-                { label: '촬영일', value: `${Math.max(days.length, 1)}` },
-                { label: copy.pageLabel, value: template === 'event' ? `${reportStats.totalMinutes}분` : template === 'ad' ? `${reportStats.cutCount || scenes.length}` : (reportStats.pageCount ? reportStats.pageCount.toFixed(1) : '-') },
-                { label: `Day ${activeDayIndex + 1} 운영`, value: `${timelineStats.totalMinutes}분` },
-                { label: '예상 종료', value: timelineStats.wrapTime ? format(timelineStats.wrapTime, 'HH:mm') : '-' },
-                { label: '장소', value: `${locations.length}` },
-                { label: copy.peopleLabel, value: `${reportStats.castCount}` },
-                { label: '스태프', value: `${reportStats.crewCount}` },
-              ].map((item) => (
-                <div key={item.label} className="rounded-2xl border border-neutral-900 bg-neutral-950/80 px-4 py-3">
-                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-600">{item.label}</div>
-                  <div className="mt-1 text-2xl font-black text-neutral-100">{item.value}</div>
-                </div>
-              ))}
-            </div>
-
-            {timelineStats.totalMinutes > 0 && (
-              <div className={`rounded-2xl border px-5 py-4 ${
-                timelineStats.risk === 'critical'
-                  ? 'border-red-500/30 bg-red-500/5'
-                  : timelineStats.risk === 'warning'
-                    ? 'border-amber-500/30 bg-amber-500/5'
-                    : 'border-neutral-900 bg-neutral-950/70'
-              }`}>
-                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${
-                      timelineStats.risk === 'critical'
-                        ? 'bg-red-500/10 text-red-300'
-                        : timelineStats.risk === 'warning'
-                          ? 'bg-amber-500/10 text-amber-300'
-                          : 'bg-cyan-500/10 text-cyan-300'
-                    }`}>
-                      <Clock className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <div className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-500">운영 시간 분석</div>
-                      <div className="mt-0.5 text-sm font-bold text-neutral-200">
-                        순수 {copy.itemPlural} {timelineStats.sceneMinutes}분 · 시간 블록 {timelineStats.breakMinutes}분 · 총 운영 {timelineStats.totalMinutes}분
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-2 text-xs font-black">
-                    <span className="rounded-xl border border-neutral-800 bg-black px-3 py-2 text-neutral-300">
-                      시작 {activeShootingStartTime ? format(activeShootingStartTime, 'HH:mm') : '미정'}
-                    </span>
-                    <span className="rounded-xl border border-neutral-800 bg-black px-3 py-2 text-neutral-300">
-                      종료 {timelineStats.wrapTime ? format(timelineStats.wrapTime, 'HH:mm') : '미정'}
-                    </span>
-                    <span className={`rounded-xl px-3 py-2 ${
-                      timelineStats.risk === 'critical'
-                        ? 'bg-red-500/15 text-red-300'
-                        : timelineStats.risk === 'warning'
-                          ? 'bg-amber-500/15 text-amber-300'
-                          : 'bg-green-500/10 text-green-300'
-                    }`}>
-                      {timelineStats.risk === 'critical' ? '장시간 운영' : timelineStats.risk === 'warning' ? '긴 일정' : '정상 범위'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
+            <ScheduleDashboardSummary
+              activeStep={activeStep}
+              activeShootingStartTime={activeShootingStartTime}
+              itemPluralLabel={copy.itemPlural}
+              metrics={dashboardMetrics}
+              timelineStats={timelineStats}
+              workflowSteps={workflowSteps}
+            />
 
             <div className={`rounded-2xl border p-5 ${
               readinessSummary.status === 'critical'
