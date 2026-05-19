@@ -3,8 +3,8 @@
 import { useScheduleStore } from '@/store/scheduleStore';
 import type { BreakItem, Person, PlanningDocument, ProductionLocation, ScheduleState, Scene, ShootDay, StoryboardCategory, TemplateType } from '@/types/schedule';
 import { format, addMinutes } from 'date-fns';
-import { Plus, Clock, Film, MonitorPlay, Camera, Image as ImageIcon, Download, Cloud, MapPin, FileText, Sparkles, Database, Brain, KeyRound, Wand2, ArrowRight, RefreshCw, Users, Music2, Calculator } from 'lucide-react';
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { Plus, Clock, Film, MonitorPlay, Camera, Image as ImageIcon, Download, Cloud, MapPin, FileText, Sparkles, Database, Brain, KeyRound, Wand2, ArrowRight, RefreshCw, Users, Music2, Calculator, ClipboardList } from 'lucide-react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { storyboardDb, recommendShots } from '@/data/storyboardDb';
@@ -14,6 +14,7 @@ import CurrentWorkBar from '@/components/layout/CurrentWorkBar';
 import ProductionGuideFooter from '@/components/layout/ProductionGuideFooter';
 import { FirstRunPanel, WorkspaceFlowBar } from '@/components/layout/WorkspaceOnboarding';
 import BudgetPanel from '@/components/sections/BudgetPanel';
+import CueSheetPanel, { type CueSheetRow } from '@/components/sections/CueSheetPanel';
 import LocationsPanel from '@/components/sections/LocationsPanel';
 import PeoplePanel from '@/components/sections/PeoplePanel';
 import { defaultPlanningAiSettings, type PlanningAiSettings } from '@/components/sections/planning/PlanningAiPanel';
@@ -170,11 +171,11 @@ type PlanningSectionDefinition = {
   fields: PlanningFieldDefinition[];
 };
 
-type MainWorkspaceTab = 'planning' | 'schedule' | 'locations' | 'people' | 'budget' | 'storyboard' | 'report';
+type MainWorkspaceTab = 'planning' | 'schedule' | 'cueSheet' | 'locations' | 'people' | 'budget' | 'storyboard' | 'report';
 type MainWorkspaceGroup = '준비' | '촬영' | '정산';
 type PlanningWorkspaceTab = 'brief' | 'details' | 'ai';
 
-const mainWorkspaceTabIds = ['planning', 'schedule', 'locations', 'people', 'budget', 'storyboard', 'report'] as const;
+const mainWorkspaceTabIds = ['planning', 'schedule', 'cueSheet', 'locations', 'people', 'budget', 'storyboard', 'report'] as const;
 const activeTabStorageKey = 'prepro-active-tab';
 const isMainWorkspaceTab = (value: string | null): value is MainWorkspaceTab =>
   Boolean(value && mainWorkspaceTabIds.includes(value as MainWorkspaceTab));
@@ -187,6 +188,8 @@ type WorkspaceLanguage = {
   peopleCaption: string;
   scheduleLabel: string;
   scheduleCaption: string;
+  cueSheetLabel: string;
+  cueSheetCaption: string;
   storyboardLabel: string;
   storyboardCaption: string;
   reportLabel: string;
@@ -219,6 +222,8 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
     peopleCaption: '캐스팅과 콜타임',
     scheduleLabel: '촬영표',
     scheduleCaption: '씬 순서와 이동',
+    cueSheetLabel: '큐시트',
+    cueSheetCaption: '씬별 촬영 큐',
     storyboardLabel: '콘티/샷',
     storyboardCaption: '앵글과 레퍼런스',
     reportLabel: '결과 리포트',
@@ -226,7 +231,7 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
     setupLabel: '단편 제작 기준',
     setupFallback: '촬영지',
     flowHint: '로그라인을 씬으로 쪼개고, 장소/인원/콘티를 붙인 뒤 촬영표로 확정합니다.',
-    flowPath: ['기획서', '로케이션', '출연/스태프', '촬영표', '콘티', '리포트'],
+    flowPath: ['기획서', '로케이션', '출연/스태프', '촬영표', '큐시트', '콘티', '리포트'],
     workflowSetupLabel: '현장 설정',
     workflowBuildLabel: '씬 구성',
     workflowConfirmLabel: '촬영표 확정',
@@ -249,6 +254,7 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
       people: '촬영표 구성',
       budget: '촬영표 확인',
       schedule: '콘티 연결',
+      cueSheet: '콘티 연결',
       storyboard: '현장 리포트',
       report: 'PDF 정리',
     },
@@ -261,6 +267,8 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
     peopleCaption: '승인과 콜타임',
     scheduleLabel: '컷리스트',
     scheduleCaption: '제품 컷과 액션',
+    cueSheetLabel: '큐시트',
+    cueSheetCaption: '컷별 진행 큐',
     storyboardLabel: '콘티/레퍼런스',
     storyboardCaption: '무드와 필수 컷',
     reportLabel: '납품 리포트',
@@ -268,7 +276,7 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
     setupLabel: '광고 제작 기준',
     setupFallback: '촬영지',
     flowHint: '브랜드 메시지를 컷으로 나누고, 필수 노출/승인/납품 버전을 함께 잠급니다.',
-    flowPath: ['브리프', '제품/장소', '모델/스태프', '컷리스트', '콘티', '납품'],
+    flowPath: ['브리프', '제품/장소', '모델/스태프', '컷리스트', '큐시트', '콘티', '납품'],
     workflowSetupLabel: '촬영 조건',
     workflowBuildLabel: '컷 구성',
     workflowConfirmLabel: '플랜 확정',
@@ -291,6 +299,7 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
       people: '컷리스트 구성',
       budget: '컷리스트 확인',
       schedule: '콘티/레퍼런스 연결',
+      cueSheet: '콘티/레퍼런스 연결',
       storyboard: '납품 리포트',
       report: 'PDF 정리',
     },
@@ -303,6 +312,8 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
     peopleCaption: '출연과 스타일링',
     scheduleLabel: 'MV 큐시트',
     scheduleCaption: '가사와 타임코드',
+    cueSheetLabel: '큐시트',
+    cueSheetCaption: '타임코드/가사',
     storyboardLabel: 'MV 레퍼런스',
     storyboardCaption: '립싱크/B-roll',
     reportLabel: '촬영 리포트',
@@ -310,7 +321,7 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
     setupLabel: 'MV 제작 기준',
     setupFallback: '촬영지',
     flowHint: '곡 구조를 타임코드로 쪼개고 립싱크, 퍼포먼스, B-roll을 병렬로 설계합니다.',
-    flowPath: ['곡 분석', '세트/로케', '아티스트', 'MV 큐시트', '레퍼런스', '리포트'],
+    flowPath: ['곡 분석', '세트/로케', '아티스트', '촬영표', '큐시트', '레퍼런스', '리포트'],
     workflowSetupLabel: '곡/세트 설정',
     workflowBuildLabel: '큐 구성',
     workflowConfirmLabel: '콘티 확정',
@@ -333,6 +344,7 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
       people: 'MV 큐시트 구성',
       budget: 'MV 큐시트 확인',
       schedule: '레퍼런스 연결',
+      cueSheet: '레퍼런스 연결',
       storyboard: '촬영 리포트',
       report: 'PDF 정리',
     },
@@ -345,6 +357,8 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
     peopleCaption: '포커스와 콜타임',
     scheduleLabel: '댄스 콘티',
     scheduleCaption: '타임코드와 안무',
+    cueSheetLabel: '큐시트',
+    cueSheetCaption: '가사/대형/포커스',
     storyboardLabel: '인서트/레퍼런스',
     storyboardCaption: '풀샷과 포커스 컷',
     reportLabel: '촬영 리포트',
@@ -352,7 +366,7 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
     setupLabel: '댄스커버 기준',
     setupFallback: '스튜디오',
     flowHint: '원테이크 풀샷을 기준으로 잡고, 구간별 포커스 멤버와 인서트를 보강합니다.',
-    flowPath: ['곡/안무', '스튜디오', '멤버', '타임코드 콘티', '인서트', '리포트'],
+    flowPath: ['곡/안무', '스튜디오', '멤버', '촬영표', '큐시트', '인서트', '리포트'],
     workflowSetupLabel: '곡/공간 설정',
     workflowBuildLabel: '구간 구성',
     workflowConfirmLabel: '콘티 확정',
@@ -375,6 +389,7 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
       people: '댄스 콘티 구성',
       budget: '댄스 콘티 확인',
       schedule: '인서트/레퍼런스 연결',
+      cueSheet: '인서트/레퍼런스 연결',
       storyboard: '촬영 리포트',
       report: 'PDF 정리',
     },
@@ -387,6 +402,8 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
     peopleCaption: '담당과 연락처',
     scheduleLabel: '운영표',
     scheduleCaption: '식순과 커버리지',
+    cueSheetLabel: '큐시트',
+    cueSheetCaption: '식순/담당/장비',
     storyboardLabel: '커버리지',
     storyboardCaption: 'A/B캠과 스케치',
     reportLabel: '결과 리포트',
@@ -394,7 +411,7 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
     setupLabel: '행사 촬영 기준',
     setupFallback: '행사장',
     flowHint: '식순을 시간 순서로 두고, 담당자/구역/촬영 커버리지를 프로그램마다 붙입니다.',
-    flowPath: ['목적/식순', '행사장', '담당자', '운영표', '커버리지', '리포트'],
+    flowPath: ['목적/식순', '행사장', '담당자', '운영표', '큐시트', '커버리지', '리포트'],
     workflowSetupLabel: '행사 설정',
     workflowBuildLabel: '식순 구성',
     workflowConfirmLabel: '운영표 확정',
@@ -417,6 +434,7 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
       people: '운영표 구성',
       budget: '운영표 확인',
       schedule: '커버리지 연결',
+      cueSheet: '커버리지 연결',
       storyboard: '결과 리포트',
       report: 'PDF 정리',
     },
@@ -1121,6 +1139,7 @@ export default function Home() {
   const [shareStatus, setShareStatus] = useState('');
   const [fileStatus, setFileStatus] = useState('');
   const [pdfStatus, setPdfStatus] = useState('');
+  const [cueSheetStatus, setCueSheetStatus] = useState('');
   const [isExportingPdf, setIsExportingPdf] = useState(false);
   const [scheduleSearch, setScheduleSearch] = useState('');
   const [scheduleStatusFilter, setScheduleStatusFilter] = useState<ScheduleStatusFilter>('all');
@@ -1128,6 +1147,7 @@ export default function Home() {
   const [scheduleLocationFilter, setScheduleLocationFilter] = useState('all');
   const [peopleIssueFilter, setPeopleIssueFilter] = useState(false);
   const pdfRef = useRef<HTMLDivElement>(null);
+  const cueSheetPdfRef = useRef<HTMLDivElement>(null);
   const reportPdfRef = useRef<HTMLDivElement>(null);
   const callSheetPdfRef = useRef<HTMLDivElement>(null);
   const shareImportCheckedRef = useRef(false);
@@ -1321,7 +1341,9 @@ export default function Home() {
   const planningFoundations = planningFoundationByTemplate[template];
   const planningPlaybook = planningScalePlaybook[planning.productionScale];
   const planningQualityChecksForTemplate = planningQualityChecks[template];
-  const getPlanningFieldValue = (sectionId: string, fieldId: string) => planning.sections[sectionId]?.[fieldId] || '';
+  const getPlanningFieldValue = useCallback((sectionId: string, fieldId: string) => (
+    planning.sections[sectionId]?.[fieldId] || ''
+  ), [planning.sections]);
   const getPlanningCheckValue = (check: { sectionId?: string; fieldId?: string; root?: keyof PlanningDocument }) => {
     if (check.root) {
       const value = planning[check.root];
@@ -1371,6 +1393,95 @@ export default function Home() {
       .map((line) => line.replace(/^\s*[-*•\d.)]+\s*/, '').trim())
       .filter(Boolean);
   }, [planning.sections, planningScheduleSource.fieldId, planningScheduleSource.sectionId]);
+
+  const cueSheetPlanningRows = useMemo<CueSheetRow[]>(() => {
+    const fallbackLocation = locations[0];
+    const defaultLocation = fallbackLocation?.name || location || '장소 미정';
+    const defaultReference = template === 'event' ? '/shot_141.png' : template === 'ad' ? '/shot_136.png' : template === 'musicvideo' ? '/shot_10.png' : template === 'dance' ? '/shot_171.png' : '/shot_15.png';
+    const defaultMinutes = template === 'event' ? 30 : template === 'ad' ? 45 : template === 'musicvideo' ? 35 : template === 'dance' ? 12 : 60;
+
+    return planningScheduleLines.map((line, index) => {
+      const timecode = line.match(/(\d{1,2}:\d{2})/)?.[1] || '';
+      const content = line.replace(/^\s*\d{1,2}:\d{2}\s*/, '').trim() || line;
+      const shotSize = line.match(/\b(ECU|CU|CS|MS|LS|FS|WS)\b/i)?.[1]?.toUpperCase() || (template === 'dance' ? 'FS' : template === 'musicvideo' ? 'CU' : '');
+
+      return {
+        id: `planning-${index}`,
+        orderLabel: `${index + 1}`,
+        sequenceLabel: template === 'event' ? `P#${index + 1}` : template === 'ad' ? `C#${index + 1}` : template === 'musicvideo' ? `MV#${index + 1}` : template === 'dance' ? `D#${index + 1}` : `S#${index + 1}`,
+        timeLabel: timecode || '--:--',
+        durationLabel: `${defaultMinutes}분`,
+        location: defaultLocation,
+        content,
+        reference: defaultReference,
+        section: template === 'event' ? (content.split(/[-:–—]/)[0]?.trim() || `프로그램 ${index + 1}`) : undefined,
+        gear: template === 'event' ? '현장 스케치 / B-roll' : undefined,
+        note: template === 'dance'
+          ? getPlanningFieldValue('camera', 'coverageMode') || getPlanningFieldValue('camera', 'insertPlan')
+          : template === 'musicvideo'
+            ? getPlanningFieldValue('production', 'coveragePlan') || getPlanningFieldValue('visual', 'shotLanguage')
+            : template === 'ad'
+              ? getPlanningFieldValue('brief', 'mandatory') || getPlanningFieldValue('creative', 'tone')
+              : undefined,
+        timecode,
+        lyrics: template === 'dance' || template === 'musicvideo' ? content.split(/[-–—]/)[0]?.trim() || content : undefined,
+        shotSize,
+        focus: template === 'musicvideo' ? '아티스트' : undefined,
+        formation: template === 'dance' ? getPlanningFieldValue('structure', 'formationMap') : undefined,
+        status: 'pending',
+        estimatedMinutes: defaultMinutes,
+        source: 'planning',
+      };
+    });
+  }, [getPlanningFieldValue, location, locations, planningScheduleLines, template]);
+
+  const cueSheetSceneRows = useMemo<CueSheetRow[]>(() => (
+    activeDayScenes.map((scene, index) => {
+      const start = scene.startTime ? format(new Date(scene.startTime), 'HH:mm') : '';
+      const fallbackSequence = template === 'event' ? `P#${index + 1}` : template === 'ad' ? `C#${index + 1}` : template === 'musicvideo' ? `MV#${index + 1}` : template === 'dance' ? `D#${index + 1}` : `S#${index + 1}`;
+      const note = [
+        scene.choreoNote,
+        scene.cameraGear,
+        scene.lightingNote,
+        scene.clientMemo,
+        scene.props && `소품: ${scene.props}`,
+        scene.costume && `의상: ${scene.costume}`,
+        scene.specialInstruction,
+      ].filter(Boolean).join(' · ');
+
+      return {
+        id: scene.id,
+        orderLabel: `${index + 1}`,
+        sequenceLabel: scene.sceneNumber || fallbackSequence,
+        timeLabel: start || scene.musicCue || '--:--',
+        durationLabel: `${scene.estimatedMinutes || 0}분`,
+        location: scene.location || '장소 미정',
+        content: scene.description || '-',
+        reference: scene.visualRef,
+        section: scene.eventSection,
+        gear: scene.cameraGear || scene.cast,
+        note,
+        timecode: scene.musicCue,
+        lyrics: scene.lyrics,
+        shotSize: scene.shotSize,
+        focus: scene.focusMember || scene.cast,
+        formation: scene.formation,
+        status: scene.status || 'pending',
+        estimatedMinutes: scene.estimatedMinutes || 0,
+        source: 'scene',
+      };
+    })
+  ), [activeDayScenes, template]);
+
+  const cueSheetRows = cueSheetSceneRows.length > 0 ? cueSheetSceneRows : cueSheetPlanningRows;
+  const cueSheetTotalMinutes = cueSheetRows.reduce((sum, row) => sum + row.estimatedMinutes, 0);
+  const cueSheetCanApplyDraft = cueSheetSceneRows.length === 0 && cueSheetPlanningRows.length > 0;
+  const cueSheetSourceLabel = cueSheetSceneRows.length > 0 ? '촬영표' : cueSheetPlanningRows.length > 0 ? '기획서' : '없음';
+  const cueSheetSourceDetail = cueSheetSceneRows.length > 0
+    ? `Day ${activeDayIndex + 1} 촬영표 ${cueSheetSceneRows.length}개 기준`
+    : cueSheetPlanningRows.length > 0
+      ? `${planningScheduleLabel[template]} ${cueSheetPlanningRows.length}줄 초안`
+      : `${planningScheduleLabel[template]} 입력 필요`;
 
   const recommendations = useMemo(() => recommendShots(newSceneParams.description), [newSceneParams.description]);
   const [sbCategory, setSbCategory] = useState<StoryboardCategory | 'ALL'>('ALL');
@@ -1654,6 +1765,7 @@ export default function Home() {
     { id: 'people', group: '준비', label: workspaceLanguage.peopleLabel, caption: workspaceLanguage.peopleCaption, metric: `${people.length}명`, Icon: Users },
     { id: 'budget', group: '준비', label: '예산', caption: '순제작비 초안', metric: budgetStats.total >= 1000000 ? `${Math.round(budgetStats.total / 10000)}만` : formatKRW(budgetStats.total), Icon: Calculator },
     { id: 'schedule', group: '촬영', label: workspaceLanguage.scheduleLabel, caption: workspaceLanguage.scheduleCaption, metric: isMusicTimelineTemplate ? `${danceCoverageStats.cueCount}큐` : `${timelineStats.totalMinutes || 0}분`, Icon: isMusicTimelineTemplate ? Music2 : Clock },
+    { id: 'cueSheet', group: '촬영', label: workspaceLanguage.cueSheetLabel, caption: workspaceLanguage.cueSheetCaption, metric: `${cueSheetRows.length}큐`, Icon: ClipboardList },
     { id: 'storyboard', group: '촬영', label: workspaceLanguage.storyboardLabel, caption: workspaceLanguage.storyboardCaption, metric: `${storyboardDb.length}개`, Icon: ImageIcon },
     { id: 'report', group: '정산', label: workspaceLanguage.reportLabel, caption: workspaceLanguage.reportCaption, metric: `${reportStats.done}/${Math.max(1, scenes.length)}`, Icon: FileText },
   ];
@@ -2378,6 +2490,23 @@ export default function Home() {
     window.setTimeout(() => setPlanningAiStatus(''), 2600);
   };
 
+  const handleRefreshCueSheetDraft = () => {
+    const message = cueSheetRows.length > 0
+      ? `${cueSheetRows.length}개 큐를 ${cueSheetSourceLabel} 기준으로 정리했습니다.`
+      : `${planningScheduleLabel[template]}를 먼저 입력하거나 촬영표에 항목을 추가하세요.`;
+    setCueSheetStatus(message);
+    window.setTimeout(() => setCueSheetStatus(''), 2600);
+  };
+
+  const handleApplyCueSheetDraft = () => {
+    if (!cueSheetCanApplyDraft) {
+      setCueSheetStatus(cueSheetSceneRows.length > 0 ? '이미 촬영표 기준 큐시트입니다.' : `${planningScheduleLabel[template]} 입력 필요`);
+      window.setTimeout(() => setCueSheetStatus(''), 2400);
+      return;
+    }
+    handlePlanningToSchedule();
+  };
+
   const handleExportPDF = async () => {
     if (isExportingPdf) return;
 
@@ -2385,7 +2514,9 @@ export default function Home() {
       ? reportPdfRef.current
       : activeTab === 'people'
         ? callSheetPdfRef.current
-        : pdfRef.current;
+        : activeTab === 'cueSheet'
+          ? cueSheetPdfRef.current
+          : pdfRef.current;
     if (!target) {
       setPdfStatus('PDF 대상 없음');
       window.setTimeout(() => setPdfStatus(''), 2200);
@@ -2447,7 +2578,7 @@ export default function Home() {
         );
       }
 
-      const mode = activeTab === 'report' || isReportMode ? 'report' : activeTab === 'people' ? 'callsheet' : 'schedule';
+      const mode = activeTab === 'report' || isReportMode ? 'report' : activeTab === 'people' ? 'callsheet' : activeTab === 'cueSheet' ? 'cue-sheet' : 'schedule';
       pdf.save(`PrePro_Studio_${template}_${mode}_${format(new Date(), 'yyyyMMdd')}.pdf`);
       setPdfStatus('PDF 저장됨');
     } catch (error) {
@@ -3182,6 +3313,12 @@ export default function Home() {
           { id: 'schedule-optimize', label: 'AI 동선 최적화', detail: '장소와 인원 기준', Icon: Sparkles, disabled: activeDayScenes.length < 2, tone: 'neutral' },
           { id: 'export-pdf', label: 'PDF 다운로드', detail: pdfKindLabel, Icon: Download, disabled: isExportingPdf, tone: 'neutral' },
         ]
+      : activeTab === 'cueSheet'
+        ? [
+            { id: 'cue-refresh', label: '자동 초안', detail: cueSheetSourceLabel, Icon: RefreshCw, tone: 'primary' },
+            { id: 'cue-apply', label: '촬영표 반영', detail: cueSheetCanApplyDraft ? `${cueSheetRows.length}큐 추가` : '이미 반영됨', Icon: ArrowRight, disabled: !cueSheetCanApplyDraft, tone: 'green' },
+            { id: 'export-pdf', label: '큐시트 PDF', detail: `${cueSheetRows.length}큐`, Icon: Download, disabled: isExportingPdf || cueSheetRows.length === 0, tone: 'neutral' },
+          ]
       : activeTab === 'locations'
         ? [
             { id: 'location-add', label: '장소 추가', detail: '허가, 담당, 날씨', Icon: MapPin, tone: 'primary' },
@@ -3238,6 +3375,12 @@ export default function Home() {
         break;
       case 'schedule-optimize':
         handleOptimizeSchedule();
+        break;
+      case 'cue-refresh':
+        handleRefreshCueSheetDraft();
+        break;
+      case 'cue-apply':
+        handleApplyCueSheetDraft();
         break;
       case 'location-add':
         openLocationModal();
@@ -3703,6 +3846,29 @@ export default function Home() {
             />
           </div>
           </>
+          )}
+
+          {activeTab === 'cueSheet' && (
+            <CueSheetPanel
+              activeDayLabel={`Day ${activeDayIndex + 1} · ${activeShootingDate}`}
+              canApplyDraft={cueSheetCanApplyDraft}
+              isExportingPdf={isExportingPdf}
+              pdfButtonText={pdfButtonText('큐시트 PDF')}
+              pdfRef={cueSheetPdfRef}
+              planningLineCount={planningScheduleLines.length}
+              rows={cueSheetRows}
+              scenesCount={activeDayScenes.length}
+              sourceDetail={cueSheetSourceDetail}
+              sourceLabel={cueSheetSourceLabel}
+              status={cueSheetStatus}
+              storyboardFallback={storyboardFallback}
+              template={template}
+              templateLabel={templateLabel}
+              totalMinutes={cueSheetTotalMinutes}
+              onApplyDraft={handleApplyCueSheetDraft}
+              onExportPDF={handleExportPDF}
+              onRefreshDraft={handleRefreshCueSheetDraft}
+            />
           )}
 
           {activeTab === 'locations' && (

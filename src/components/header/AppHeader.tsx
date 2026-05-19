@@ -19,7 +19,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 
-type MainWorkspaceTab = 'planning' | 'schedule' | 'locations' | 'people' | 'budget' | 'storyboard' | 'report';
+type MainWorkspaceTab = 'planning' | 'schedule' | 'cueSheet' | 'locations' | 'people' | 'budget' | 'storyboard' | 'report';
 type MainWorkspaceGroup = '준비' | '촬영' | '정산';
 
 type IconComponent = ComponentType<{ className?: string }>;
@@ -153,7 +153,7 @@ export default function AppHeader({
                 <span className="shrink-0 rounded-md border border-neutral-800 bg-neutral-950 px-2 py-0.5 text-[10px] font-black text-neutral-500 whitespace-nowrap">v1.3</span>
               </div>
               <p className="mt-1 text-xs font-bold text-neutral-500">
-                기획서 · 촬영표 · 콜시트 · 콘티 · 리포트 <span className="text-neutral-700">•</span> <span className="text-neutral-400">무로그인 BYOK 프로덕션 툴</span>
+                기획서 · 촬영표 · 큐시트 · 콜시트 · 콘티 · 리포트 <span className="text-neutral-700">•</span> <span className="text-neutral-400">무로그인 BYOK 프로덕션 툴</span>
               </p>
               <div className="mt-3 flex flex-wrap items-center gap-1.5">
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-teal-400/20 bg-teal-400/10 px-2.5 py-1 text-[10px] font-black text-teal-100">

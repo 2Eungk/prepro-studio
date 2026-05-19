@@ -2,7 +2,7 @@ import type { TemplateType } from '@/types/schedule';
 import type { LucideIcon } from 'lucide-react';
 import { ArrowRight, Calendar as CalendarIcon, ShieldCheck, Sparkles } from 'lucide-react';
 
-type MainWorkspaceTab = 'planning' | 'schedule' | 'locations' | 'people' | 'budget' | 'storyboard' | 'report';
+type MainWorkspaceTab = 'planning' | 'schedule' | 'cueSheet' | 'locations' | 'people' | 'budget' | 'storyboard' | 'report';
 
 type WorkspaceLanguage = {
   firstRunDetail: string;
@@ -54,7 +54,7 @@ export function WorkspaceFlowBar({
   onToggleProjectSetup: () => void;
 }) {
   const PrimaryQuickActionIcon = primaryAction?.Icon;
-  const flowTabOrder: MainWorkspaceTab[] = ['planning', 'locations', 'people', 'schedule', 'storyboard', 'report'];
+  const flowTabOrder: MainWorkspaceTab[] = ['planning', 'locations', 'people', 'schedule', 'cueSheet', 'storyboard', 'report'];
 
   return (
     <section className="rounded-2xl border border-neutral-900 bg-neutral-950/75 p-3">
