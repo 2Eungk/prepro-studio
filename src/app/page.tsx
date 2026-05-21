@@ -2868,6 +2868,35 @@ export default function Home() {
     }
   };
 
+  const getAutoStoryboardUrl = (scene: AnalyzedScene) => {
+    if (scene.visualRef) return scene.visualRef;
+
+    const storyboardQuery = [
+      scene.description,
+      scene.location,
+      scene.cast,
+      scene.props,
+      scene.costume,
+      scene.soundNote,
+      scene.specialInstruction,
+      scene.insertNote,
+      scene.continuityNote,
+    ].filter(Boolean).join(' ');
+    const recommendedShot = recommendShots(storyboardQuery)[0];
+
+    if (recommendedShot) return recommendedShot.url;
+    if (/눈|손|시계|휴대폰|망치|프린터|꺼내|부수|소품|인서트|디테일/.test(storyboardQuery)) return '/shot_76.png';
+    if (/얼굴|표정|눈물|분노|비명|감정|바라보/.test(storyboardQuery)) return '/shot_08.png';
+    return '/shot_15.png';
+  };
+
+  const attachAutoStoryboards = (items: AnalyzedScene[]) => (
+    items.map((scene) => ({
+      ...scene,
+      visualRef: getAutoStoryboardUrl(scene),
+    }))
+  );
+
   const handleCustomStoryboardUpload = (file?: File) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
@@ -3576,7 +3605,7 @@ export default function Home() {
             <div className="animate-in fade-in zoom-in duration-300">
               <ScriptAnalyzer
                 onClose={() => setShowAnalyzer(false)}
-                onExtract={(result) => setExtractedScenes(result)}
+                onExtract={(result) => setExtractedScenes(attachAutoStoryboards(result))}
               />
             </div>
           )}

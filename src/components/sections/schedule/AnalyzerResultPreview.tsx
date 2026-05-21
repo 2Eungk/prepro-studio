@@ -39,6 +39,11 @@ export default function AnalyzerResultPreview({
             </div>
             <div className="mb-1 truncate font-bold text-neutral-200">{scene.location}</div>
             <div className="truncate text-neutral-600">{scene.cast || '출연 없음'}</div>
+            {scene.visualRef && (
+              <div className="mt-3 inline-flex items-center rounded-full border border-teal-400/20 bg-teal-400/10 px-2 py-1 text-[10px] font-black text-teal-200">
+                콘티 자동 부착
+              </div>
+            )}
           </div>
         ))}
       </div>
