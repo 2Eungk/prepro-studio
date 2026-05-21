@@ -337,7 +337,8 @@ const normalizeSceneModel = (
 
   nextScene.visualRef = normalizeVisualRef(nextScene.visualRef);
 
-  if (!nextScene.dayId && nextDays[0]) nextScene.dayId = nextDays[0].id;
+  const validDayIds = new Set(nextDays.map((day) => day.id));
+  if ((!nextScene.dayId || !validDayIds.has(nextScene.dayId)) && nextDays[0]) nextScene.dayId = nextDays[0].id;
 
   const locationResult = ensureLocation(nextLocations, nextScene.location || '');
   nextLocations = locationResult.locations;
