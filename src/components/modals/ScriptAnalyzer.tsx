@@ -167,19 +167,30 @@ export default function ScriptAnalyzer({ onExtract, onClose }: ScriptAnalyzerPro
       const extractedScenes: ParsedScriptScene[] = [];
       const lines = sourceText.split('\n');
       let currentScene: ParsedScriptScene | null = null;
+      let pendingLinesBeforeFirstHeading: string[] = [];
 
       lines.forEach((line) => {
         const sceneHeading = parseSceneHeading(line, extractedScenes.length + (currentScene ? 2 : 1));
         if (sceneHeading) {
           if (currentScene) extractedScenes.push(currentScene);
           currentScene = createEmptyScene(sceneHeading.sceneNumber, sceneHeading.location, sceneHeading.intExt, sceneHeading.dayNight);
+          pendingLinesBeforeFirstHeading.forEach((pendingLine) => appendLineToScene(currentScene as ParsedScriptScene, pendingLine));
+          pendingLinesBeforeFirstHeading = [];
         } else {
-          currentScene ||= createEmptyScene('S#1', '장소 미정', 'INT', 'DAY');
-          appendLineToScene(currentScene, line);
+          if (currentScene) {
+            appendLineToScene(currentScene, line);
+          } else if (line.trim()) {
+            pendingLinesBeforeFirstHeading.push(line);
+          }
         }
       });
 
       if (currentScene) extractedScenes.push(currentScene);
+      if (!currentScene && pendingLinesBeforeFirstHeading.length > 0) {
+        const fallbackScene = createEmptyScene('S#1', '장소 미정', 'INT', 'DAY');
+        pendingLinesBeforeFirstHeading.forEach((line) => appendLineToScene(fallbackScene, line));
+        extractedScenes.push(fallbackScene);
+      }
 
       const finalScenes: AnalyzedScene[] = extractedScenes.map((scene) => ({
         ...scene,
@@ -243,7 +254,7 @@ export default function ScriptAnalyzer({ onExtract, onClose }: ScriptAnalyzerPro
           <h3 className="text-xl font-bold flex items-center gap-2 text-indigo-100">
             <Brain className="w-6 h-6 text-indigo-400" /> 시나리오 AI 분석기
           </h3>
-          <p className="text-sm text-neutral-500 mt-1">텍스트를 붙여넣거나 시나리오 파일(.txt)을 업로드하세요.</p>
+          <p className="text-sm text-neutral-500 mt-1">대본 텍스트를 붙여넣거나 PDF/TXT 파일을 업로드하세요. API 없이 로컬에서 분석합니다.</p>
         </div>
         <div className="flex items-center gap-3">
           <input
@@ -261,7 +272,7 @@ export default function ScriptAnalyzer({ onExtract, onClose }: ScriptAnalyzerPro
             onClick={() => fileInputRef.current?.click()}
             className="flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-neutral-700"
           >
-            <Upload className="w-3.5 h-3.5" /> 파일 불러오기
+            <Upload className="w-3.5 h-3.5" /> PDF/TXT 불러오기
           </button>
           <button type="button" onClick={onClose} className="p-2 hover:bg-neutral-800 rounded-full transition-colors">
             <XCircle className="w-5 h-5 text-neutral-500" />
@@ -281,10 +292,20 @@ export default function ScriptAnalyzer({ onExtract, onClose }: ScriptAnalyzerPro
         className="relative group"
       >
         <textarea
-          placeholder="여기에 시나리오를 붙여넣으세요. 또는 파일을 이곳에 끌어다 놓으세요. (예: S#1. 거실 (낮) ...)"
+          placeholder={`여기에 시나리오를 붙여넣으세요.
+
+예:
+내부. 아파트 침실 - 오전 8:13
+햇빛이 창문을 통해 들어온다.
+카이로스: 매뉴얼은 없다.
+
+또는 S#1. 거실 (낮) 형식도 인식합니다.`}
           className="w-full h-48 bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition-all font-mono mb-4 custom-scrollbar group-hover:border-neutral-700"
           value={script}
-          onChange={(event) => setScript(event.target.value)}
+          onChange={(event) => {
+            setScript(event.target.value);
+            if (analysisStatus) setAnalysisStatus('');
+          }}
         />
         <div className="absolute inset-0 border-2 border-dashed border-indigo-500/0 rounded-xl pointer-events-none group-hover:border-indigo-500/20 transition-all" />
       </div>
@@ -300,6 +321,10 @@ export default function ScriptAnalyzer({ onExtract, onClose }: ScriptAnalyzerPro
             <>
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               시나리오 분석 중...
+            </>
+          ) : !script.trim() ? (
+            <>
+              <Sparkles className="w-4 h-4" /> 대본 입력 필요
             </>
           ) : (
             <>
