@@ -2835,6 +2835,12 @@ export default function Home() {
     requestAnimationFrame(() => document.getElementById('scene-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   };
 
+  const openScriptAnalyzer = () => {
+    setActiveTab('schedule');
+    setShowAnalyzer(true);
+    requestAnimationFrame(() => document.getElementById('script-analyzer-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  };
+
   const applyStoryboardToSceneForm = (shot: (typeof storyboardDb)[number], shouldOpenForm = false) => {
     if (shouldOpenForm) {
       setEditingScene(null);
@@ -3310,7 +3316,7 @@ export default function Home() {
       label: template === 'event' ? '식순 정리' : template === 'ad' ? '광고 구성 분석' : template === 'musicvideo' ? 'MV 타임코드 콘티' : template === 'dance' ? '타임코드 콘티' : '시나리오 분석',
       detail: workspaceLanguage.gettingStarted.analyzer,
       Icon: Brain,
-      action: () => setShowAnalyzer(true),
+      action: openScriptAnalyzer,
       tone: 'primary',
     },
     {
@@ -3602,27 +3608,35 @@ export default function Home() {
 
           {/* AI Script Analyzer Overlay */}
           {showAnalyzer && (
-            <div className="animate-in fade-in zoom-in duration-300">
+            <div id="script-analyzer-panel" className="scroll-mt-24 animate-in fade-in zoom-in duration-300">
               <ScriptAnalyzer
                 onClose={() => setShowAnalyzer(false)}
-                onExtract={(result) => setExtractedScenes(attachAutoStoryboards(result))}
+                onExtract={(result) => {
+                  setExtractedScenes(attachAutoStoryboards(result));
+                  requestAnimationFrame(() => document.getElementById('analyzer-result-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+                }}
               />
             </div>
           )}
 
-          <AnalyzerResultPreview
-            addResultLabel={copy.addResult}
-            analyzerResultLabel={copy.analyzerResult}
-            itemPluralLabel={copy.itemPlural}
-            scenes={extractedScenes}
-            onCancel={() => setExtractedScenes([])}
-            onConfirm={() => {
-              addScenes(extractedScenes.map((scene) => ({ ...scene, dayId: activeDay.id })));
-              setOptimizationSummary(null);
-              setExtractedScenes([]);
-              setShowAnalyzer(false);
-            }}
-          />
+          <div id="analyzer-result-panel" className="scroll-mt-24">
+            <AnalyzerResultPreview
+              addResultLabel={copy.addResult}
+              analyzerResultLabel={copy.analyzerResult}
+              itemPluralLabel={copy.itemPlural}
+              scenes={extractedScenes}
+              onCancel={() => setExtractedScenes([])}
+              onConfirm={() => {
+                addScenes(extractedScenes.map((scene) => ({ ...scene, dayId: activeDay.id })));
+                setOptimizationSummary(null);
+                resetScheduleFilters();
+                setActiveTab('schedule');
+                setExtractedScenes([]);
+                setShowAnalyzer(false);
+                requestAnimationFrame(() => document.getElementById('schedule-timeline-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+              }}
+            />
+          </div>
 
           {activeTab === 'planning' && (
             <PlanningPanel
@@ -3769,6 +3783,7 @@ export default function Home() {
           <AdBanner placement="middle_timeline" format="auto" />
 
         {/* Timeline View */}
+        <div id="schedule-timeline-panel" className="scroll-mt-24">
         <ScheduleControlsPanel
           activeDayIndex={activeDayIndex}
           activeDaySceneCount={activeDayScenes.length}
@@ -3867,12 +3882,13 @@ export default function Home() {
               onEditScene={openSceneEditor}
               onLoadSampleData={handleLoadSampleData}
               onNewScene={openNewSceneForm}
-              onOpenAnalyzer={() => setShowAnalyzer(true)}
+              onOpenAnalyzer={openScriptAnalyzer}
               onResetFilters={resetScheduleFilters}
               onTimelineDragEnd={handleTimelineDragEnd}
               SortableBreakRow={SortableBreakRow}
               SortableRow={SortableRow}
             />
+          </div>
           </div>
           </>
           )}
