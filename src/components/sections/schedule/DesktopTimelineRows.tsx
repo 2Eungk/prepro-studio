@@ -72,7 +72,7 @@ export function SortableRow({
           </div>
         )}
       </td>
-      <td className="px-4 py-3 font-mono">
+      <td className="px-4 py-5 font-mono">
         <div className="text-base font-black text-neutral-100">{scene.startTime ? format(scene.startTime, 'HH:mm') : '--:--'}</div>
         <div className="mt-0.5 text-xs font-bold text-neutral-600">{scene.endTime ? format(scene.endTime, 'HH:mm') : '--:--'} 종료</div>
       </td>
@@ -80,7 +80,7 @@ export function SortableRow({
       {/* 템플릿별 동적 컬럼 렌더링 */}
       {template === 'film' && (
         <>
-          <td className="px-4 py-3 font-medium">
+          <td className="px-4 py-5 font-medium">
             <div className="flex flex-col gap-1">
               <div>
                 <span className="bg-neutral-800 px-2 py-0.5 rounded text-[10px] mr-2 text-neutral-300">{scene.sceneNumber || '-'}</span>
@@ -95,12 +95,12 @@ export function SortableRow({
               )}
             </div>
           </td>
-          <td className="px-4 py-3 font-medium">
+          <td className="px-4 py-5 font-medium">
             {scene.visualRef ? (
-              <Image src={scene.visualRef} alt="콘티" width={64} height={36} priority unoptimized className="pdf-shot-frame w-16 aspect-video object-contain bg-white rounded border border-neutral-700" />
+              <Image src={scene.visualRef} alt="콘티" width={176} height={99} priority unoptimized className="pdf-shot-frame w-44 aspect-video object-contain bg-white rounded-lg border border-neutral-700" />
             ) : (
-              <div className="pdf-shot-frame w-16 aspect-video bg-neutral-800 rounded flex items-center justify-center border border-neutral-700">
-                 <ImageIcon className="w-4 h-4 text-neutral-600" />
+              <div className="pdf-shot-frame w-44 aspect-video bg-neutral-800 rounded-lg flex items-center justify-center border border-neutral-700">
+                 <ImageIcon className="w-5 h-5 text-neutral-600" />
               </div>
             )}
           </td>
@@ -108,18 +108,18 @@ export function SortableRow({
       )}
       {template === 'event' && (
         <>
-          <td className="px-4 py-3 font-medium">
+          <td className="px-4 py-5 font-medium">
             <span className="bg-indigo-900/50 text-indigo-300 border border-indigo-500/30 px-2 py-1 rounded text-xs">
               {scene.eventSection || '공통'}
             </span>
             {scene.cast && <div className="text-[10px] text-indigo-400 font-bold mt-2">담당 · {scene.cast}</div>}
           </td>
-          <td className="px-4 py-3 font-medium">
+          <td className="px-4 py-5 font-medium">
             {scene.visualRef ? (
-              <Image src={scene.visualRef} alt="촬영 컷 이미지" width={64} height={36} priority unoptimized className="pdf-shot-frame w-16 aspect-video object-contain bg-white rounded border border-neutral-700" />
+              <Image src={scene.visualRef} alt="촬영 컷 이미지" width={176} height={99} priority unoptimized className="pdf-shot-frame w-44 aspect-video object-contain bg-white rounded-lg border border-neutral-700" />
             ) : (
-              <div className="pdf-shot-frame w-16 aspect-video bg-neutral-800 rounded flex items-center justify-center border border-neutral-700">
-                 <ImageIcon className="w-4 h-4 text-neutral-600" />
+              <div className="pdf-shot-frame w-44 aspect-video bg-neutral-800 rounded-lg flex items-center justify-center border border-neutral-700">
+                 <ImageIcon className="w-5 h-5 text-neutral-600" />
               </div>
             )}
           </td>
@@ -127,7 +127,7 @@ export function SortableRow({
       )}
       {isMusicTimelineRow && (
         <>
-          <td className="px-4 py-3 font-medium">
+          <td className="px-4 py-5 font-medium">
             <div className="flex flex-col gap-1">
               <div>
                 <span className="mr-2 rounded border border-teal-400/20 bg-teal-400/10 px-2 py-0.5 text-[10px] font-black text-teal-100">{scene.sceneNumber || '-'}</span>
@@ -137,12 +137,12 @@ export function SortableRow({
               {scene.focusMember && <div className="text-[10px] font-black text-teal-200">{musicSubjectLabel} · {scene.focusMember}</div>}
             </div>
           </td>
-          <td className="px-4 py-3 font-medium">
+          <td className="px-4 py-5 font-medium">
             {scene.visualRef ? (
-              <Image src={scene.visualRef} alt={musicReferenceAlt} width={80} height={45} priority unoptimized className="pdf-shot-frame w-20 aspect-video object-contain bg-white rounded border border-neutral-700" />
+              <Image src={scene.visualRef} alt={musicReferenceAlt} width={176} height={99} priority unoptimized className="pdf-shot-frame w-44 aspect-video object-contain bg-white rounded-lg border border-neutral-700" />
             ) : (
-              <div className="pdf-shot-frame w-20 aspect-video bg-neutral-800 rounded flex items-center justify-center border border-neutral-700">
-                 <ImageIcon className="w-4 h-4 text-neutral-600" />
+              <div className="pdf-shot-frame w-44 aspect-video bg-neutral-800 rounded-lg flex items-center justify-center border border-neutral-700">
+                 <ImageIcon className="w-5 h-5 text-neutral-600" />
               </div>
             )}
             <div className="mt-1 text-[10px] font-black text-neutral-400">{scene.shotSize || 'FS'} {scene.formation ? `· ${scene.formation}` : ''}</div>
@@ -151,7 +151,7 @@ export function SortableRow({
       )}
       {template === 'ad' && (
         <>
-          <td className="px-4 py-3 font-medium">
+          <td className="px-4 py-5 font-medium">
             <div className="flex flex-col gap-1">
               <div>
                 <span className="bg-neutral-800 px-2 py-0.5 rounded text-[10px] mr-2 text-neutral-300">{scene.sceneNumber || '-'}</span>
@@ -161,12 +161,12 @@ export function SortableRow({
               {scene.cutCount && <div className="text-[10px] text-neutral-500 font-medium mt-0.5">{scene.cutCount}컷</div>}
             </div>
           </td>
-          <td className="px-4 py-3 font-medium">
+          <td className="px-4 py-5 font-medium">
             {scene.visualRef ? (
-              <Image src={scene.visualRef} alt="콘티" width={64} height={36} priority unoptimized className="pdf-shot-frame w-16 aspect-video object-contain bg-white rounded border border-neutral-700" />
+              <Image src={scene.visualRef} alt="콘티" width={176} height={99} priority unoptimized className="pdf-shot-frame w-44 aspect-video object-contain bg-white rounded-lg border border-neutral-700" />
             ) : (
-              <div className="pdf-shot-frame w-16 aspect-video bg-neutral-800 rounded flex items-center justify-center border border-neutral-700">
-                 <ImageIcon className="w-4 h-4 text-neutral-600" />
+              <div className="pdf-shot-frame w-44 aspect-video bg-neutral-800 rounded-lg flex items-center justify-center border border-neutral-700">
+                 <ImageIcon className="w-5 h-5 text-neutral-600" />
               </div>
             )}
             {scene.clientMemo && <div className="text-[10px] text-amber-500/80 mt-1 max-w-[120px] truncate" title={scene.clientMemo}>메모 · {scene.clientMemo}</div>}
@@ -174,8 +174,8 @@ export function SortableRow({
         </>
       )}
 
-      <td className="px-4 py-3 font-bold text-neutral-300">{scene.location}</td>
-      <td className="px-4 py-3 text-neutral-400">
+      <td className="px-4 py-5 font-bold text-neutral-300">{scene.location}</td>
+      <td className="px-4 py-5 text-neutral-400">
         <div className="text-sm font-medium leading-relaxed text-neutral-300">{scene.description}</div>
         {template === 'event' && scene.cameraGear && (
           <div className="mt-1 text-xs font-bold text-neutral-500">장비 · {scene.cameraGear}</div>
@@ -200,7 +200,7 @@ export function SortableRow({
             ].filter(Boolean).map((item) => {
               const [label, value] = item as string[];
               return (
-                <span key={`${label}-${value}`} className="max-w-[180px] truncate rounded-full border border-teal-400/15 bg-teal-400/5 px-2 py-1 text-[10px] font-bold text-teal-100/70" title={value}>
+                <span key={`${label}-${value}`} className="max-w-[260px] truncate rounded-full border border-teal-400/15 bg-teal-400/5 px-2 py-1 text-[10px] font-bold text-teal-100/70" title={value}>
                   {label} · {value}
                 </span>
               );
@@ -239,7 +239,7 @@ export function SortableRow({
           </div>
         )}
       </td>
-      <td className="px-4 py-3 text-right font-mono text-neutral-500">{scene.estimatedMinutes}분</td>
+      <td className="px-4 py-5 text-right font-mono text-neutral-500">{scene.estimatedMinutes}분</td>
     </tr>
   );
 }
