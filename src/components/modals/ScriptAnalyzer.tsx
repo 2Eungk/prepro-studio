@@ -21,55 +21,161 @@ type ScriptAnalyzerProps = {
   onClose: () => void;
 };
 
+type PdfTextItem = {
+  str?: string;
+};
+
+const exteriorLocationPattern = /마당|공원|길|거리|골목|옥상|루프탑|한강|해변|산|도로|주차장|운동장|광장|출구|역/;
+const dayNightPattern = /오전|아침|낮|점심|오후|저녁|해질|노을|밤|새벽|day|night|sunset|dawn/i;
+const transitionPattern = /^(암전|컷 투|cut to|fade|dissolve|black|title)/i;
+
+const getDayNight = (text = ''): NonNullable<Scene['dayNight']> => {
+  const normalized = text.toLowerCase();
+  if (/밤|새벽|night|dawn/.test(normalized)) return 'NIGHT';
+  if (/저녁|해질|노을|sunset/.test(normalized)) return 'SUNSET';
+  return 'DAY';
+};
+
+const getIntExt = (prefix: string, location: string): NonNullable<Scene['intExt']> => {
+  if (/외부|ext/i.test(prefix)) return 'EXT';
+  if (/내부|int/i.test(prefix)) return 'INT';
+  return exteriorLocationPattern.test(location) ? 'EXT' : 'INT';
+};
+
+const cleanSceneLocation = (value: string) => (
+  value
+    .replace(/^[.:\-\s]+/, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+);
+
+const parseSceneHeading = (line: string, fallbackIndex: number) => {
+  const trimmedLine = line.trim();
+  const numberedMatch = trimmedLine.match(/^(?:S|씬|scene)\s*#?\s*(\d+)\.?\s*([^(\n-]+)(?:\(([^)]+)\))?/i);
+  if (numberedMatch) {
+    const location = cleanSceneLocation(numberedMatch[2]);
+    return {
+      sceneNumber: `S#${numberedMatch[1]}`,
+      location: location || '장소 미정',
+      dayNight: getDayNight(numberedMatch[3] || location),
+      intExt: getIntExt('', location),
+    };
+  }
+
+  const slugMatch = trimmedLine.match(/^(내부|외부|INT\.?|EXT\.?)\s*[.:\-]?\s*(.+)$/i);
+  if (slugMatch) {
+    const prefix = slugMatch[1];
+    const rest = slugMatch[2].trim();
+    const [rawLocation, ...timeParts] = rest.split(/\s[-–—]\s| - | – | — /);
+    const timeText = timeParts.join(' ');
+    const location = cleanSceneLocation(rawLocation.replace(/\([^)]*\)/g, ''));
+    const dayNightText = timeText || rawLocation.match(/\(([^)]+)\)/)?.[1] || rest.match(dayNightPattern)?.[0] || '';
+
+    return {
+      sceneNumber: `S#${fallbackIndex}`,
+      location: location || '장소 미정',
+      dayNight: getDayNight(dayNightText),
+      intExt: getIntExt(prefix, location),
+    };
+  }
+
+  return null;
+};
+
+const createEmptyScene = (
+  sceneNumber: string,
+  location: string,
+  intExt: NonNullable<Scene['intExt']>,
+  dayNight: NonNullable<Scene['dayNight']>,
+): ParsedScriptScene => ({
+  sceneNumber,
+  location,
+  dayNight,
+  description: '',
+  cast: new Set(),
+  estimatedMinutes: 60,
+  intExt,
+});
+
+const appendLineToScene = (scene: ParsedScriptScene, line: string) => {
+  const trimmedLine = line.trim();
+  if (!trimmedLine || transitionPattern.test(trimmedLine)) return;
+
+  const castMatch = trimmedLine.match(/^([^:(\s]{1,10})\s*:/);
+  if (castMatch) {
+    scene.cast.add(castMatch[1].trim());
+    scene.description += `${trimmedLine} `;
+  } else if (/소품|들고|꺼내|시계|휴대폰|가방|컵|잔|문서|편지|담배|라이터|우산|망치|프린터/.test(trimmedLine)) {
+    scene.props = [scene.props, trimmedLine].filter(Boolean).join(' / ');
+    scene.description += `${trimmedLine} `;
+  } else if (/의상|입고|코트|셔츠|교복|정장|드레스|신발|모자|가디건|외투/.test(trimmedLine)) {
+    scene.costume = [scene.costume, trimmedLine].filter(Boolean).join(' / ');
+    scene.description += `${trimmedLine} `;
+  } else if (/소리|음악|진동|벨소리|노크|발소리|차소리|사이렌|M\.?O\.?S|무음|나레이션|보이스오버/.test(trimmedLine)) {
+    scene.soundNote = [scene.soundNote, trimmedLine].filter(Boolean).join(' / ');
+    scene.description += `${trimmedLine} `;
+  } else if (/카메라|트래킹|패닝|틸트|핸드헬드|줌|슬로우|VFX|CG|특수|드론/.test(trimmedLine)) {
+    scene.specialInstruction = [scene.specialInstruction, trimmedLine].filter(Boolean).join(' / ');
+    scene.description += `${trimmedLine} `;
+  } else if (/인서트|클로즈업|ECU|CU|손|눈|시계|문고리|발|얼굴/.test(trimmedLine)) {
+    scene.insertNote = [scene.insertNote, trimmedLine].filter(Boolean).join(' / ');
+    scene.description += `${trimmedLine} `;
+  } else if (!trimmedLine.includes(':') && trimmedLine.length > 1) {
+    scene.description += `${trimmedLine} `;
+  }
+};
+
+const extractTextFromPdf = async (file: File) => {
+  const pdfjs = await import('pdfjs-dist');
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.mjs', import.meta.url).toString();
+
+  const data = await file.arrayBuffer();
+  const pdf = await pdfjs.getDocument({ data }).promise;
+  const pages: string[] = [];
+
+  for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+    const page = await pdf.getPage(pageNumber);
+    const textContent = await page.getTextContent();
+    const pageText = textContent.items
+      .map((item) => ('str' in item ? (item as PdfTextItem).str || '' : ''))
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (pageText) pages.push(pageText);
+  }
+
+  return pages.join('\n\n');
+};
+
 export default function ScriptAnalyzer({ onExtract, onClose }: ScriptAnalyzerProps) {
   const [script, setScript] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [fileStatus, setFileStatus] = useState('');
+  const [analysisStatus, setAnalysisStatus] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const analyze = () => {
-    if (!script.trim()) return;
+    const sourceText = script.trim();
+    if (!sourceText) {
+      setAnalysisStatus('분석할 대본을 먼저 붙여넣거나 파일을 불러오세요.');
+      return;
+    }
     setIsAnalyzing(true);
+    setAnalysisStatus('');
 
     setTimeout(() => {
       const extractedScenes: ParsedScriptScene[] = [];
-      const lines = script.split('\n');
+      const lines = sourceText.split('\n');
       let currentScene: ParsedScriptScene | null = null;
 
       lines.forEach((line) => {
-        const sceneMatch = line.match(/S#\s*(\d+)\.?\s*([^(]+)(?:\(([^)]+)\))?/);
-        if (sceneMatch) {
+        const sceneHeading = parseSceneHeading(line, extractedScenes.length + (currentScene ? 2 : 1));
+        if (sceneHeading) {
           if (currentScene) extractedScenes.push(currentScene);
-
-          const loc = sceneMatch[2].trim();
-          const dn = sceneMatch[3]?.toLowerCase();
-
-          currentScene = {
-            sceneNumber: `S#${sceneMatch[1]}`,
-            location: loc,
-            dayNight: dn?.includes('밤') ? 'NIGHT' : dn?.includes('저녁') || dn?.includes('해질') ? 'SUNSET' : 'DAY',
-            description: '',
-            cast: new Set(),
-            estimatedMinutes: 60,
-            intExt: loc.includes('마당') || loc.includes('공원') || loc.includes('길') ? 'EXT' : 'INT',
-          };
-        } else if (currentScene) {
-          const trimmedLine = line.trim();
-          const castMatch = line.match(/^([^:(\s]{1,10})\s*:/);
-          if (castMatch) {
-            currentScene.cast.add(castMatch[1].trim());
-          } else if (/소품|들고|꺼내|시계|휴대폰|가방|컵|잔|문서|편지|담배|라이터|우산/.test(trimmedLine)) {
-            currentScene.props = [currentScene.props, trimmedLine].filter(Boolean).join(' / ');
-          } else if (/의상|입고|코트|셔츠|교복|정장|드레스|신발|모자|가디건|외투/.test(trimmedLine)) {
-            currentScene.costume = [currentScene.costume, trimmedLine].filter(Boolean).join(' / ');
-          } else if (/소리|음악|진동|벨소리|노크|발소리|차소리|사이렌|M\.?O\.?S|무음/.test(trimmedLine)) {
-            currentScene.soundNote = [currentScene.soundNote, trimmedLine].filter(Boolean).join(' / ');
-          } else if (/카메라|트래킹|패닝|틸트|핸드헬드|줌|슬로우|VFX|CG|특수|드론/.test(trimmedLine)) {
-            currentScene.specialInstruction = [currentScene.specialInstruction, trimmedLine].filter(Boolean).join(' / ');
-          } else if (/인서트|클로즈업|ECU|CU|손|눈|시계|문고리|발/.test(trimmedLine)) {
-            currentScene.insertNote = [currentScene.insertNote, trimmedLine].filter(Boolean).join(' / ');
-          } else if (trimmedLine && !line.includes(':') && line.length > 5) {
-            currentScene.description += `${trimmedLine} `;
-          }
+          currentScene = createEmptyScene(sceneHeading.sceneNumber, sceneHeading.location, sceneHeading.intExt, sceneHeading.dayNight);
+        } else {
+          currentScene ||= createEmptyScene('S#1', '장소 미정', 'INT', 'DAY');
+          appendLineToScene(currentScene, line);
         }
       });
 
@@ -78,27 +184,54 @@ export default function ScriptAnalyzer({ onExtract, onClose }: ScriptAnalyzerPro
       const finalScenes: AnalyzedScene[] = extractedScenes.map((scene) => ({
         ...scene,
         cast: Array.from(scene.cast).join(', '),
-        description: scene.description.substring(0, 80).trim() + (scene.description.length > 80 ? '...' : ''),
-      }));
+        description: (scene.description.trim() || scene.location).substring(0, 80).trim() + (scene.description.length > 80 ? '...' : ''),
+      })).filter((scene) => scene.description.trim() || scene.location !== '장소 미정');
+
+      if (finalScenes.length === 0) {
+        setAnalysisStatus('씬을 찾지 못했습니다. 내부/외부, S#1, 장소명 같은 단서를 조금 넣어주세요.');
+        setIsAnalyzing(false);
+        return;
+      }
 
       onExtract(finalScenes);
       setIsAnalyzing(false);
+      onClose();
     }, 1200);
   };
 
-  const handleFileUpload = (file: File) => {
+  const handleFileUpload = async (file: File) => {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setScript(event.target?.result as string);
-    };
-    reader.readAsText(file);
+    setFileStatus(`${file.name} 읽는 중...`);
+
+    try {
+      if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+        const text = await extractTextFromPdf(file);
+        if (!text.trim()) {
+          setFileStatus('PDF에서 텍스트를 찾지 못했습니다. 스캔본이면 텍스트 PDF로 변환이 필요합니다.');
+          return;
+        }
+        setScript(text);
+        setFileStatus(`PDF ${text.length.toLocaleString()}자 불러옴`);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onerror = () => setFileStatus('파일을 읽지 못했습니다.');
+      reader.onload = (event) => {
+        setScript(String(event.target?.result || ''));
+        setFileStatus(`${file.name} 불러옴`);
+      };
+      reader.readAsText(file);
+    } catch (error) {
+      console.error('Script file import failed:', error);
+      setFileStatus('파일을 읽지 못했습니다. PDF가 잠겨 있거나 손상됐을 수 있습니다.');
+    }
   };
 
   const handleDrop = (event: DragEvent) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
-    if (file) handleFileUpload(file);
+    if (file) void handleFileUpload(file);
   };
 
   return (
@@ -117,8 +250,11 @@ export default function ScriptAnalyzer({ onExtract, onClose }: ScriptAnalyzerPro
             type="file"
             ref={fileInputRef}
             className="hidden"
-            accept=".txt,.json"
-            onChange={(event) => event.target.files?.[0] && handleFileUpload(event.target.files[0])}
+            accept=".txt,.json,.pdf,application/pdf"
+            onChange={(event) => {
+              if (event.target.files?.[0]) void handleFileUpload(event.target.files[0]);
+              event.target.value = '';
+            }}
           />
           <button
             type="button"
@@ -132,6 +268,12 @@ export default function ScriptAnalyzer({ onExtract, onClose }: ScriptAnalyzerPro
           </button>
         </div>
       </div>
+
+      {(fileStatus || analysisStatus) && (
+        <div className="mb-4 rounded-xl border border-teal-400/20 bg-teal-400/10 px-4 py-3 text-xs font-bold text-teal-100">
+          {analysisStatus || fileStatus}
+        </div>
+      )}
 
       <div
         onDragOver={(event) => event.preventDefault()}
