@@ -875,6 +875,12 @@ const escapeXml = (value: string) =>
 const sameText = (a?: string, b?: string) =>
   (a || '').trim().toLowerCase() === (b || '').trim().toLowerCase();
 
+const manualStoryboardUrls = Array.from({ length: 42 }, (_, index) =>
+  `/manual-storyboards/manual_${String(index + 1).padStart(2, '0')}.png`
+);
+
+const manualScriptPattern = /더\s*매뉴얼|the\s*manual|카이로스|kairos|앤더슨|프린터|매뉴얼|타이란|다니엘|노숙자|종이\s*새|오리가미/i;
+
 const storyboardFallback = (name: string) =>
   `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 225">
@@ -2896,12 +2902,26 @@ export default function Home() {
     return '/shot_15.png';
   };
 
-  const attachAutoStoryboards = (items: AnalyzedScene[]) => (
-    items.map((scene) => ({
+  const attachAutoStoryboards = (items: AnalyzedScene[]) => {
+    const isManualScript = items.some((scene) => manualScriptPattern.test([
+      scene.description,
+      scene.location,
+      scene.cast,
+      scene.props,
+      scene.costume,
+      scene.soundNote,
+      scene.specialInstruction,
+      scene.insertNote,
+      scene.continuityNote,
+    ].filter(Boolean).join(' ')));
+
+    return items.map((scene, index) => ({
       ...scene,
-      visualRef: getAutoStoryboardUrl(scene),
-    }))
-  );
+      visualRef: scene.visualRef
+        || (isManualScript ? manualStoryboardUrls[Math.min(index, manualStoryboardUrls.length - 1)] : '')
+        || getAutoStoryboardUrl(scene),
+    }));
+  };
 
   const handleCustomStoryboardUpload = (file?: File) => {
     if (!file) return;
