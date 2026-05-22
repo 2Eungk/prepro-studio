@@ -3332,11 +3332,11 @@ export default function Home() {
   ];
   const gettingStartedCards = [
     {
-      label: '샘플로 둘러보기',
-      detail: workspaceLanguage.gettingStarted.sample,
-      Icon: Database,
-      action: handleLoadSampleData,
-      tone: 'neutral',
+      label: template === 'event' ? '식순 정리' : template === 'ad' ? '광고 구성 분석' : template === 'musicvideo' ? 'MV 타임코드 콘티' : template === 'dance' ? '타임코드 콘티' : '시나리오 분석',
+      detail: template === 'film' ? '대본/PDF/샷리스트를 넣어 촬영표 초안을 만듭니다.' : workspaceLanguage.gettingStarted.analyzer,
+      Icon: Brain,
+      action: openScriptAnalyzer,
+      tone: 'primary',
     },
     {
       label: '직접 추가',
@@ -3346,17 +3346,20 @@ export default function Home() {
       tone: 'primary',
     },
     {
-      label: template === 'event' ? '식순 정리' : template === 'ad' ? '광고 구성 분석' : template === 'musicvideo' ? 'MV 타임코드 콘티' : template === 'dance' ? '타임코드 콘티' : '시나리오 분석',
-      detail: workspaceLanguage.gettingStarted.analyzer,
-      Icon: Brain,
-      action: openScriptAnalyzer,
-      tone: 'primary',
-    },
-    {
       label: '기획부터 시작',
       detail: workspaceLanguage.gettingStarted.planning,
       Icon: FileText,
-      action: () => setActiveTab('planning'),
+      action: () => {
+        setActiveTab('planning');
+        requestAnimationFrame(() => document.getElementById('planning-workspace-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+      },
+      tone: 'neutral',
+    },
+    {
+      label: '샘플로 둘러보기',
+      detail: workspaceLanguage.gettingStarted.sample,
+      Icon: Database,
+      action: handleLoadSampleData,
       tone: 'neutral',
     },
   ];
@@ -3674,6 +3677,7 @@ export default function Home() {
           </div>
 
           {activeTab === 'planning' && (
+            <div id="planning-workspace-panel" className="scroll-mt-24">
             <PlanningPanel
               activeWorkspaceTab={planningWorkspaceTab}
               aiDraftReady={Boolean(planning.aiDraft)}
@@ -3716,6 +3720,7 @@ export default function Home() {
               onTestConnection={handleTestPlanningAiConnection}
               onUpdatePlanningField={updatePlanningField}
             />
+            </div>
           )}
 
           {activeTab === 'schedule' && (

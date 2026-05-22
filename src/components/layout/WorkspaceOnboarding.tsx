@@ -133,7 +133,7 @@ export function FirstRunPanel({
 }) {
   return (
     <section className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950/90">
-      <div className="grid gap-0 lg:grid-cols-[minmax(320px,0.8fr)_minmax(520px,1.2fr)]">
+      <div className="grid gap-0 lg:grid-cols-[minmax(300px,0.55fr)_minmax(560px,1.45fr)]">
         <div className="border-b border-neutral-900 bg-[radial-gradient(circle_at_top_left,rgba(20,184,166,0.16),transparent_32%),linear-gradient(135deg,rgba(245,158,11,0.08),transparent_42%)] p-5 lg:border-b-0 lg:border-r">
           <div className="inline-flex items-center gap-2 rounded-full border border-teal-400/20 bg-teal-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-teal-200">
             <Sparkles className="h-3 w-3" />
@@ -154,55 +154,17 @@ export function FirstRunPanel({
               </div>
             ))}
           </div>
+          <div className="mt-4 rounded-xl border border-neutral-800/80 bg-black/45 px-4 py-3 text-xs font-bold leading-relaxed text-neutral-500">
+            첫 화면에서는 하나만 고르면 됩니다. 선택한 작업 위치로 바로 이동하고, 첫 {addItemLabel}이 생기면 이 패널은 자동으로 사라집니다.
+          </div>
         </div>
         <div className="p-4">
-          <div className="mb-3 rounded-xl border border-neutral-900 bg-black/35 p-3">
-            <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <span className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-600">샘플 프로젝트</span>
-                <div className="mt-1 text-sm font-black text-neutral-200">내 작업과 가장 가까운 예시로 시작</div>
-              </div>
-              <span className="text-[10px] font-bold text-neutral-700">기획서와 현장표까지 같이 바뀝니다</span>
+          <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-[0.18em] text-teal-300">Start Here</span>
+              <div className="mt-1 text-lg font-black text-neutral-100">지금 하려는 작업을 고르세요</div>
             </div>
-            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
-              {cards.map((item) => {
-                const Icon = item.Icon;
-                const selected = currentTemplate === item.template;
-
-                return (
-                  <button
-                    key={item.template}
-                    type="button"
-                    onClick={() => onLoadTemplateSampleData(item.template)}
-                    className={`group min-h-[154px] rounded-xl border p-3 text-left transition-all ${
-                      selected
-                        ? 'border-teal-300/40 bg-teal-300/10 shadow-[0_0_0_1px_rgba(94,215,207,0.18)]'
-                        : 'border-neutral-900 bg-neutral-950/80 hover:border-neutral-700 hover:bg-neutral-900/70'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border ${
-                        selected
-                          ? 'border-teal-300/35 bg-teal-300/10 text-teal-100'
-                          : 'border-neutral-800 bg-black text-neutral-500 group-hover:text-neutral-200'
-                      }`}>
-                        <Icon className="h-4 w-4" />
-                      </div>
-                      <span className={`rounded-md border px-2 py-1 text-[9px] font-black ${
-                        selected
-                          ? 'border-teal-300/30 bg-black/30 text-teal-100'
-                          : 'border-neutral-800 bg-black text-neutral-600'
-                      }`}>
-                        {item.metric}
-                      </span>
-                    </div>
-                    <div className="mt-4 text-sm font-black text-white">{item.title}</div>
-                    <div className="mt-0.5 text-[10px] font-black uppercase tracking-[0.12em] text-neutral-600">{item.subtitle}</div>
-                    <p className="mt-2 text-[11px] font-bold leading-relaxed text-neutral-500">{item.detail}</p>
-                  </button>
-                );
-              })}
-            </div>
+            <span className="text-[10px] font-bold text-neutral-700">선택하면 필요한 위치로 바로 이동합니다</span>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {gettingStartedCards.map((item) => {
@@ -231,8 +193,40 @@ export function FirstRunPanel({
               );
             })}
           </div>
-          <div className="mt-3 rounded-xl border border-neutral-900 bg-black/35 px-4 py-3 text-xs font-bold text-neutral-600">
-            첫 {addItemLabel}이 추가되면 이 시작 패널은 자동으로 사라집니다.
+          <div className="mt-3 rounded-xl border border-neutral-900 bg-black/35 p-3">
+            <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-600">샘플 프로젝트</span>
+                <div className="mt-1 text-xs font-black text-neutral-300">감 잡기용 예시는 여기서만 선택</div>
+              </div>
+              <span className="text-[10px] font-bold text-neutral-700">기획서와 현장표까지 같이 바뀝니다</span>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-5">
+              {cards.map((item) => {
+                const Icon = item.Icon;
+                const selected = currentTemplate === item.template;
+
+                return (
+                  <button
+                    key={item.template}
+                    type="button"
+                    onClick={() => onLoadTemplateSampleData(item.template)}
+                    className={`group min-h-16 rounded-xl border px-3 py-2 text-left transition-all ${
+                      selected
+                        ? 'border-teal-300/40 bg-teal-300/10 text-teal-50'
+                        : 'border-neutral-900 bg-neutral-950/70 text-neutral-500 hover:border-neutral-700 hover:text-neutral-200'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <Icon className="h-3.5 w-3.5 shrink-0" />
+                      <span className="rounded bg-black/40 px-1.5 py-0.5 text-[8px] font-black text-neutral-500">{item.metric}</span>
+                    </div>
+                    <div className="mt-2 truncate text-xs font-black">{item.title}</div>
+                    <div className="mt-0.5 truncate text-[9px] font-bold text-neutral-600">{item.subtitle}</div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
