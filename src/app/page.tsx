@@ -2917,8 +2917,8 @@ export default function Home() {
 
     return items.map((scene, index) => ({
       ...scene,
-      visualRef: scene.visualRef
-        || (isManualScript ? manualStoryboardUrls[Math.min(index, manualStoryboardUrls.length - 1)] : '')
+      visualRef: (isManualScript ? manualStoryboardUrls[Math.min(index, manualStoryboardUrls.length - 1)] : '')
+        || scene.visualRef
         || getAutoStoryboardUrl(scene),
     }));
   };
