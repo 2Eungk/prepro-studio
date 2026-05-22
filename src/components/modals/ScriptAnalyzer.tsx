@@ -23,11 +23,23 @@ type ScriptAnalyzerProps = {
 
 type PdfTextItem = {
   str?: string;
+  transform?: number[];
 };
 
 const exteriorLocationPattern = /마당|공원|길|거리|골목|옥상|루프탑|한강|해변|산|도로|주차장|운동장|광장|출구|역/;
 const dayNightPattern = /오전|아침|낮|점심|오후|저녁|해질|노을|밤|새벽|day|night|sunset|dawn/i;
 const transitionPattern = /^(암전|컷 투|cut to|fade|dissolve|black|title)/i;
+const shotListHeaderPattern = /S#\s+Shot\s+Shot Type|Shot Type\s+Description|EST\.?\s*Time\s+Equipment/i;
+const shotRowPattern = /^(?:(\d{1,3})\s+)?(\d{1,3}[A-Z])\s+((?:EWS|VWS|WS|MLS|FS|MS|MCU|CU|ECU|BCU|CS|OTS|POV|INSERT|MACRO)[^가-힣]{0,80}?(?:eye level|high angle|low angle|bird'?s eye view|angle|level|view|static|tracking|zoom|pan|tilt|hand-?held)?)(?:\s{2,}(.+))?$/i;
+
+const shotTypeMinutes = (shotType: string) => {
+  const normalized = shotType.toUpperCase();
+  if (/TRACK|DOLLY|PAN|TILT|HAND|ZOOM/.test(normalized)) return 12;
+  if (/EWS|VWS|WS|MLS|FS/.test(normalized)) return 12;
+  if (/MS|MCU/.test(normalized)) return 10;
+  if (/CU|ECU|BCU|CS|INSERT|MACRO/.test(normalized)) return 8;
+  return 10;
+};
 
 const getDayNight = (text = ''): NonNullable<Scene['dayNight']> => {
   const normalized = text.toLowerCase();
@@ -125,6 +137,130 @@ const appendLineToScene = (scene: ParsedScriptScene, line: string) => {
   }
 };
 
+const cleanShotListNoise = (value: string) => (
+  value
+    .replace(/S#\s+Shot\s+Shot Type\s+Description\s+Character\s+Location\s+EST\.?\s*Time\s+Equipment\s+Day\s+Notes/gi, '')
+    .replace(/\b(?:Morning|Afternoon|Night)\s*\(\d{1,2}:\s*\d{2}\s*(?:am|pm)?\s*start\s*-\s*\d{1,2}:\s*\d{2}\s*(?:am|pm)?\s*end\)/gi, '')
+    .replace(/\b\d{1,2}\/\d{1,2}\/\d{4}\b/g, '')
+    .replace(/\b(?:Morning|Afternoon|Night|Credits|Shoot before destroying the printer)\b/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+);
+
+const inferShotLocation = (text: string, fallback = '장소 미정') => {
+  const normalized = text.replace(/\s+/g, ' ');
+  const locationPatterns: Array<[RegExp, string]> = [
+    [/Apartment\s+Living\s+Room/i, '아파트 거실'],
+    [/Apartment\s+Bedroom/i, '아파트 침실'],
+    [/Apartment\s+Entrance/i, '집 현관'],
+    [/Apartment\s+Building/i, '아파트 건물'],
+    [/School\s+Corridor|School\s+Hallway/i, '학교 복도'],
+    [/School\s+Classroom|Classroom/i, '학교 교실'],
+    [/Traditional\s+Market|Market/i, '전통시장'],
+    [/Train\s+Station|Station/i, '기차역'],
+    [/Train/i, '기차 안'],
+    [/Convenience\s+Store/i, '편의점'],
+    [/Alley/i, '골목'],
+    [/Bridge/i, '다리'],
+    [/Streets?|Road/i, '거리'],
+  ];
+  return locationPatterns.find(([pattern]) => pattern.test(normalized))?.[1] || fallback;
+};
+
+const inferShotDayNight = (text: string): NonNullable<Scene['dayNight']> => {
+  if (/Night|밤|새벽|1:\s*\d{2}/i.test(text)) return 'NIGHT';
+  if (/Afternoon|오후|Sunset|노을/i.test(text)) return 'SUNSET';
+  return 'DAY';
+};
+
+const parseShotListText = (sourceText: string): AnalyzedScene[] => {
+  if (!shotListHeaderPattern.test(sourceText)) return [];
+
+  const lines = sourceText
+    .split('\n')
+    .map((line) => cleanShotListNoise(line))
+    .filter(Boolean);
+  const shots: Array<{
+    sceneNumber?: string;
+    shotCode: string;
+    shotType: string;
+    descriptionLines: string[];
+    location: string;
+    dayNight: NonNullable<Scene['dayNight']>;
+  }> = [];
+  let current: (typeof shots)[number] | null = null;
+  let pendingLeadLines: string[] = [];
+  let lastSceneNumber = '1';
+  let lastLocation = '장소 미정';
+
+  const pushCurrent = () => {
+    if (!current) return;
+    const description = cleanShotListNoise(current.descriptionLines.join(' '));
+    if (description || current.location !== '장소 미정') shots.push({ ...current, descriptionLines: [description] });
+  };
+
+  lines.forEach((line) => {
+    if (shotListHeaderPattern.test(line)) return;
+    const rowMatch = line.match(shotRowPattern);
+
+    if (rowMatch) {
+      pushCurrent();
+      const [, sceneNumber, shotCode, shotType, tail = ''] = rowMatch;
+      if (sceneNumber) lastSceneNumber = sceneNumber;
+      const rowSeed = `${tail} ${pendingLeadLines.join(' ')}`;
+      const inferredLocation = inferShotLocation(rowSeed, lastLocation);
+      if (inferredLocation !== '장소 미정') lastLocation = inferredLocation;
+
+      current = {
+        sceneNumber: sceneNumber || lastSceneNumber,
+        shotCode,
+        shotType: shotType.trim(),
+        descriptionLines: [...pendingLeadLines, tail],
+        location: inferredLocation,
+        dayNight: inferShotDayNight(rowSeed),
+      };
+      pendingLeadLines = [];
+      return;
+    }
+
+    if (current) {
+      const nextLocation = inferShotLocation(line, current.location);
+      current.location = nextLocation;
+      if (nextLocation !== '장소 미정') lastLocation = nextLocation;
+      current.dayNight = inferShotDayNight(`${current.dayNight} ${line}`);
+      current.descriptionLines.push(line);
+    } else if (!/^\d+$/.test(line)) {
+      pendingLeadLines.push(line);
+    }
+  });
+
+  pushCurrent();
+
+  return shots.slice(0, 160).map((shot, index) => {
+    const description = cleanShotListNoise(shot.descriptionLines.join(' '));
+    const shotLabel = shot.sceneNumber ? `S#${shot.sceneNumber} / ${shot.shotCode}` : shot.shotCode;
+
+    return {
+      dayId: undefined,
+      location: shot.location,
+      description: description || `${shot.shotCode} ${shot.shotType}`,
+      estimatedMinutes: shotTypeMinutes(shot.shotType),
+      sceneNumber: shotLabel,
+      intExt: getIntExt('', shot.location),
+      dayNight: shot.dayNight,
+      cast: /Kairos|카이로스/i.test(description) || /Kairos/i.test(shot.location) ? 'Kairos Anderson' : '',
+      cutCount: 1,
+      pageCount: undefined,
+      props: /printer|manual|sheet|watch|phone|milk|banana|coke|apple|hammer|origami/i.test(description) ? description.substring(0, 120) : undefined,
+      cameraGear: shot.shotType,
+      shotSize: shot.shotType.split(',')[0]?.trim().toUpperCase(),
+      specialInstruction: shot.shotType,
+      clientMemo: `샷리스트 PDF ${index + 1}번째 컷`,
+      visualRef: undefined,
+    };
+  });
+};
+
 const extractTextFromPdf = async (file: File) => {
   const pdfjs = await import('pdfjs-dist');
   pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.mjs', import.meta.url).toString();
@@ -136,10 +272,27 @@ const extractTextFromPdf = async (file: File) => {
   for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
     const page = await pdf.getPage(pageNumber);
     const textContent = await page.getTextContent();
-    const pageText = textContent.items
-      .map((item) => ('str' in item ? (item as PdfTextItem).str || '' : ''))
-      .join(' ')
-      .replace(/\s+/g, ' ')
+    const lineBuckets: Array<{ y: number; items: Array<{ x: number; str: string }> }> = [];
+    textContent.items.forEach((item) => {
+      const pdfItem = item as PdfTextItem;
+      const str = (pdfItem.str || '').trim();
+      const transform = pdfItem.transform || [];
+      if (!str) return;
+      const x = Number(transform[4] || 0);
+      const y = Number(transform[5] || 0);
+      const line = lineBuckets.find((bucket) => Math.abs(bucket.y - y) < 3);
+      if (line) {
+        line.items.push({ x, str });
+      } else {
+        lineBuckets.push({ y, items: [{ x, str }] });
+      }
+    });
+
+    const pageText = lineBuckets
+      .sort((a, b) => b.y - a.y)
+      .map((line) => line.items.sort((a, b) => a.x - b.x).map((item) => item.str).join('  '))
+      .join('\n')
+      .replace(/[ \t]+/g, ' ')
       .trim();
     if (pageText) pages.push(pageText);
   }
@@ -164,6 +317,14 @@ export default function ScriptAnalyzer({ onExtract, onClose }: ScriptAnalyzerPro
     setAnalysisStatus('');
 
     setTimeout(() => {
+      const shotListScenes = parseShotListText(sourceText);
+      if (shotListScenes.length > 0) {
+        onExtract(shotListScenes);
+        setIsAnalyzing(false);
+        onClose();
+        return;
+      }
+
       const extractedScenes: ParsedScriptScene[] = [];
       const lines = sourceText.split('\n');
       let currentScene: ParsedScriptScene | null = null;
@@ -254,7 +415,7 @@ export default function ScriptAnalyzer({ onExtract, onClose }: ScriptAnalyzerPro
           <h3 className="text-xl font-bold flex items-center gap-2 text-indigo-100">
             <Brain className="w-6 h-6 text-indigo-400" /> 시나리오 AI 분석기
           </h3>
-          <p className="text-sm text-neutral-500 mt-1">대본 텍스트를 붙여넣거나 PDF/TXT 파일을 업로드하세요. API 없이 로컬에서 분석합니다.</p>
+          <p className="text-sm text-neutral-500 mt-1">대본 텍스트와 PDF/TXT 대본, 구글시트형 샷리스트 PDF를 촬영표 초안으로 변환합니다. API 없이 로컬에서 분석합니다.</p>
         </div>
         <div className="flex items-center gap-3">
           <input
@@ -292,14 +453,14 @@ export default function ScriptAnalyzer({ onExtract, onClose }: ScriptAnalyzerPro
         className="relative group"
       >
         <textarea
-          placeholder={`여기에 시나리오를 붙여넣으세요.
+          placeholder={`여기에 시나리오나 샷리스트를 붙여넣으세요.
 
 예:
 내부. 아파트 침실 - 오전 8:13
 햇빛이 창문을 통해 들어온다.
 카이로스: 매뉴얼은 없다.
 
-또는 S#1. 거실 (낮) 형식도 인식합니다.`}
+또는 S# / Shot / Shot Type / Description 컬럼이 있는 샷리스트 PDF도 인식합니다.`}
           className="w-full h-48 bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition-all font-mono mb-4 custom-scrollbar group-hover:border-neutral-700"
           value={script}
           onChange={(event) => {
@@ -320,15 +481,15 @@ export default function ScriptAnalyzer({ onExtract, onClose }: ScriptAnalyzerPro
           {isAnalyzing ? (
             <>
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              시나리오 분석 중...
+              촬영표 초안 생성 중...
             </>
           ) : !script.trim() ? (
             <>
-              <Sparkles className="w-4 h-4" /> 대본 입력 필요
+              <Sparkles className="w-4 h-4" /> 대본/샷리스트 입력 필요
             </>
           ) : (
             <>
-              <Sparkles className="w-4 h-4" /> AI 분석 시작
+              <Sparkles className="w-4 h-4" /> 촬영표 초안 생성
             </>
           )}
         </button>

@@ -2798,6 +2798,19 @@ export default function Home() {
     setOptimizationSummary(null);
   };
 
+  const ensureScheduleStartTime = () => {
+    if (activeShootingStartTime) return;
+
+    const firstShotTime = new Date(activeShootingDate);
+    firstShotTime.setHours(9, 0, 0, 0);
+
+    if (activeDay.id !== 'default-day') {
+      updateShootDay(activeDay.id, { firstShotTime });
+    } else {
+      setShootingStartTime(firstShotTime);
+    }
+  };
+
   const handleActiveDayDateChange = (date: string) => {
     if (activeDay.id !== 'default-day') {
       updateShootDay(activeDay.id, { date });
@@ -3647,7 +3660,9 @@ export default function Home() {
               scenes={extractedScenes}
               onCancel={() => setExtractedScenes([])}
               onConfirm={() => {
+                ensureScheduleStartTime();
                 addScenes(extractedScenes.map((scene) => ({ ...scene, dayId: activeDay.id })));
+                useScheduleStore.getState().optimizeSchedule(activeDay.id);
                 setOptimizationSummary(null);
                 resetScheduleFilters();
                 setActiveTab('schedule');
