@@ -123,6 +123,7 @@ export function FirstRunPanel({
   gettingStartedCards,
   workspaceLanguage,
   onLoadTemplateSampleData,
+  onSelectTemplate,
 }: {
   addItemLabel: string;
   cards: QuickStartProjectCard[];
@@ -130,7 +131,10 @@ export function FirstRunPanel({
   gettingStartedCards: GettingStartedCard[];
   workspaceLanguage: WorkspaceLanguage;
   onLoadTemplateSampleData: (template: TemplateType) => void;
+  onSelectTemplate: (template: TemplateType) => void;
 }) {
+  const currentTemplateCard = cards.find((item) => item.template === currentTemplate);
+
   return (
     <section className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950/90">
       <div className="grid gap-0 lg:grid-cols-[minmax(300px,0.55fr)_minmax(560px,1.45fr)]">
@@ -159,47 +163,21 @@ export function FirstRunPanel({
           </div>
         </div>
         <div className="p-4">
-          <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+          <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <span className="text-[10px] font-black uppercase tracking-[0.18em] text-teal-300">Start Here</span>
-              <div className="mt-1 text-lg font-black text-neutral-100">지금 하려는 작업을 고르세요</div>
+              <div className="mt-1 text-lg font-black text-neutral-100">3단계로 목적지까지 이동</div>
             </div>
-            <span className="text-[10px] font-bold text-neutral-700">선택하면 필요한 위치로 바로 이동합니다</span>
+            <span className="text-[10px] font-bold text-neutral-700">분류만 고르면 필요한 화면 앞까지 데려갑니다</span>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {gettingStartedCards.map((item) => {
-              const Icon = item.Icon;
 
-              return (
-                <button
-                  key={item.label}
-                  type="button"
-                  onClick={item.action}
-                  className={`prepro-action-card group rounded-xl border p-4 text-left transition-all ${item.tone === 'primary' ? 'is-primary text-neutral-100' : 'text-neutral-300'}`}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border ${
-                      item.tone === 'primary'
-                        ? 'border-teal-300/30 bg-teal-300/10 text-teal-200'
-                        : 'border-neutral-800 bg-neutral-950 text-neutral-400 group-hover:text-neutral-200'
-                    }`}>
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-neutral-700 transition-all group-hover:translate-x-0.5 group-hover:text-neutral-300" />
-                  </div>
-                  <div className="mt-4 text-sm font-black text-white">{item.label}</div>
-                  <p className="mt-1 min-h-10 text-xs font-bold leading-relaxed text-neutral-600">{item.detail}</p>
-                </button>
-              );
-            })}
-          </div>
-          <div className="mt-3 rounded-xl border border-neutral-900 bg-black/35 p-3">
+          <div className="rounded-xl border border-neutral-900 bg-black/35 p-3">
             <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-600">샘플 프로젝트</span>
-                <div className="mt-1 text-xs font-black text-neutral-300">감 잡기용 예시는 여기서만 선택</div>
+                <span className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-600">1. 제작 분야</span>
+                <div className="mt-1 text-xs font-black text-neutral-300">먼저 작업 종류를 고릅니다</div>
               </div>
-              <span className="text-[10px] font-bold text-neutral-700">기획서와 현장표까지 같이 바뀝니다</span>
+              <span className="text-[10px] font-bold text-teal-200">{currentTemplateCard?.title || '선택됨'}</span>
             </div>
             <div className="grid gap-2 sm:grid-cols-5">
               {cards.map((item) => {
@@ -210,7 +188,7 @@ export function FirstRunPanel({
                   <button
                     key={item.template}
                     type="button"
-                    onClick={() => onLoadTemplateSampleData(item.template)}
+                    onClick={() => onSelectTemplate(item.template)}
                     className={`group min-h-16 rounded-xl border px-3 py-2 text-left transition-all ${
                       selected
                         ? 'border-teal-300/40 bg-teal-300/10 text-teal-50'
@@ -227,6 +205,81 @@ export function FirstRunPanel({
                 );
               })}
             </div>
+          </div>
+
+          <div className="mt-3 rounded-xl border border-neutral-900 bg-black/35 p-3">
+            <div className="mb-2">
+              <span className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-600">2. 가진 자료</span>
+              <div className="mt-1 text-xs font-black text-neutral-300">대본/PDF가 있으면 분석으로, 없으면 직접 입력이나 기획서로 갑니다</div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {gettingStartedCards.slice(0, 2).map((item) => {
+                const Icon = item.Icon;
+
+                return (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={item.action}
+                    className={`prepro-action-card group rounded-xl border p-4 text-left transition-all ${item.tone === 'primary' ? 'is-primary text-neutral-100' : 'text-neutral-300'}`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border ${
+                        item.tone === 'primary'
+                          ? 'border-teal-300/30 bg-teal-300/10 text-teal-200'
+                          : 'border-neutral-800 bg-neutral-950 text-neutral-400 group-hover:text-neutral-200'
+                      }`}>
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-neutral-700 transition-all group-hover:translate-x-0.5 group-hover:text-neutral-300" />
+                    </div>
+                    <div className="mt-4 text-sm font-black text-white">{item.label}</div>
+                    <p className="mt-1 min-h-10 text-xs font-bold leading-relaxed text-neutral-600">{item.detail}</p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="mt-3 rounded-xl border border-neutral-900 bg-black/35 p-3">
+            <div className="mb-2">
+              <span className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-600">3. 시작 위치</span>
+              <div className="mt-1 text-xs font-black text-neutral-300">기획서로 정리하거나 샘플로 전체 흐름을 봅니다</div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {gettingStartedCards.slice(2).map((item) => {
+                const Icon = item.Icon;
+
+                return (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={item.action}
+                    className={`prepro-action-card group rounded-xl border p-4 text-left transition-all ${item.tone === 'primary' ? 'is-primary text-neutral-100' : 'text-neutral-300'}`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border ${
+                        item.tone === 'primary'
+                          ? 'border-teal-300/30 bg-teal-300/10 text-teal-200'
+                          : 'border-neutral-800 bg-neutral-950 text-neutral-400 group-hover:text-neutral-200'
+                      }`}>
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-neutral-700 transition-all group-hover:translate-x-0.5 group-hover:text-neutral-300" />
+                    </div>
+                    <div className="mt-4 text-sm font-black text-white">{item.label}</div>
+                    <p className="mt-1 min-h-10 text-xs font-bold leading-relaxed text-neutral-600">{item.detail}</p>
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              type="button"
+              onClick={() => onLoadTemplateSampleData(currentTemplate)}
+              className="mt-3 w-full rounded-xl border border-neutral-800 bg-neutral-950/70 px-4 py-3 text-left text-xs font-black text-neutral-300 transition-all hover:border-neutral-700 hover:text-neutral-100"
+            >
+              현재 선택한 {currentTemplateCard?.title || '분야'} 샘플 데이터로 전체 흐름 보기
+            </button>
           </div>
         </div>
       </div>

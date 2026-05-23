@@ -3584,7 +3584,7 @@ export default function Home() {
             onToggleProjectSetup={() => setShowProjectSetup((value) => !value)}
           />
 
-          {activeTab === 'schedule' && scenes.length === 0 && (
+          {scenes.length === 0 && (
             <FirstRunPanel
               addItemLabel={copy.item}
               cards={quickStartProjectCards}
@@ -3592,6 +3592,7 @@ export default function Home() {
               gettingStartedCards={gettingStartedCards}
               workspaceLanguage={workspaceLanguage}
               onLoadTemplateSampleData={handleLoadTemplateSampleData}
+              onSelectTemplate={handleTemplateChange}
             />
           )}
         </div>
