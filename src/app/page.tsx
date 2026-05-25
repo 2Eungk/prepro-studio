@@ -1144,6 +1144,7 @@ export default function Home() {
   const [optimizationSummary, setOptimizationSummary] = useState<OptimizationSummary | null>(null);
   const [shareStatus, setShareStatus] = useState('');
   const [fileStatus, setFileStatus] = useState('');
+  const [sampleProjectNotice, setSampleProjectNotice] = useState('');
   const [pdfStatus, setPdfStatus] = useState('');
   const [cueSheetStatus, setCueSheetStatus] = useState('');
   const [isExportingPdf, setIsExportingPdf] = useState(false);
@@ -1516,6 +1517,29 @@ export default function Home() {
   }, [people, scenes]);
   const budgetStats = useMemo(() => {
     const budgetTemplateLabel = template === 'event' ? '행사/스케치' : template === 'ad' ? '광고/브랜디드' : template === 'musicvideo' ? '뮤직비디오' : template === 'dance' ? '댄스커버' : '영화/단편';
+    const hasBudgetInputs = scenes.length > 0 || locations.length > 0 || people.length > 0 || breaks.length > 0;
+    const emptyCategories = [
+      { label: '인건비', value: 0, note: '출연진/스태프 등록 후 산정' },
+      { label: '장소/진행비', value: 0, note: '장소 또는 시간블록 등록 후 산정' },
+      { label: '기재비', value: 0, note: '촬영표 등록 후 산정' },
+      { label: template === 'dance' ? '의상/헤메' : template === 'musicvideo' ? '미술/스타일링' : template === 'ad' ? '미술/제품' : '미술/소품', value: 0, note: `${budgetTemplateLabel} 제작 성격 반영 대기` },
+      { label: '후반/납품', value: 0, note: '컷/구간 등록 후 산정' },
+      { label: '예비비', value: 0, note: '리스크 버퍼 산정 대기' },
+    ];
+
+    if (!hasBudgetInputs) {
+      return {
+        total: 0,
+        subtotal: 0,
+        contingency: 0,
+        categories: emptyCategories,
+        shootDays: 0,
+        cutCount: 0,
+        costPerDay: 0,
+        costPerCut: 0,
+      };
+    }
+
     const scaleMultiplier = planning.productionScale === 'premium' ? 1.55 : planning.productionScale === 'standard' ? 1 : 0.62;
     const shootDays = Math.max(1, days.length || 1);
     const sceneCount = Math.max(1, scenes.length);
@@ -1769,11 +1793,11 @@ export default function Home() {
     { id: 'planning', group: '준비', label: '기획서', caption: workspaceLanguage.planningCaption, metric: `${planningCompletion}%`, Icon: Brain },
     { id: 'locations', group: '준비', label: workspaceLanguage.locationsLabel, caption: workspaceLanguage.locationsCaption, metric: `${locations.length}곳`, Icon: MapPin },
     { id: 'people', group: '준비', label: workspaceLanguage.peopleLabel, caption: workspaceLanguage.peopleCaption, metric: `${people.length}명`, Icon: Users },
-    { id: 'budget', group: '준비', label: '예산', caption: '순제작비 초안', metric: budgetStats.total >= 1000000 ? `${Math.round(budgetStats.total / 10000)}만` : formatKRW(budgetStats.total), Icon: Calculator },
+    { id: 'budget', group: '준비', label: '예산', caption: '순제작비 초안', metric: budgetStats.total > 0 ? (budgetStats.total >= 1000000 ? `${Math.round(budgetStats.total / 10000)}만` : formatKRW(budgetStats.total)) : '준비 전', Icon: Calculator },
     { id: 'schedule', group: '촬영', label: workspaceLanguage.scheduleLabel, caption: workspaceLanguage.scheduleCaption, metric: isMusicTimelineTemplate ? `${danceCoverageStats.cueCount}큐` : `${timelineStats.totalMinutes || 0}분`, Icon: isMusicTimelineTemplate ? Music2 : Clock },
     { id: 'cueSheet', group: '촬영', label: workspaceLanguage.cueSheetLabel, caption: workspaceLanguage.cueSheetCaption, metric: `${cueSheetRows.length}큐`, Icon: ClipboardList },
     { id: 'storyboard', group: '촬영', label: workspaceLanguage.storyboardLabel, caption: workspaceLanguage.storyboardCaption, metric: `${storyboardDb.length}개`, Icon: ImageIcon },
-    { id: 'report', group: '정산', label: workspaceLanguage.reportLabel, caption: workspaceLanguage.reportCaption, metric: `${reportStats.done}/${Math.max(1, scenes.length)}`, Icon: FileText },
+    { id: 'report', group: '정산', label: workspaceLanguage.reportLabel, caption: workspaceLanguage.reportCaption, metric: scenes.length > 0 ? `${reportStats.done}/${scenes.length}` : '준비 전', Icon: FileText },
   ];
   const mainWorkspaceGroups: MainWorkspaceGroup[] = ['준비', '촬영', '정산'];
 
@@ -2674,12 +2698,12 @@ export default function Home() {
         const json = JSON.parse(ev.target?.result as string);
         importData(json);
         setOptimizationSummary(null);
+        setSampleProjectNotice('');
         setFileStatus('가져오기 완료');
         window.setTimeout(() => setFileStatus(''), 2200);
       } catch {
-        alert('올바른 JSON 파일이 아닙니다.');
-        setFileStatus('가져오기 실패');
-        window.setTimeout(() => setFileStatus(''), 2200);
+        setFileStatus('가져오기 실패 · JSON 파일을 확인하세요');
+        window.setTimeout(() => setFileStatus(''), 3200);
       } finally {
         e.target.value = '';
       }
@@ -2942,6 +2966,10 @@ export default function Home() {
       setCustomImageStatus('이미지 파일만 가능합니다.');
       return;
     }
+    if (file.size > 8 * 1024 * 1024) {
+      setCustomImageStatus('8MB 이하 이미지만 업로드할 수 있습니다.');
+      return;
+    }
 
     setCustomImageStatus('이미지 정리 중...');
 
@@ -2996,24 +3024,27 @@ export default function Home() {
     setEditingLocation(null);
     setShowPersonModal(false);
     setEditingPerson(null);
+    setSampleProjectNotice(`${templateLabel} 샘플 데이터`);
     resetSceneForm();
     requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
   };
 
-  const handleLoadSampleData = () => {
-    if (!confirm(`${template === 'event' ? '행사' : template === 'ad' ? '광고' : template === 'musicvideo' ? '뮤직비디오' : template === 'dance' ? '댄스커버' : '단편영화'} 샘플 데이터를 로드하시겠습니까?`)) return;
+  const handleLoadSampleData = (askConfirm = true) => {
+    if (askConfirm && !confirm(`${template === 'event' ? '행사' : template === 'ad' ? '광고' : template === 'musicvideo' ? '뮤직비디오' : template === 'dance' ? '댄스커버' : '단편영화'} 샘플 데이터를 로드하시겠습니까?`)) return;
 
     loadSampleData();
     finishSampleDataLoad();
   };
 
-  const handleLoadTemplateSampleData = (nextTemplate: TemplateType) => {
-    const sampleLabel = nextTemplate === 'event' ? '행사' : nextTemplate === 'ad' ? '광고' : nextTemplate === 'musicvideo' ? '뮤직비디오' : nextTemplate === 'dance' ? '댄스커버' : '단편영화';
-    if (!confirm(`${sampleLabel} 샘플 데이터를 로드하시겠습니까? 현재 작업 데이터는 샘플로 교체됩니다.`)) return;
+  const handleResetProject = () => {
+    setSampleProjectNotice('');
+    resetProject();
+  };
 
-    setTemplate(nextTemplate);
-    loadSampleData();
-    finishSampleDataLoad();
+  const promoteSampleProject = () => {
+    setSampleProjectNotice('');
+    setFileStatus('샘플을 내 프로젝트로 전환');
+    window.setTimeout(() => setFileStatus(''), 2200);
   };
 
   const openSceneEditor = (scene: Scene) => {
@@ -3359,11 +3390,13 @@ export default function Home() {
       label: '샘플로 둘러보기',
       detail: workspaceLanguage.gettingStarted.sample,
       Icon: Database,
-      action: handleLoadSampleData,
+      action: () => handleLoadSampleData(false),
       tone: 'neutral',
     },
   ];
-  const showOperationalDashboard = activeTab === 'schedule' || activeTab === 'report';
+  const isFirstRun = scenes.length === 0;
+  const showOperationalDashboard = (activeTab === 'schedule' || activeTab === 'report') && !isFirstRun;
+  const showEmptyScheduleGuide = activeTab === 'schedule' && isFirstRun && !showSceneForm && !showAnalyzer && extractedScenes.length === 0;
   const workspaceQuickActions: Array<{
     id: string;
     label: string;
@@ -3530,7 +3563,7 @@ export default function Home() {
   };
 
   return (
-    <div className="prepro-shell min-h-screen bg-black text-white p-6 md:p-10 font-sans selection:bg-indigo-500/30 overflow-x-hidden">
+    <div className="prepro-shell min-h-screen bg-black p-4 font-sans text-white selection:bg-indigo-500/30 md:p-10 overflow-x-hidden">
       <div className="max-w-7xl mx-auto space-y-8">
         <AppHeader
           activeShootingDate={activeShootingDate}
@@ -3559,7 +3592,7 @@ export default function Home() {
           onExportJSON={handleExportJSON}
           onImportJSON={handleImportJSON}
           onLoadSampleData={handleLoadSampleData}
-          onResetProject={resetProject}
+          onResetProject={handleResetProject}
           onSearchGlobalWeatherLocation={searchGlobalWeatherLocation}
           onSelectGlobalWeatherLocation={selectGlobalWeatherLocation}
           onSetActiveTab={setActiveTab}
@@ -3574,26 +3607,43 @@ export default function Home() {
           sameText={sameText}
         />
 
-          <WorkspaceFlowBar
-            activeTab={activeTab}
-            currentLabel={currentWorkspaceTab?.label}
-            nextFlowTarget={nextFlowTarget}
-            primaryAction={primaryQuickAction}
-            workspaceLanguage={workspaceLanguage}
-            onPrimaryAction={handleWorkspaceQuickAction}
-            onToggleProjectSetup={() => setShowProjectSetup((value) => !value)}
-          />
+          {!isFirstRun && (
+            <WorkspaceFlowBar
+              activeTab={activeTab}
+              currentLabel={currentWorkspaceTab?.label}
+              nextFlowTarget={nextFlowTarget}
+              primaryAction={primaryQuickAction}
+              workspaceLanguage={workspaceLanguage}
+              onPrimaryAction={handleWorkspaceQuickAction}
+              onToggleProjectSetup={() => setShowProjectSetup((value) => !value)}
+            />
+          )}
 
-          {scenes.length === 0 && (
+          {isFirstRun && activeTab !== 'schedule' && (
             <FirstRunPanel
               addItemLabel={copy.item}
               cards={quickStartProjectCards}
               currentTemplate={template}
               gettingStartedCards={gettingStartedCards}
               workspaceLanguage={workspaceLanguage}
-              onLoadTemplateSampleData={handleLoadTemplateSampleData}
               onSelectTemplate={handleTemplateChange}
             />
+          )}
+
+          {sampleProjectNotice && !isFirstRun && (
+            <section className="rounded-2xl border border-amber-400/25 bg-amber-400/10 p-4" data-html2canvas-ignore="true">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div className="min-w-0">
+                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-200">Sample project</div>
+                  <p className="mt-1 text-sm font-black text-neutral-100">지금 보고 있는 내용은 {sampleProjectNotice}입니다.</p>
+                  <p className="mt-1 text-xs font-bold text-neutral-500">구조를 둘러보는 예시라서 실제 프로젝트로 쓰려면 “내 프로젝트로 사용”을 눌러 표시를 지우거나, 새로 시작하세요.</p>
+                </div>
+                <div className="grid grid-cols-2 gap-2 sm:flex sm:shrink-0">
+                  <button type="button" onClick={promoteSampleProject} className="prepro-btn prepro-btn--secondary">내 프로젝트로 사용</button>
+                  <button type="button" onClick={handleResetProject} className="prepro-btn prepro-btn--quiet">새로 시작</button>
+                </div>
+              </div>
+            </section>
           )}
         </div>
 
@@ -3634,11 +3684,13 @@ export default function Home() {
 
         {/* === MAIN CONTENT === */}
         <main className="space-y-8">
-          <CurrentWorkBar
-            actions={secondaryQuickActions}
-            currentWorkspace={currentWorkspaceTab}
-            onAction={handleWorkspaceQuickAction}
-          />
+          {!isFirstRun && (
+            <CurrentWorkBar
+              actions={secondaryQuickActions}
+              currentWorkspace={currentWorkspaceTab}
+              onAction={handleWorkspaceQuickAction}
+            />
+          )}
 
           {/* Ad Slot */}
           {showOperationalDashboard && <AdBanner placement="top_banner" format="auto" />}
@@ -3724,7 +3776,58 @@ export default function Home() {
             </div>
           )}
 
-          {activeTab === 'schedule' && (
+          {activeTab === 'schedule' && showEmptyScheduleGuide && (
+            <section className="scroll-mt-24 rounded-[2rem] border border-neutral-900 bg-neutral-950/80 p-6 md:p-8">
+              <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center">
+                <div>
+                  <div className="inline-flex rounded-full border border-teal-300/20 bg-teal-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-teal-200">
+                    Start here
+                  </div>
+                  <h2 className="mt-4 max-w-2xl text-3xl font-black leading-tight text-white md:text-4xl">
+                    지금은 하나만 고르면 돼요.
+                  </h2>
+                  <p className="mt-3 max-w-2xl text-sm font-bold leading-relaxed text-neutral-500 md:text-base">
+                    장소, 인원, 예산, 리포트는 첫 {copy.item}이 생긴 뒤 자연스럽게 따라오게 숨겨뒀습니다. 먼저 어떤 방식으로 시작할지만 선택하세요.
+                  </p>
+                  <div className="mt-6 grid gap-3 md:grid-cols-3">
+                    <button type="button" onClick={openNewSceneForm} className="rounded-2xl border border-teal-300/35 bg-teal-300/10 p-5 text-left transition-all hover:bg-teal-300/15">
+                      <Plus className="h-5 w-5 text-teal-200" />
+                      <div className="mt-4 text-lg font-black text-white">직접 추가</div>
+                      <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">장소와 내용을 적어서 첫 {copy.item}을 만듭니다.</p>
+                    </button>
+                    <button type="button" onClick={() => handleLoadSampleData(false)} className="rounded-2xl border border-neutral-800 bg-black/45 p-5 text-left transition-all hover:border-neutral-700 hover:bg-neutral-900/70">
+                      <Database className="h-5 w-5 text-neutral-300" />
+                      <div className="mt-4 text-lg font-black text-white">샘플 보기</div>
+                      <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">완성된 예시로 전체 흐름을 빠르게 둘러봅니다.</p>
+                    </button>
+                    <button type="button" onClick={() => setActiveTab('planning')} className="rounded-2xl border border-neutral-800 bg-black/45 p-5 text-left transition-all hover:border-neutral-700 hover:bg-neutral-900/70">
+                      <FileText className="h-5 w-5 text-neutral-300" />
+                      <div className="mt-4 text-lg font-black text-white">기획부터</div>
+                      <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">로그라인/브리프를 정리하고 촬영표로 넘깁니다.</p>
+                    </button>
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-neutral-900 bg-black/45 p-5">
+                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-600">Next flow</div>
+                  {[
+                    ['1', `${copy.item} 만들기`, '가장 먼저 필요한 최소 입력'],
+                    ['2', '장소/인원 보강', '필요할 때만 추가로 열기'],
+                    ['3', '촬영표 확인', '시간, 콘티, PDF는 마지막에 정리'],
+                  ].map(([step, title, detail]) => (
+                    <div key={step} className="mt-4 flex gap-3 rounded-xl border border-neutral-900 bg-neutral-950/80 p-3">
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-800 text-xs font-black text-teal-200">{step}</div>
+                      <div>
+                        <div className="text-sm font-black text-neutral-100">{title}</div>
+                        <div className="mt-0.5 text-xs font-bold text-neutral-600">{detail}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {activeTab === 'schedule' && !showEmptyScheduleGuide && (
           <>
           <ScheduleSetupPanel
             activeCallTime={activeCallTime}

@@ -123,7 +123,7 @@ export default function BudgetPanel({
           </div>
           <div className="space-y-3">
             {budgetStats.categories.map((item) => {
-              const percent = Math.round((item.value / budgetStats.total) * 100);
+              const percent = budgetStats.total > 0 ? Math.round((item.value / budgetStats.total) * 100) : 0;
 
               return (
                 <div key={item.label} className="rounded-xl border border-neutral-900 bg-black/40 px-4 py-3">

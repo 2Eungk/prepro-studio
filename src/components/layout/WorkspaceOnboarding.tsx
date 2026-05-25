@@ -16,6 +16,7 @@ type WorkspaceLanguage = {
 type PrimaryAction = {
   id: string;
   label: string;
+  detail?: string;
   Icon: LucideIcon;
   disabled?: boolean;
 };
@@ -91,22 +92,31 @@ export function WorkspaceFlowBar({
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:flex sm:shrink-0 sm:flex-wrap lg:justify-end">
+        <div className="grid grid-cols-1 gap-2 sm:flex sm:shrink-0 sm:flex-wrap lg:justify-end">
           {primaryAction && (
             <button
               type="button"
               onClick={() => onPrimaryAction(primaryAction.id)}
               disabled={primaryAction.disabled}
-              className="prepro-btn prepro-btn--primary"
+              className="group flex min-h-16 min-w-[220px] items-center justify-between gap-3 rounded-2xl border border-teal-300/35 bg-teal-300 px-4 py-3 text-left text-black shadow-lg shadow-teal-950/20 transition-all hover:bg-teal-200 disabled:cursor-not-allowed disabled:border-neutral-800 disabled:bg-neutral-900 disabled:text-neutral-600 disabled:shadow-none"
             >
-              {PrimaryQuickActionIcon && <PrimaryQuickActionIcon className="h-3.5 w-3.5" />}
-              {primaryAction.label}
+              <span className="flex min-w-0 items-center gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-black/10 text-black group-disabled:bg-black/20 group-disabled:text-neutral-600">
+                  {PrimaryQuickActionIcon && <PrimaryQuickActionIcon className="h-4 w-4" />}
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-[10px] font-black uppercase tracking-[0.16em] opacity-70">다음 할 일</span>
+                  <span className="mt-0.5 block truncate text-sm font-black">{primaryAction.label}</span>
+                  {primaryAction.detail && <span className="mt-0.5 block truncate text-[10px] font-bold opacity-70">{primaryAction.detail}</span>}
+                </span>
+              </span>
+              <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
             </button>
           )}
           <button
             type="button"
             onClick={onToggleProjectSetup}
-            className="prepro-btn prepro-btn--secondary"
+            className="prepro-btn prepro-btn--secondary min-h-12"
           >
             <CalendarIcon className="h-3.5 w-3.5" />
             날짜/날씨
@@ -123,7 +133,6 @@ export function FirstRunPanel({
   currentTemplate,
   gettingStartedCards,
   workspaceLanguage,
-  onLoadTemplateSampleData,
   onSelectTemplate,
 }: {
   addItemLabel: string;
@@ -131,45 +140,26 @@ export function FirstRunPanel({
   currentTemplate: TemplateType;
   gettingStartedCards: GettingStartedCard[];
   workspaceLanguage: WorkspaceLanguage;
-  onLoadTemplateSampleData: (template: TemplateType) => void;
   onSelectTemplate: (template: TemplateType) => void;
 }) {
   const currentTemplateCard = cards.find((item) => item.template === currentTemplate);
-  const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [selectedAction, setSelectedAction] = useState<GettingStartedCard | null>(null);
+  const [step, setStep] = useState<1 | 2>(1);
   const [isDismissed, setIsDismissed] = useState(false);
-  const actionChoices: GettingStartedCard[] = [
-    ...gettingStartedCards,
-    {
-      label: `${currentTemplateCard?.title || '현재 분야'} 샘플 보기`,
-      detail: '예시 데이터로 기획서, 촬영표, 콘티, 리포트 흐름을 한 번에 확인합니다.',
-      Icon: Sparkles,
-      action: () => onLoadTemplateSampleData(currentTemplate),
-      tone: 'neutral',
-    },
-  ];
-  const activeAction = selectedAction || actionChoices[0];
-  const ActiveActionIcon = activeAction.Icon;
+  const actionChoices: GettingStartedCard[] = gettingStartedCards;
 
   if (isDismissed) return null;
 
   const moveToAction = (item: GettingStartedCard) => {
-    setSelectedAction(item);
-    setStep(3);
-  };
-
-  const runSelectedAction = () => {
     setIsDismissed(true);
-    requestAnimationFrame(() => activeAction.action());
+    requestAnimationFrame(() => item.action());
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 py-6 backdrop-blur-sm">
+    <div className="scroll-mt-24">
       <section
-        role="dialog"
-        aria-modal="true"
+        role="region"
         aria-labelledby="first-run-title"
-        className="max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-teal-300/25 bg-neutral-950 shadow-2xl shadow-teal-950/40"
+        className="overflow-hidden rounded-2xl border border-teal-300/25 bg-neutral-950 shadow-2xl shadow-teal-950/25"
       >
         <div className="flex items-start justify-between gap-4 border-b border-neutral-900 bg-[radial-gradient(circle_at_top_right,rgba(20,184,166,0.18),transparent_32%),linear-gradient(135deg,rgba(242,161,75,0.08),transparent_44%)] p-5">
           <div className="min-w-0">
@@ -195,11 +185,10 @@ export function FirstRunPanel({
         </div>
 
         <div className="border-b border-neutral-900 px-5 py-3">
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {[
               { id: 1, label: '제작 분야' },
               { id: 2, label: '자료 상태' },
-              { id: 3, label: '목적지 확인' },
             ].map((item) => {
               const isActive = step === item.id;
               const isDone = step > item.id;
@@ -308,49 +297,6 @@ export function FirstRunPanel({
                     </button>
                   );
                 })}
-              </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div>
-              <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <span className="text-[10px] font-black uppercase tracking-[0.18em] text-teal-300">Step 3</span>
-                  <h3 className="mt-1 text-xl font-black text-white">이 위치로 이동할까요?</h3>
-                  <p className="mt-1 text-sm font-bold text-neutral-600">확인하면 모달을 닫고 선택한 작업 화면을 바로 엽니다.</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  className="inline-flex items-center gap-2 rounded-lg border border-neutral-800 px-3 py-2 text-xs font-black text-neutral-400 hover:border-neutral-700 hover:text-neutral-100"
-                >
-                  <ArrowLeft className="h-3.5 w-3.5" />
-                  작업 다시 선택
-                </button>
-              </div>
-              <div className="rounded-2xl border border-teal-300/25 bg-teal-300/10 p-5">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-teal-300/30 bg-black/40 text-teal-200">
-                    <ActiveActionIcon className="h-6 w-6" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-xs font-black uppercase tracking-[0.18em] text-teal-200">{currentTemplateCard?.title || '현재 분야'}</div>
-                    <div className="mt-2 text-2xl font-black text-white">{activeAction.label}</div>
-                    <p className="mt-2 text-sm font-bold leading-relaxed text-neutral-400">{activeAction.detail}</p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={runSelectedAction}
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-teal-400 px-5 py-4 text-sm font-black text-black transition-all hover:bg-teal-300"
-                >
-                  바로 이동
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-              </div>
-              <div className="mt-3 rounded-xl border border-neutral-900 bg-black/45 px-4 py-3 text-xs font-bold leading-relaxed text-neutral-600">
-                나중에 다른 화면이 필요하면 상단 워크스페이스 탭에서 언제든 이동할 수 있습니다.
               </div>
             </div>
           )}
