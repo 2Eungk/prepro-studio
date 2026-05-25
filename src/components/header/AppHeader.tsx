@@ -149,7 +149,7 @@ export default function AppHeader({
             </div>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-3xl font-black uppercase leading-none text-neutral-100">PrePro Studio</h1>
+                <h1 className="text-2xl font-black uppercase leading-none text-neutral-100 md:text-3xl">PrePro Studio</h1>
                 <span className="shrink-0 rounded-md border border-neutral-800 bg-neutral-950 px-2 py-0.5 text-[10px] font-black text-neutral-500 whitespace-nowrap">v1.3</span>
               </div>
               <p className="mt-1 text-xs font-bold text-neutral-500">
@@ -252,55 +252,76 @@ export default function AppHeader({
         </div>
       </header>
 
-      <nav className="sticky top-0 z-30 -mx-2 overflow-x-auto border-y border-neutral-900 bg-black/90 px-2 py-2 backdrop-blur custom-scrollbar">
-        <div className="inline-flex min-w-max items-stretch gap-1.5">
-          {mainWorkspaceGroups.map((group) => {
-            const groupTabs = mainWorkspaceTabs.filter((tab) => tab.group === group);
-            const groupIsActive = groupTabs.some((tab) => tab.id === activeTab);
+      <nav className="sticky top-0 z-30 -mx-2 border-y border-neutral-900 bg-black/90 px-2 py-2 backdrop-blur">
+        <div className="space-y-2 overflow-x-auto custom-scrollbar">
+          <div className="inline-flex min-w-max rounded-2xl border border-neutral-900 bg-neutral-950/60 p-1">
+            {mainWorkspaceGroups.map((group, index) => {
+              const groupTabs = mainWorkspaceTabs.filter((tab) => tab.group === group);
+              const groupIsActive = groupTabs.some((tab) => tab.id === activeTab);
+              const firstTab = groupTabs[0];
 
-            return (
-              <div key={group} className="flex min-w-max items-stretch gap-1 rounded-xl border border-neutral-900 bg-neutral-950/45 p-1">
-                <div className={`flex w-7 shrink-0 items-center justify-center rounded-lg border text-[9px] font-black ${
-                  groupIsActive
-                    ? 'border-teal-400/25 bg-teal-400/10 text-teal-100'
-                    : 'border-transparent text-neutral-700'
-                }`}>
-                  {group}
-                </div>
-                {groupTabs.map((tab) => {
-                  const Icon = tab.Icon;
-                  const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={group}
+                  type="button"
+                  onClick={() => firstTab && onSetActiveTab(firstTab.id)}
+                  className={`flex min-w-[112px] items-center gap-2 rounded-xl border px-3 py-2 text-left transition-all ${
+                    groupIsActive
+                      ? 'border-teal-400/30 bg-teal-400/10 text-teal-50'
+                      : 'border-transparent text-neutral-500 hover:bg-neutral-900/80 hover:text-neutral-200'
+                  }`}
+                >
+                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-black ${
+                    groupIsActive ? 'bg-teal-300 text-black' : 'bg-neutral-900 text-neutral-600'
+                  }`}>
+                    {index + 1}
+                  </span>
+                  <span>
+                    <span className="block text-sm font-black leading-none">{group}</span>
+                    <span className="mt-1 block text-[10px] font-bold text-neutral-600">
+                      {groupTabs.map((tab) => tab.label).join(' · ')}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
 
-                  return (
-                    <button
-                      key={tab.id}
-                      onClick={() => onSetActiveTab(tab.id)}
-                      aria-current={isActive ? 'page' : undefined}
-                      className={`relative flex min-h-11 min-w-[148px] items-center gap-2 rounded-lg border px-3 py-2 text-left transition-all lg:min-w-[164px] ${
-                        isActive
-                          ? 'border-teal-400/35 bg-neutral-900 text-white'
-                          : 'border-transparent bg-transparent text-neutral-500 hover:bg-neutral-950 hover:text-neutral-200'
-                      }`}
-                    >
-                      {isActive && <span className="absolute inset-y-2 left-0 w-px bg-teal-300/80" />}
-                      <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-teal-200' : 'text-neutral-600'}`} />
-                      <span className="min-w-0 flex-1">
-                        <span className="block whitespace-nowrap text-sm font-black leading-none">{tab.label}</span>
-                        <span className={`mt-1 hidden truncate text-[10px] font-bold 2xl:block ${isActive ? 'text-neutral-400' : 'text-neutral-700'}`}>
-                          {tab.caption}
-                        </span>
+          <div className="inline-flex min-w-max items-stretch gap-1 rounded-2xl border border-neutral-900 bg-neutral-950/45 p-1">
+            {mainWorkspaceTabs
+              .filter((tab) => tab.group === mainWorkspaceTabs.find((item) => item.id === activeTab)?.group)
+              .map((tab) => {
+                const Icon = tab.Icon;
+                const isActive = activeTab === tab.id;
+
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => onSetActiveTab(tab.id)}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`relative flex min-h-11 min-w-[136px] items-center gap-2 rounded-xl border px-3 py-2 text-left transition-all lg:min-w-[156px] ${
+                      isActive
+                        ? 'border-teal-400/35 bg-neutral-900 text-white'
+                        : 'border-transparent bg-transparent text-neutral-500 hover:bg-neutral-950 hover:text-neutral-200'
+                    }`}
+                  >
+                    {isActive && <span className="absolute inset-x-3 top-0 h-px bg-teal-300/80" />}
+                    <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-teal-200' : 'text-neutral-600'}`} />
+                    <span className="min-w-0 flex-1">
+                      <span className="block whitespace-nowrap text-sm font-black leading-none">{tab.label}</span>
+                      <span className={`mt-1 hidden truncate text-[10px] font-bold xl:block ${isActive ? 'text-neutral-400' : 'text-neutral-700'}`}>
+                        {tab.caption}
                       </span>
-                      <span className={`ml-auto shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-black ${
-                        isActive ? 'bg-black/50 text-teal-100' : 'bg-neutral-950 text-neutral-600'
-                      }`}>
-                        {tab.metric}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            );
-          })}
+                    </span>
+                    <span className={`ml-auto shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-black ${
+                      isActive ? 'bg-black/50 text-teal-100' : 'bg-neutral-950 text-neutral-600'
+                    }`}>
+                      {tab.metric}
+                    </span>
+                  </button>
+                );
+              })}
+          </div>
         </div>
       </nav>
 

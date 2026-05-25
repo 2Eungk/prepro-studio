@@ -88,7 +88,7 @@ export default function DesktopScheduleTable({
 }: DesktopScheduleTableProps) {
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onTimelineDragEnd}>
-      <table className="desktop-schedule-table hidden w-full min-w-[1240px] text-sm text-left lg:table">
+      <table className="desktop-schedule-table hidden w-full min-w-[1120px] text-sm text-left lg:table">
         <thead className="bg-neutral-950 text-neutral-500 uppercase text-[11px] border-b border-neutral-900">
           <tr>
             <th className="px-4 py-3 font-black w-12 text-center">순서</th>
@@ -97,31 +97,31 @@ export default function DesktopScheduleTable({
             {template === 'film' && (
               <>
                 <th className="px-4 py-3 font-black w-28">{infoColumnLabel}</th>
-                <th className="px-4 py-3 font-black w-52">콘티</th>
+                <th className="px-4 py-3 font-black w-40">콘티</th>
               </>
             )}
             {template === 'event' && (
               <>
                 <th className="px-4 py-3 font-black w-28">식순 구분</th>
-                <th className="px-4 py-3 font-black w-52">샷 플랜</th>
+                <th className="px-4 py-3 font-black w-40">샷 플랜</th>
               </>
             )}
             {isMusicTimelineTemplate && (
               <>
                 <th className="px-4 py-3 font-black w-40">타임코드 / 가사</th>
-                <th className="px-4 py-3 font-black w-52">{template === 'musicvideo' ? 'MV 레퍼런스' : '레퍼런스'}</th>
+                <th className="px-4 py-3 font-black w-40">{template === 'musicvideo' ? 'MV 레퍼런스' : '레퍼런스'}</th>
               </>
             )}
             {template === 'ad' && (
               <>
                 <th className="px-4 py-3 font-black w-28">{infoColumnLabel}</th>
-                <th className="px-4 py-3 font-black w-52">콘티</th>
+                <th className="px-4 py-3 font-black w-40">콘티</th>
               </>
             )}
 
-            <th className="px-4 py-3 font-black w-44">장소</th>
-            <th className="px-4 py-3 font-black">{contentColumnLabel}</th>
-            <th className="px-4 py-3 font-black w-24 text-right">분량</th>
+            <th className="px-4 py-3 font-black w-36">장소</th>
+            <th className="px-4 py-3 font-black min-w-[260px]">{contentColumnLabel}</th>
+            <th className="px-4 py-3 font-black w-20 text-right">분량</th>
           </tr>
         </thead>
         <SortableContext items={timelineRows.map((row) => row.id)} strategy={verticalListSortingStrategy}>

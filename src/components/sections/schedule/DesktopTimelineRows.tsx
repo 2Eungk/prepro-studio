@@ -97,9 +97,9 @@ export function SortableRow({
           </td>
           <td className="px-4 py-5 font-medium">
             {scene.visualRef ? (
-              <Image src={scene.visualRef} alt="콘티" width={176} height={99} priority unoptimized className="pdf-shot-frame w-44 aspect-video object-contain bg-white rounded-lg border border-neutral-700" />
+              <Image src={scene.visualRef} alt="콘티" width={176} height={99} priority unoptimized className="pdf-shot-frame w-36 aspect-video object-contain bg-white rounded-lg border border-neutral-700" />
             ) : (
-              <div className="pdf-shot-frame w-44 aspect-video bg-neutral-800 rounded-lg flex items-center justify-center border border-neutral-700">
+              <div className="pdf-shot-frame w-36 aspect-video bg-neutral-800 rounded-lg flex items-center justify-center border border-neutral-700">
                  <ImageIcon className="w-5 h-5 text-neutral-600" />
               </div>
             )}
@@ -116,9 +116,9 @@ export function SortableRow({
           </td>
           <td className="px-4 py-5 font-medium">
             {scene.visualRef ? (
-              <Image src={scene.visualRef} alt="촬영 컷 이미지" width={176} height={99} priority unoptimized className="pdf-shot-frame w-44 aspect-video object-contain bg-white rounded-lg border border-neutral-700" />
+              <Image src={scene.visualRef} alt="촬영 컷 이미지" width={176} height={99} priority unoptimized className="pdf-shot-frame w-36 aspect-video object-contain bg-white rounded-lg border border-neutral-700" />
             ) : (
-              <div className="pdf-shot-frame w-44 aspect-video bg-neutral-800 rounded-lg flex items-center justify-center border border-neutral-700">
+              <div className="pdf-shot-frame w-36 aspect-video bg-neutral-800 rounded-lg flex items-center justify-center border border-neutral-700">
                  <ImageIcon className="w-5 h-5 text-neutral-600" />
               </div>
             )}
@@ -139,9 +139,9 @@ export function SortableRow({
           </td>
           <td className="px-4 py-5 font-medium">
             {scene.visualRef ? (
-              <Image src={scene.visualRef} alt={musicReferenceAlt} width={176} height={99} priority unoptimized className="pdf-shot-frame w-44 aspect-video object-contain bg-white rounded-lg border border-neutral-700" />
+              <Image src={scene.visualRef} alt={musicReferenceAlt} width={176} height={99} priority unoptimized className="pdf-shot-frame w-36 aspect-video object-contain bg-white rounded-lg border border-neutral-700" />
             ) : (
-              <div className="pdf-shot-frame w-44 aspect-video bg-neutral-800 rounded-lg flex items-center justify-center border border-neutral-700">
+              <div className="pdf-shot-frame w-36 aspect-video bg-neutral-800 rounded-lg flex items-center justify-center border border-neutral-700">
                  <ImageIcon className="w-5 h-5 text-neutral-600" />
               </div>
             )}
@@ -163,9 +163,9 @@ export function SortableRow({
           </td>
           <td className="px-4 py-5 font-medium">
             {scene.visualRef ? (
-              <Image src={scene.visualRef} alt="콘티" width={176} height={99} priority unoptimized className="pdf-shot-frame w-44 aspect-video object-contain bg-white rounded-lg border border-neutral-700" />
+              <Image src={scene.visualRef} alt="콘티" width={176} height={99} priority unoptimized className="pdf-shot-frame w-36 aspect-video object-contain bg-white rounded-lg border border-neutral-700" />
             ) : (
-              <div className="pdf-shot-frame w-44 aspect-video bg-neutral-800 rounded-lg flex items-center justify-center border border-neutral-700">
+              <div className="pdf-shot-frame w-36 aspect-video bg-neutral-800 rounded-lg flex items-center justify-center border border-neutral-700">
                  <ImageIcon className="w-5 h-5 text-neutral-600" />
               </div>
             )}

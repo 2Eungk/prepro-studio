@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import type { ProductionLocation, TemplateType } from '@/types/schedule';
 import { Search } from 'lucide-react';
 
@@ -92,6 +93,8 @@ export default function ScheduleControlsPanel({
   onResetFilters,
   onUndoOptimization,
 }: ScheduleControlsPanelProps) {
+  const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(isScheduleFiltered);
+
   return (
     <>
       <div className="rounded-3xl border border-neutral-900 bg-neutral-950/70 p-5">
@@ -119,88 +122,104 @@ export default function ScheduleControlsPanel({
       </div>
 
       <div className="rounded-2xl border border-neutral-900 bg-black/35 p-3" data-html2canvas-ignore="true">
-        <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-          <div className="flex min-w-0 flex-1 flex-col gap-3 md:flex-row">
-            <div className="relative min-w-0 flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-600" />
-              <input
-                value={scheduleSearch}
-                onChange={(e) => onChangeSearch(e.target.value)}
-                placeholder={searchPlaceholder}
-                className="h-11 w-full rounded-xl border border-neutral-800 bg-black pl-10 pr-4 text-sm font-bold text-neutral-200 outline-none transition-colors placeholder:text-neutral-700 focus:border-indigo-500"
-              />
-            </div>
-            <select
-              value={locationFilter}
-              onChange={(e) => onChangeLocationFilter(e.target.value)}
-              className="h-11 rounded-xl border border-neutral-800 bg-black px-4 text-sm font-bold text-neutral-300 outline-none transition-colors focus:border-indigo-500"
-            >
-              <option value="all">모든 장소</option>
-              {locations.map((item) => (
-                <option key={item.id} value={item.id}>{item.name}</option>
-              ))}
-            </select>
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="relative min-w-0 flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-600" />
+            <input
+              value={scheduleSearch}
+              onChange={(e) => onChangeSearch(e.target.value)}
+              placeholder={searchPlaceholder}
+              className="h-11 w-full rounded-xl border border-neutral-800 bg-black pl-10 pr-4 text-sm font-bold text-neutral-200 outline-none transition-colors placeholder:text-neutral-700 focus:border-indigo-500"
+            />
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {statusOptions.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => onChangeStatusFilter(item.id)}
-                className={`h-11 rounded-xl border px-4 text-xs font-black transition-all ${
-                  scheduleStatusFilter === item.id
-                    ? 'border-indigo-400 bg-indigo-600 text-white'
-                    : 'border-neutral-800 bg-neutral-900 text-neutral-500 hover:border-neutral-700 hover:text-neutral-300'
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-neutral-600">
+            <span>
+              {isScheduleFiltered ? `${filteredSceneCount}/${activeDaySceneCount}개 ${itemPluralLabel} 표시 중` : `Day ${activeDayIndex + 1} 전체 ${activeDaySceneCount}개 ${itemPluralLabel}`}
+            </span>
             {isScheduleFiltered && (
               <button
                 type="button"
                 onClick={onResetFilters}
-                className="h-11 rounded-xl border border-neutral-800 px-4 text-xs font-black text-neutral-500 transition-colors hover:border-neutral-700 hover:text-neutral-300"
+                className="rounded-lg border border-neutral-800 px-3 py-2 text-xs font-black text-neutral-500 transition-colors hover:border-neutral-700 hover:text-neutral-300"
               >
-                초기화
+                필터 초기화
               </button>
             )}
           </div>
         </div>
-        <div className="mt-3 text-xs font-bold text-neutral-600">
-          {isScheduleFiltered ? `${filteredSceneCount}/${activeDaySceneCount}개 ${itemPluralLabel} 표시 중` : `Day ${activeDayIndex + 1} 전체 ${activeDaySceneCount}개 ${itemPluralLabel} 표시 중`}
-        </div>
-        <div className="mt-3 border-t border-neutral-900 pt-3">
-          <div className="mb-2 flex items-center justify-between gap-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-600">제작 점검</p>
-            <p className="text-[10px] font-bold text-neutral-700">클릭하면 해당 항목만 필터링됩니다</p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {issueOptions.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => onChangeIssueFilter(item.id)}
-                className={`inline-flex h-10 items-center gap-2 rounded-xl border px-3 text-xs font-black transition-all ${
-                  scheduleIssueFilter === item.id
-                    ? 'border-amber-400/60 bg-amber-500/10 text-amber-200'
-                    : item.count > 0 && item.id !== 'all'
-                      ? 'border-neutral-800 bg-neutral-900 text-neutral-300 hover:border-amber-500/40 hover:text-amber-200'
-                      : 'border-neutral-900 bg-black text-neutral-600 hover:border-neutral-800 hover:text-neutral-400'
-                }`}
+
+        <details
+          className="group mt-3 rounded-2xl border border-neutral-900 bg-neutral-950/50"
+          open={isAdvancedFiltersOpen || isScheduleFiltered}
+          onToggle={(event) => setIsAdvancedFiltersOpen(event.currentTarget.open)}
+        >
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-xs font-black text-neutral-300 [&::-webkit-details-marker]:hidden">
+            <span>고급 필터 · 제작 점검</span>
+            <span className="text-[10px] text-neutral-600 group-open:hidden">펼치기</span>
+            <span className="hidden text-[10px] text-neutral-600 group-open:inline">접기</span>
+          </summary>
+          <div className="space-y-3 border-t border-neutral-900 p-3">
+            <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+              <select
+                value={locationFilter}
+                onChange={(e) => onChangeLocationFilter(e.target.value)}
+                className="h-11 rounded-xl border border-neutral-800 bg-black px-4 text-sm font-bold text-neutral-300 outline-none transition-colors focus:border-indigo-500"
               >
-                <span>{item.label}</span>
-                <span className={`rounded-full px-2 py-0.5 text-[10px] ${
-                  item.count > 0 && item.id !== 'all'
-                    ? 'bg-amber-500/15 text-amber-200'
-                    : 'bg-neutral-800 text-neutral-500'
-                }`}>
-                  {item.count}
-                </span>
-              </button>
-            ))}
+                <option value="all">모든 장소</option>
+                {locations.map((item) => (
+                  <option key={item.id} value={item.id}>{item.name}</option>
+                ))}
+              </select>
+              <div className="flex flex-wrap items-center gap-2">
+                {statusOptions.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => onChangeStatusFilter(item.id)}
+                    className={`h-10 rounded-xl border px-4 text-xs font-black transition-all ${
+                      scheduleStatusFilter === item.id
+                        ? 'border-indigo-400 bg-indigo-600 text-white'
+                        : 'border-neutral-800 bg-neutral-900 text-neutral-500 hover:border-neutral-700 hover:text-neutral-300'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="border-t border-neutral-900 pt-3">
+              <div className="mb-2 flex items-center justify-between gap-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-600">제작 점검</p>
+                <p className="text-[10px] font-bold text-neutral-700">누락 항목을 눌러 해당 컷만 보기</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {issueOptions.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => onChangeIssueFilter(item.id)}
+                    className={`inline-flex h-10 items-center gap-2 rounded-xl border px-3 text-xs font-black transition-all ${
+                      scheduleIssueFilter === item.id
+                        ? 'border-amber-400/60 bg-amber-500/10 text-amber-200'
+                        : item.count > 0 && item.id !== 'all'
+                          ? 'border-neutral-800 bg-neutral-900 text-neutral-300 hover:border-amber-500/40 hover:text-amber-200'
+                          : 'border-neutral-900 bg-black text-neutral-600 hover:border-neutral-800 hover:text-neutral-400'
+                    }`}
+                  >
+                    <span>{item.label}</span>
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] ${
+                      item.count > 0 && item.id !== 'all'
+                        ? 'bg-amber-500/15 text-amber-200'
+                        : 'bg-neutral-800 text-neutral-500'
+                    }`}>
+                      {item.count}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
+        </details>
       </div>
 
       {optimizationSummary && (
