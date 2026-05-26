@@ -3802,7 +3802,12 @@ export default function Home() {
                   <p className="mt-3 max-w-2xl text-sm font-bold leading-relaxed text-neutral-500 md:text-base">
                     장소, 인원, 예산, 리포트는 첫 {copy.item}이 생긴 뒤 자연스럽게 따라오게 숨겨뒀습니다. 먼저 어떤 방식으로 시작할지만 선택하세요.
                   </p>
-                  <div className="mt-6 grid gap-3 md:grid-cols-3">
+                  <div className="mt-6 grid gap-3 md:grid-cols-4">
+                    <button type="button" onClick={openScriptAnalyzer} className="rounded-2xl border border-teal-300/35 bg-teal-300/10 p-5 text-left transition-all hover:bg-teal-300/15">
+                      <Brain className="h-5 w-5 text-teal-200" />
+                      <div className="mt-4 text-lg font-black text-white">{template === 'event' ? '식순 정리' : template === 'ad' ? '광고 분석' : template === 'musicvideo' ? 'MV 콘티' : template === 'dance' ? '타임코드 콘티' : '시나리오 분석'}</div>
+                      <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">{workspaceLanguage.gettingStarted.analyzer}</p>
+                    </button>
                     <button type="button" onClick={openNewSceneForm} className="rounded-2xl border border-teal-300/35 bg-teal-300/10 p-5 text-left transition-all hover:bg-teal-300/15">
                       <Plus className="h-5 w-5 text-teal-200" />
                       <div className="mt-4 text-lg font-black text-white">직접 추가</div>

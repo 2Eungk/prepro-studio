@@ -69,6 +69,14 @@ const checks = [
       && page.indexOf('resetScheduleFilters();', page.indexOf('const handleGoSchedule = () => {')) > page.indexOf('const handleGoSchedule = () => {')
       && page.indexOf('resetScheduleFilters();', page.indexOf('const handleGoSchedule = () => {')) < page.indexOf("setActiveTab('schedule');", page.indexOf('const handleGoSchedule = () => {')),
   },
+  {
+    name: 'first-run schedule guide exposes analyzer import shortcut',
+    ok: page.includes('showEmptyScheduleGuide')
+      && page.includes('openScriptAnalyzer')
+      && page.includes("workspaceLanguage.gettingStarted.analyzer")
+      && page.indexOf('openScriptAnalyzer', page.indexOf('showEmptyScheduleGuide')) > page.indexOf('showEmptyScheduleGuide')
+      && page.indexOf('openScriptAnalyzer', page.indexOf('showEmptyScheduleGuide')) < page.indexOf("handleLoadSampleData(false)", page.indexOf('showEmptyScheduleGuide')),
+  },
 ];
 
 const failed = checks.filter((check) => !check.ok);
