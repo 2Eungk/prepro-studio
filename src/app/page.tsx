@@ -3814,12 +3814,15 @@ export default function Home() {
                     장소, 인원, 예산, 리포트는 첫 {copy.item}이 생긴 뒤 자연스럽게 따라오게 숨겨뒀습니다. 먼저 어떤 방식으로 시작할지만 선택하세요.
                   </p>
                   <div className="mt-6 grid gap-3 md:grid-cols-4">
-                    <button type="button" onClick={openScriptAnalyzer} className="rounded-2xl border border-teal-300/35 bg-teal-300/10 p-5 text-left transition-all hover:bg-teal-300/15">
-                      <Brain className="h-5 w-5 text-teal-200" />
+                    <button type="button" onClick={openScriptAnalyzer} data-first-action="recommended-analyzer" className="rounded-2xl border border-teal-300/35 bg-teal-300/10 p-5 text-left transition-all hover:bg-teal-300/15">
+                      <div className="flex items-start justify-between gap-3">
+                        <Brain className="h-5 w-5 text-teal-200" />
+                        <span className="rounded-full border border-teal-300/30 bg-teal-300/10 px-2 py-1 text-[9px] font-black text-teal-100">추천 빠른 시작</span>
+                      </div>
                       <div className="mt-4 text-lg font-black text-white">{template === 'event' ? '식순 정리' : template === 'ad' ? '광고 분석' : template === 'musicvideo' ? 'MV 콘티' : template === 'dance' ? '타임코드 콘티' : '시나리오 분석'}</div>
                       <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">{workspaceLanguage.gettingStarted.analyzer}</p>
                     </button>
-                    <button type="button" onClick={openNewSceneForm} className="rounded-2xl border border-teal-300/35 bg-teal-300/10 p-5 text-left transition-all hover:bg-teal-300/15">
+                    <button type="button" onClick={openNewSceneForm} data-first-action="manual-entry" className="rounded-2xl border border-teal-300/35 bg-teal-300/10 p-5 text-left transition-all hover:bg-teal-300/15">
                       <Plus className="h-5 w-5 text-teal-200" />
                       <div className="mt-4 text-lg font-black text-white">직접 추가</div>
                       <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">장소와 내용을 적어서 첫 {copy.item}을 만듭니다.</p>

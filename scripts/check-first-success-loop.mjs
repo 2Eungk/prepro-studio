@@ -21,6 +21,12 @@ const quickActionHandler = quickActionHandlerStart >= 0 && quickActionHandlerEnd
   ? page.slice(quickActionHandlerStart, quickActionHandlerEnd)
   : '';
 
+const emptyScheduleGuideStart = page.indexOf("{activeTab === 'schedule' && showEmptyScheduleGuide");
+const emptyScheduleGuideEnd = page.indexOf("{activeTab === 'schedule' && !showEmptyScheduleGuide", emptyScheduleGuideStart);
+const emptyScheduleGuide = emptyScheduleGuideStart >= 0 && emptyScheduleGuideEnd > emptyScheduleGuideStart
+  ? page.slice(emptyScheduleGuideStart, emptyScheduleGuideEnd)
+  : '';
+
 const checks = [
   {
     name: 'post-first-scene schedule primary action advances to storyboard',
@@ -60,6 +66,13 @@ const checks = [
     ok: sceneLocationField.includes('autoFocus')
       && sceneLocationField.includes('scene-location-first-success-hint')
       && sceneLocationField.includes('첫 장면은 장소와 내용만 넣으면 바로 추가할 수 있어요.'),
+  },
+  {
+    name: 'empty schedule guide marks the analyzer as the recommended fastest start',
+    ok: emptyScheduleGuide.includes('추천 빠른 시작')
+      && emptyScheduleGuide.includes('data-first-action="recommended-analyzer"')
+      && emptyScheduleGuide.indexOf('추천 빠른 시작') < emptyScheduleGuide.indexOf('직접 추가')
+      && emptyScheduleGuide.indexOf('data-first-action="recommended-analyzer"') < emptyScheduleGuide.indexOf('data-first-action="manual-entry"'),
   },
 ];
 
