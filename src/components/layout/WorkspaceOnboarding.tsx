@@ -168,7 +168,7 @@ export function FirstRunPanel({
               첫 시작 설정
             </div>
             <h2 id="first-run-title" className="mt-3 text-2xl font-black leading-tight text-white">
-              뭐 만들 건지 고르면 바로 데려다줄게요
+              {workspaceLanguage.firstRunTitle}
             </h2>
             <p className="mt-2 max-w-2xl text-sm font-bold leading-relaxed text-neutral-500">
               {workspaceLanguage.firstRunDetail} 선택이 끝나면 필요한 화면이 열리고, 첫 {addItemLabel}이 생기면 이 안내는 사라집니다.

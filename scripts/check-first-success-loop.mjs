@@ -6,6 +6,7 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const read = (path) => readFileSync(join(root, path), 'utf8');
 
 const page = read('src/app/page.tsx');
+const workspaceOnboarding = read('src/components/layout/WorkspaceOnboarding.tsx');
 
 const scheduleActionsStart = page.indexOf(": activeTab === 'schedule'");
 const scheduleActionsEnd = page.indexOf(": activeTab === 'cueSheet'", scheduleActionsStart);
@@ -45,6 +46,13 @@ const checks = [
       && page.includes("case 'storyboard-apply-featured':")
       && page.includes('applyStoryboardToSceneForm(featuredStoryboards[0], true)')
       && page.indexOf("id: 'storyboard-apply-featured'") < page.indexOf("id: 'storyboard-gallery'"),
+  },
+  {
+    name: 'first-run landing uses template-specific promise headline',
+    ok: workspaceOnboarding.includes('{workspaceLanguage.firstRunTitle}')
+      && !workspaceOnboarding.includes('뭐 만들 건지 고르면 바로 데려다줄게요')
+      && page.includes('firstRunTitle:')
+      && page.includes('workspaceLanguage={workspaceLanguage}'),
   },
 ];
 
