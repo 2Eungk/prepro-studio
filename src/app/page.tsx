@@ -2276,6 +2276,7 @@ export default function Home() {
 
   const handleEnableReportMode = () => {
     setIsReportMode(true);
+    resetScheduleFilters();
     setActiveTab('schedule');
     requestAnimationFrame(() => {
       document.getElementById('schedule-report-checkpoint')?.scrollIntoView({ behavior: 'smooth', block: 'start' });

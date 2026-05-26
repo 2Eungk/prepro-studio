@@ -54,6 +54,13 @@ const checks = [
       && page.includes('onEnableReportMode={handleEnableReportMode}')
       && scheduleControls.includes('schedule-report-checkpoint'),
   },
+  {
+    name: 'report mode entry clears stale schedule filters',
+    ok: page.includes('const handleEnableReportMode = () => {')
+      && page.includes('resetScheduleFilters();')
+      && page.indexOf('resetScheduleFilters();') > page.indexOf('const handleEnableReportMode = () => {')
+      && page.indexOf('resetScheduleFilters();') < page.indexOf("setActiveTab('schedule')"),
+  },
 ];
 
 const failed = checks.filter((check) => !check.ok);
