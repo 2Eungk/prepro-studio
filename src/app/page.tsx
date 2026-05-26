@@ -3536,6 +3536,7 @@ export default function Home() {
       case 'schedule':
       case 'sceneBreakdown':
       case 'metadata':
+        resetScheduleFilters();
         setActiveTab('schedule');
         if (scenes.length === 0) openNewSceneForm();
         break;
@@ -3569,6 +3570,7 @@ export default function Home() {
         }
         break;
       case 'duration':
+        resetScheduleFilters();
         setActiveTab('schedule');
         if (timelineStats.totalMinutes === 0) openBreakModal();
         break;

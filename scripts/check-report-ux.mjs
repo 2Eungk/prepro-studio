@@ -77,6 +77,14 @@ const checks = [
       && page.indexOf('openScriptAnalyzer', page.indexOf('showEmptyScheduleGuide')) > page.indexOf('showEmptyScheduleGuide')
       && page.indexOf('openScriptAnalyzer', page.indexOf('showEmptyScheduleGuide')) < page.indexOf("handleLoadSampleData(false)", page.indexOf('showEmptyScheduleGuide')),
   },
+  {
+    name: 'readiness schedule actions clear stale filters before opening schedule',
+    ok: page.includes('const handleReadinessAction = (checkId: string) => {')
+      && page.indexOf('resetScheduleFilters();', page.indexOf("case 'schedule':")) > page.indexOf("case 'metadata':")
+      && page.indexOf('resetScheduleFilters();', page.indexOf("case 'schedule':")) < page.indexOf("setActiveTab('schedule');", page.indexOf("case 'schedule':"))
+      && page.indexOf('resetScheduleFilters();', page.indexOf("case 'duration':")) > page.indexOf("case 'duration':")
+      && page.indexOf('resetScheduleFilters();', page.indexOf("case 'duration':")) < page.indexOf("setActiveTab('schedule');", page.indexOf("case 'duration':")),
+  },
 ];
 
 const failed = checks.filter((check) => !check.ok);
