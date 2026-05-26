@@ -35,7 +35,7 @@ export default function SceneFormHeader({
           </span>
         </h3>
         <p className="text-xs font-bold text-neutral-600">
-          {canSave ? '선택한 샷과 기본 제작값이 채워졌습니다.' : '장소와 진행 내용만 채우면 바로 일정에 넣을 수 있습니다.'}
+          {canSave ? '필수 입력이 채워졌습니다. 바로 일정에 추가할 수 있습니다.' : '장소와 진행 내용만 채우면 바로 일정에 넣을 수 있습니다.'}
         </p>
       </div>
       <button
