@@ -61,6 +61,14 @@ const checks = [
       && page.indexOf('resetScheduleFilters();') > page.indexOf('const handleEnableReportMode = () => {')
       && page.indexOf('resetScheduleFilters();') < page.indexOf("setActiveTab('schedule')"),
   },
+  {
+    name: 'schedule shortcuts clear stale filters before entering the timeline',
+    ok: page.includes('const handleGoSchedule = () => {')
+      && page.includes('onGoSchedule={handleGoSchedule}')
+      && page.includes("case 'go-schedule':")
+      && page.indexOf('resetScheduleFilters();', page.indexOf('const handleGoSchedule = () => {')) > page.indexOf('const handleGoSchedule = () => {')
+      && page.indexOf('resetScheduleFilters();', page.indexOf('const handleGoSchedule = () => {')) < page.indexOf("setActiveTab('schedule');", page.indexOf('const handleGoSchedule = () => {')),
+  },
 ];
 
 const failed = checks.filter((check) => !check.ok);

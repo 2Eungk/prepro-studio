@@ -2283,6 +2283,11 @@ export default function Home() {
     });
   };
 
+  const handleGoSchedule = () => {
+    resetScheduleFilters();
+    setActiveTab('schedule');
+  };
+
   const handleOptimizeSchedule = () => {
     const beforeState = useScheduleStore.getState();
     const previousOrder = [...beforeState.timelineOrder];
@@ -3501,7 +3506,7 @@ export default function Home() {
         setShowProjectSetup(true);
         break;
       case 'go-schedule':
-        setActiveTab('schedule');
+        handleGoSchedule();
         break;
       case 'person-add':
         openPersonModal();
@@ -4084,7 +4089,7 @@ export default function Home() {
               onAddLocation={() => openLocationModal()}
               onDeleteLocation={handleDeleteLocation}
               onEditLocation={openLocationModal}
-              onGoSchedule={() => setActiveTab('schedule')}
+              onGoSchedule={handleGoSchedule}
               onLoadSampleData={handleLoadSampleData}
             />
           )}
@@ -4109,7 +4114,7 @@ export default function Home() {
               onDeletePerson={handleDeletePerson}
               onEditPerson={openPersonModal}
               onExportPDF={handleExportPDF}
-              onGoSchedule={() => setActiveTab('schedule')}
+              onGoSchedule={handleGoSchedule}
               onLoadSampleData={handleLoadSampleData}
               onNewPerson={() => openPersonModal()}
               onToggleIssueFilter={() => setPeopleIssueFilter((value) => !value)}
@@ -4160,7 +4165,7 @@ export default function Home() {
               templateLabel={templateLabel}
               onEnableReportMode={handleEnableReportMode}
               onExportPDF={handleExportPDF}
-              onGoSchedule={() => setActiveTab('schedule')}
+              onGoSchedule={handleGoSchedule}
               onLoadSampleData={handleLoadSampleData}
               onNewScene={openNewSceneForm}
               pdfButtonText={pdfButtonText}
