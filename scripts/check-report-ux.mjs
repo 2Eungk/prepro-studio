@@ -8,6 +8,8 @@ const read = (path) => readFileSync(join(root, path), 'utf8');
 const desktopTimeline = read('src/components/sections/schedule/DesktopTimelineRows.tsx');
 const mobileTimeline = read('src/components/sections/schedule/MobileTimelineCards.tsx');
 const mobileScheduleList = read('src/components/sections/schedule/MobileScheduleList.tsx');
+const page = read('src/app/page.tsx');
+const scheduleControls = read('src/components/sections/schedule/ScheduleControlsPanel.tsx');
 const reportPanel = read('src/components/sections/ReportPanel.tsx');
 
 const checks = [
@@ -37,6 +39,14 @@ const checks = [
       && mobileTimeline.includes('scrollIntoView')
       && mobileScheduleList.includes('data-mobile-scene-card')
       && mobileScheduleList.includes('mobile-scene-'),
+  },
+  {
+    name: 'report mode entry returns operators to the schedule checkpoint',
+    ok: page.includes('handleEnableReportMode')
+      && page.includes("setActiveTab('schedule')")
+      && page.includes('schedule-report-checkpoint')
+      && page.includes('onEnableReportMode={handleEnableReportMode}')
+      && scheduleControls.includes('schedule-report-checkpoint'),
   },
 ];
 

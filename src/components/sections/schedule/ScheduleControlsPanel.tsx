@@ -97,7 +97,7 @@ export default function ScheduleControlsPanel({
 
   return (
     <>
-      <div className="rounded-3xl border border-neutral-900 bg-neutral-950/70 p-5">
+      <div id="schedule-report-checkpoint" className="rounded-3xl border border-neutral-900 bg-neutral-950/70 p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <div className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-600">Timeline</div>

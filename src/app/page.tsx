@@ -2274,6 +2274,14 @@ export default function Home() {
     setScheduleLocationFilter('all');
   };
 
+  const handleEnableReportMode = () => {
+    setIsReportMode(true);
+    setActiveTab('schedule');
+    requestAnimationFrame(() => {
+      document.getElementById('schedule-report-checkpoint')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+
   const handleOptimizeSchedule = () => {
     const beforeState = useScheduleStore.getState();
     const previousOrder = [...beforeState.timelineOrder];
@@ -3509,7 +3517,7 @@ export default function Home() {
         setSbSearch('');
         break;
       case 'report-mode':
-        setIsReportMode(true);
+        handleEnableReportMode();
         break;
       case 'export-pdf':
         void handleExportPDF();
@@ -4149,7 +4157,7 @@ export default function Home() {
               shootingDate={shootingDate}
               template={template}
               templateLabel={templateLabel}
-              onEnableReportMode={() => setIsReportMode(true)}
+              onEnableReportMode={handleEnableReportMode}
               onExportPDF={handleExportPDF}
               onGoSchedule={() => setActiveTab('schedule')}
               onLoadSampleData={handleLoadSampleData}
