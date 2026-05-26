@@ -249,9 +249,21 @@ export default function ReportPanel({
               <h3 className="text-sm font-black text-neutral-100">후속조치</h3>
               <p className="mt-1 text-xs text-neutral-500">NG와 대기 항목만 모아봅니다.</p>
             </div>
-            <span className={`rounded-full px-3 py-1 text-[10px] font-black ${reportActionItems.length ? 'bg-red-500/10 text-red-300' : 'bg-green-500/10 text-green-300'}`}>
-              {reportActionItems.length ? `${reportActionItems.length}건` : '완료'}
-            </span>
+            <div className="flex shrink-0 items-center gap-2">
+              <span className={`rounded-full px-3 py-1 text-[10px] font-black ${reportActionItems.length ? 'bg-red-500/10 text-red-300' : 'bg-green-500/10 text-green-300'}`}>
+                {reportActionItems.length ? `${reportActionItems.length}건` : '완료'}
+              </span>
+              {reportActionItems.length > 0 && (
+                <button
+                  type="button"
+                  onClick={onEnableReportMode}
+                  data-html2canvas-ignore="true"
+                  className="rounded-full border border-teal-400/25 bg-teal-400/10 px-3 py-1 text-[10px] font-black text-teal-100 transition-colors hover:border-teal-300/45 hover:bg-teal-400/15"
+                >
+                  남은 항목 체크
+                </button>
+              )}
+            </div>
           </div>
           <div className="space-y-2">
             {reportActionItems.length === 0 ? (

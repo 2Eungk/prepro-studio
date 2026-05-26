@@ -34,6 +34,12 @@ const checks = [
     ok: reportPanel.includes('현장 체크 요약') && reportPanel.includes('남은 확인') && reportPanel.includes('재확인'),
   },
   {
+    name: 'report follow-up section can return directly to field check mode',
+    ok: reportPanel.includes('남은 항목 체크')
+      && reportPanel.includes('reportActionItems.length > 0')
+      && reportPanel.includes('onClick={onEnableReportMode}'),
+  },
+  {
     name: 'mobile field bar can jump to the next unchecked scene',
     ok: mobileTimeline.includes('다음 확인으로 이동')
       && mobileTimeline.includes('scrollIntoView')
