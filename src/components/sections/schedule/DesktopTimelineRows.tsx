@@ -41,6 +41,16 @@ export function SortableRow({
   const isMusicTimelineRow = template === 'dance' || template === 'musicvideo';
   const musicSubjectLabel = template === 'musicvideo' ? '아티스트' : '포커스';
   const musicReferenceAlt = template === 'musicvideo' ? 'MV 레퍼런스' : '댄스 레퍼런스';
+  const statusMeta = scene.status === 'done'
+    ? { label: '완료', short: '완료', className: 'border-green-400/45 bg-green-500/15 text-green-200 shadow-green-500/10' }
+    : scene.status === 'ng'
+      ? { label: 'NG', short: 'NG', className: 'border-red-400/45 bg-red-500/15 text-red-200 shadow-red-500/10' }
+      : { label: '대기', short: '대기', className: 'border-neutral-600 bg-neutral-900 text-neutral-200 shadow-black/20' };
+  const statusButtons = [
+    { label: '완료', value: 'done' as const, Icon: CheckCircle2, className: scene.status === 'done' ? 'border-green-400/60 bg-green-500/15 text-green-100 ring-2 ring-green-400/20' : 'border-neutral-800 bg-black text-neutral-500 hover:border-green-400/30 hover:text-green-200' },
+    { label: 'NG', value: 'ng' as const, Icon: XCircle, className: scene.status === 'ng' ? 'border-red-400/60 bg-red-500/15 text-red-100 ring-2 ring-red-400/20' : 'border-neutral-800 bg-black text-neutral-500 hover:border-red-400/30 hover:text-red-200' },
+    { label: '대기', value: 'pending' as const, Icon: Circle, className: !scene.status || scene.status === 'pending' ? 'border-neutral-500 bg-neutral-900 text-neutral-100 ring-2 ring-neutral-500/15' : 'border-neutral-800 bg-black text-neutral-500 hover:border-neutral-600 hover:text-neutral-200' },
+  ];
 
   return (
     <tr
@@ -55,16 +65,24 @@ export function SortableRow({
       <td className="px-4 py-3 text-center">
         <span className="pdf-order-index inline-flex h-5 min-w-5 items-center justify-center rounded-full border border-neutral-700 bg-neutral-900 px-1 text-[10px] font-black text-neutral-400">{rowNumber}</span>
         {isReportMode ? (
-          <div className="flex flex-col gap-1 items-center" data-pdf-ignore="true" data-html2canvas-ignore="true">
-            <button onClick={() => setStatus('done')} className={`p-1 rounded ${scene.status === 'done' ? 'text-green-500 bg-green-500/10' : 'text-neutral-600 hover:text-neutral-400'}`} title="완료">
-              <CheckCircle2 className="w-4 h-4" />
-            </button>
-            <button onClick={() => setStatus('ng')} className={`p-1 rounded ${scene.status === 'ng' ? 'text-red-500 bg-red-500/10' : 'text-neutral-600 hover:text-neutral-400'}`} title="NG">
-              <XCircle className="w-4 h-4" />
-            </button>
-            <button onClick={() => setStatus('pending')} className={`p-1 rounded ${!scene.status || scene.status === 'pending' ? 'text-neutral-300 bg-neutral-700/60' : 'text-neutral-600 hover:text-neutral-400'}`} title="대기">
-              <Circle className="w-4 h-4" />
-            </button>
+          <div className="mt-2 flex min-w-20 flex-col items-stretch gap-1.5" data-pdf-ignore="true" data-html2canvas-ignore="true">
+            <div className={`rounded-lg border px-2 py-1 text-center text-[9px] font-black shadow-lg ${statusMeta.className}`} title="현재 상태">
+              <span className="block text-[8px] uppercase tracking-widest opacity-60">현재 상태</span>
+              <span>{statusMeta.short}</span>
+            </div>
+            {statusButtons.map(({ label, value, Icon, className }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setStatus(value)}
+                className={`flex h-9 items-center justify-center gap-1 rounded-lg border px-2 text-[10px] font-black transition ${className}`}
+                title={label}
+                aria-pressed={(scene.status || 'pending') === value}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                <span>{label}</span>
+              </button>
+            ))}
           </div>
         ) : (
           <div {...attributes} {...listeners} data-pdf-ignore="true" data-html2canvas-ignore="true" className="cursor-grab active:cursor-grabbing p-1 hover:bg-neutral-700 rounded transition-colors inline-block">

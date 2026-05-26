@@ -49,6 +49,12 @@ export function MobileTimelineSceneCard({
   const setStatus = (status: 'done' | 'ng' | 'pending') => {
     updateScene(scene.id, { status });
   };
+  const statusLabel = scene.status === 'done' ? '완료' : scene.status === 'ng' ? 'NG' : '대기';
+  const statusButtons = [
+    { label: '완료', value: 'done' as const, helper: 'OK 컷', className: scene.status === 'done' ? 'border-green-400/60 bg-green-500/15 text-green-100 ring-2 ring-green-400/20' : 'border-neutral-800 bg-black text-neutral-500' },
+    { label: 'NG', value: 'ng' as const, helper: '재확인', className: scene.status === 'ng' ? 'border-red-400/60 bg-red-500/15 text-red-100 ring-2 ring-red-400/20' : 'border-neutral-800 bg-black text-neutral-500' },
+    { label: '대기', value: 'pending' as const, helper: '남김', className: !scene.status || scene.status === 'pending' ? 'border-neutral-500 bg-neutral-900 text-neutral-100 ring-2 ring-neutral-500/15' : 'border-neutral-800 bg-black text-neutral-500' },
+  ];
 
   return (
     <article className={`rounded-xl border p-4 ${
@@ -123,10 +129,26 @@ export function MobileTimelineSceneCard({
 
       {isReportMode ? (
         <div className="mt-4 space-y-2" data-pdf-ignore="true" data-html2canvas-ignore="true">
+          <div className="rounded-xl border border-neutral-900 bg-black/45 px-3 py-2">
+            <div className="text-[9px] font-black uppercase tracking-widest text-neutral-600">현재 상태</div>
+            <div className="mt-1 text-sm font-black text-neutral-100">{statusLabel}</div>
+          </div>
           <div className="grid grid-cols-3 gap-2">
-            <button onClick={() => setStatus('done')} className={`h-10 rounded-lg border text-[11px] font-black ${scene.status === 'done' ? 'border-green-400/40 bg-green-500/10 text-green-300' : 'border-neutral-800 bg-black text-neutral-500'}`}>Done</button>
-            <button onClick={() => setStatus('ng')} className={`h-10 rounded-lg border text-[11px] font-black ${scene.status === 'ng' ? 'border-red-400/40 bg-red-500/10 text-red-300' : 'border-neutral-800 bg-black text-neutral-500'}`}>NG</button>
-            <button onClick={() => setStatus('pending')} className={`h-10 rounded-lg border text-[11px] font-black ${!scene.status || scene.status === 'pending' ? 'border-neutral-600 bg-neutral-900 text-neutral-200' : 'border-neutral-800 bg-black text-neutral-500'}`}>대기</button>
+            {statusButtons.map((item) => {
+              const selected = (scene.status || 'pending') === item.value;
+              return (
+                <button
+                  key={item.value}
+                  type="button"
+                  onClick={() => setStatus(item.value)}
+                  className={`min-h-14 rounded-xl border px-2 text-left transition ${item.className}`}
+                  aria-pressed={selected}
+                >
+                  <span className="block text-sm font-black">{item.label}</span>
+                  <span className="mt-0.5 block text-[10px] font-bold opacity-70">{selected ? '선택됨' : item.helper}</span>
+                </button>
+              );
+            })}
           </div>
           <details className="rounded-xl border border-neutral-900 bg-black/40">
             <summary className="cursor-pointer list-none px-3 py-2 text-[11px] font-black text-neutral-400">
@@ -222,6 +244,11 @@ export function MobileFieldControlBar({
       </div>
       <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-neutral-900">
         <div className="h-full rounded-full bg-teal-300" style={{ width: `${reportStats.completionRate}%` }} />
+      </div>
+      <div className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-black">
+        <span className="rounded-full border border-green-400/20 bg-green-500/10 px-2 py-1 text-green-200">완료 {reportStats.done}</span>
+        <span className="rounded-full border border-red-400/20 bg-red-500/10 px-2 py-1 text-red-200">NG {reportStats.ng}</span>
+        <span className="rounded-full border border-neutral-700 bg-neutral-900 px-2 py-1 text-neutral-300">대기 {reportStats.pending}</span>
       </div>
       <div className="mt-3 grid grid-cols-3 gap-2">
         {([

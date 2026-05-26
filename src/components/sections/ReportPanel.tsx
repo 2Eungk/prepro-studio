@@ -162,6 +162,32 @@ export default function ReportPanel({
           </div>
         ))}
       </div>
+      <div className="mt-4 rounded-2xl border border-neutral-800 bg-black/35 p-4">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 className="text-sm font-black text-neutral-100">현장 체크 요약</h3>
+            <p className="mt-1 text-xs font-bold text-neutral-500">완료/재확인/남은 확인을 한 줄에서 바로 판단합니다.</p>
+          </div>
+          <span className="rounded-full border border-indigo-400/20 bg-indigo-500/10 px-3 py-1 text-[10px] font-black text-indigo-200">{reportStats.completionRate}% 완료</span>
+        </div>
+        <div className="grid gap-2 md:grid-cols-3">
+          <div className="rounded-xl border border-green-400/20 bg-green-500/10 px-4 py-3">
+            <div className="text-[10px] font-black uppercase tracking-widest text-green-200/70">완료</div>
+            <div className="mt-1 text-2xl font-black text-green-200">{reportStats.done}개</div>
+            <div className="mt-1 text-xs font-bold text-green-100/60">{reportStats.doneMinutes}분 확보</div>
+          </div>
+          <div className="rounded-xl border border-red-400/25 bg-red-500/10 px-4 py-3">
+            <div className="text-[10px] font-black uppercase tracking-widest text-red-200/70">재확인</div>
+            <div className="mt-1 text-2xl font-black text-red-200">{reportStats.ng}개</div>
+            <div className="mt-1 text-xs font-bold text-red-100/60">{reportStats.ngMinutes}분 리커버리 후보</div>
+          </div>
+          <div className="rounded-xl border border-neutral-700 bg-neutral-900 px-4 py-3">
+            <div className="text-[10px] font-black uppercase tracking-widest text-neutral-500">남은 확인</div>
+            <div className="mt-1 text-2xl font-black text-neutral-100">{reportStats.pending}개</div>
+            <div className="mt-1 text-xs font-bold text-neutral-500">{reportStats.pendingMinutes}분 대기</div>
+          </div>
+        </div>
+      </div>
       <div className="mt-4 rounded-xl border border-neutral-900 bg-black/40 px-4 py-2 text-right text-[10px] font-bold text-neutral-600">
         Created with PrePro Studio
       </div>
