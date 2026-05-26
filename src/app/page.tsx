@@ -3425,7 +3425,8 @@ export default function Home() {
       ]
     : activeTab === 'schedule'
       ? [
-          { id: 'schedule-add', label: copy.addItem, detail: `Day ${activeDayIndex + 1}에 추가`, Icon: Plus, tone: 'primary' },
+          ...(scenes.length > 0 ? [{ id: 'go-storyboard', label: `${copy.storyboardLabel} 연결`, detail: '첫 다음 단계', Icon: ImageIcon, tone: 'primary' as const }] : []),
+          { id: 'schedule-add', label: copy.addItem, detail: `Day ${activeDayIndex + 1}에 추가`, Icon: Plus, tone: scenes.length > 0 ? 'neutral' : 'primary' },
           { id: 'schedule-break', label: '시간 추가', detail: '식사, 이동, 리허설', Icon: Clock, tone: 'amber' },
           { id: 'schedule-optimize', label: 'AI 동선 최적화', detail: '장소와 인원 기준', Icon: Sparkles, disabled: activeDayScenes.length < 2, tone: 'neutral' },
           { id: 'export-pdf', label: 'PDF 다운로드', detail: pdfKindLabel, Icon: Download, disabled: isExportingPdf, tone: 'neutral' },
@@ -3514,6 +3515,10 @@ export default function Home() {
       case 'people-filter-call':
         setPeopleIssueFilter((value) => !value);
         setActiveTab('people');
+        break;
+      case 'go-storyboard':
+        setActiveTab('storyboard');
+        requestAnimationFrame(() => document.getElementById('storyboard-workspace-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
         break;
       case 'storyboard-gallery':
         setShowGallery(true);
@@ -4146,13 +4151,15 @@ export default function Home() {
           )}
 
           {activeTab === 'storyboard' && (
-            <StoryboardPanel
-              copy={{ storyboardLabel: copy.storyboardLabel, storyboardDescription: copy.storyboardDescription }}
-              featuredStoryboards={featuredStoryboards}
-              onApplyStoryboard={applyStoryboardToSceneForm}
-              onFallbackImage={storyboardFallback}
-              onOpenGallery={() => setShowGallery(true)}
-            />
+            <div id="storyboard-workspace-panel" className="scroll-mt-24">
+              <StoryboardPanel
+                copy={{ storyboardLabel: copy.storyboardLabel, storyboardDescription: copy.storyboardDescription }}
+                featuredStoryboards={featuredStoryboards}
+                onApplyStoryboard={applyStoryboardToSceneForm}
+                onFallbackImage={storyboardFallback}
+                onOpenGallery={() => setShowGallery(true)}
+              />
+            </div>
           )}
 
           {activeTab === 'report' && (
