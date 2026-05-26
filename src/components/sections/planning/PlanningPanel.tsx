@@ -16,6 +16,7 @@ type PlanningApiGuideItem = {
   provider: string;
   url: string;
   note: string;
+  actionLabel?: string;
 };
 
 type PlanningPanelProps = {

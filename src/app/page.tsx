@@ -1391,6 +1391,7 @@ export default function Home() {
     { provider: 'OpenAI 호환', url: 'https://platform.openai.com/api-keys', note: 'OpenAI 또는 호환 게이트웨이 키를 사용합니다.' },
     { provider: 'Gemini', url: 'https://aistudio.google.com/apikey', note: 'Google AI Studio에서 키를 발급합니다.' },
     { provider: 'Claude', url: 'https://console.anthropic.com/settings/keys', note: 'Anthropic Console에서 키를 발급합니다.' },
+    { provider: 'Public APIs', url: 'https://github.com/public-apis/public-apis', note: '날씨, 위치, 이미지, 공공데이터 등 무료/공개 API 후보를 찾는 레퍼런스 목록입니다.', actionLabel: '목록 보기' },
   ];
   const planningScheduleSource = planningScheduleSourceField[template];
   const planningScheduleLines = useMemo(() => {

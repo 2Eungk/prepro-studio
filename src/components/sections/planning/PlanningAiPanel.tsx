@@ -27,6 +27,7 @@ type PlanningApiGuideItem = {
   provider: string;
   url: string;
   note: string;
+  actionLabel?: string;
 };
 
 type PlanningAiPanelProps = {
@@ -108,7 +109,7 @@ export default function PlanningAiPanel({
               >
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-xs font-black text-neutral-100">{item.provider}</span>
-                  <span className="text-[10px] font-black text-indigo-300">등록 페이지</span>
+                  <span className="text-[10px] font-black text-indigo-300">{item.actionLabel || '등록 페이지'}</span>
                 </div>
                 <p className="mt-1 text-[11px] font-bold leading-relaxed text-neutral-600">{item.note}</p>
               </a>
