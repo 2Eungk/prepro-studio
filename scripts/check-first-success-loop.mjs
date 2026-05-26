@@ -7,6 +7,7 @@ const read = (path) => readFileSync(join(root, path), 'utf8');
 
 const page = read('src/app/page.tsx');
 const workspaceOnboarding = read('src/components/layout/WorkspaceOnboarding.tsx');
+const sceneLocationField = read('src/components/sections/schedule/SceneLocationField.tsx');
 
 const scheduleActionsStart = page.indexOf(": activeTab === 'schedule'");
 const scheduleActionsEnd = page.indexOf(": activeTab === 'cueSheet'", scheduleActionsStart);
@@ -53,6 +54,12 @@ const checks = [
       && !workspaceOnboarding.includes('뭐 만들 건지 고르면 바로 데려다줄게요')
       && page.includes('firstRunTitle:')
       && page.includes('workspaceLanguage={workspaceLanguage}'),
+  },
+  {
+    name: 'manual first scene starts focused on the first required field',
+    ok: sceneLocationField.includes('autoFocus')
+      && sceneLocationField.includes('scene-location-first-success-hint')
+      && sceneLocationField.includes('첫 장면은 장소와 내용만 넣으면 바로 추가할 수 있어요.'),
   },
 ];
 

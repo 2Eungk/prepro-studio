@@ -24,6 +24,9 @@ export default function SceneLocationField({
       <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">
         장소 <span className="text-indigo-500">*</span>
       </label>
+      <p id="scene-location-first-success-hint" className="text-xs font-bold text-neutral-600">
+        첫 장면은 장소와 내용만 넣으면 바로 추가할 수 있어요.
+      </p>
       <div className="grid grid-cols-[1fr_auto] gap-2">
         <select
           className="w-full bg-neutral-950 border border-neutral-800 rounded-2xl px-5 py-4 text-sm font-bold focus:outline-none focus:border-indigo-500 transition-all appearance-none"
@@ -51,6 +54,8 @@ export default function SceneLocationField({
       <input
         list="location-list"
         placeholder="직접 입력하면 저장 시 장소 DB에 자동 추가"
+        aria-describedby="scene-location-first-success-hint"
+        autoFocus
         className="w-full bg-neutral-950 border border-neutral-800 rounded-2xl px-6 py-4 text-sm font-bold focus:outline-none focus:border-indigo-500 transition-all"
         value={location}
         onChange={(event) => {
