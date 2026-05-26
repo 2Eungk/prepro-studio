@@ -3457,6 +3457,7 @@ export default function Home() {
               ]
             : activeTab === 'storyboard'
               ? [
+                  { id: 'storyboard-apply-featured', label: '추천 샷으로 추가', detail: `${copy.item} 폼에 연결`, Icon: Plus, disabled: featuredStoryboards.length === 0, tone: 'primary' },
                   { id: 'storyboard-gallery', label: '전체 갤러리', detail: `${storyboardDb.length}종`, Icon: ImageIcon, tone: 'primary' },
                   { id: 'schedule-add', label: copy.addItem, detail: `${copy.storyboardLabel} 연결`, Icon: Plus, tone: 'neutral' },
                   { id: 'storyboard-reset', label: '추천 검색 초기화', detail: `${filteredStoryboards.length}개 표시`, Icon: RefreshCw, disabled: sbCategory === 'ALL' && !sbSearch.trim(), tone: 'neutral' },
@@ -3515,6 +3516,9 @@ export default function Home() {
       case 'people-filter-call':
         setPeopleIssueFilter((value) => !value);
         setActiveTab('people');
+        break;
+      case 'storyboard-apply-featured':
+        if (featuredStoryboards[0]) applyStoryboardToSceneForm(featuredStoryboards[0], true);
         break;
       case 'go-storyboard':
         setActiveTab('storyboard');

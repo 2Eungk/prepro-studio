@@ -38,6 +38,14 @@ const checks = [
     ok: page.includes('id="storyboard-workspace-panel"')
       && page.indexOf('id="storyboard-workspace-panel"') < page.indexOf('<StoryboardPanel'),
   },
+  {
+    name: 'storyboard primary action applies a recommended shot into the scene form',
+    ok: page.includes("id: 'storyboard-apply-featured'")
+      && page.includes('추천 샷으로 추가')
+      && page.includes("case 'storyboard-apply-featured':")
+      && page.includes('applyStoryboardToSceneForm(featuredStoryboards[0], true)')
+      && page.indexOf("id: 'storyboard-apply-featured'") < page.indexOf("id: 'storyboard-gallery'"),
+  },
 ];
 
 const failed = checks.filter((check) => !check.ok);
