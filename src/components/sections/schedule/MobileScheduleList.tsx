@@ -146,16 +146,17 @@ export default function MobileScheduleList({
         filteredTimelineRows.map((row, index) => {
           if (row.type === 'scene') {
             return (
-              <MobileTimelineSceneCard
-                key={`mobile-${row.id}`}
-                scene={row.scene}
-                template={template}
-                isReportMode={isReportMode}
-                rowNumber={index + 1}
-                onEdit={() => onEditScene(row.scene)}
-                onDuplicate={() => onDuplicateScene(row.scene)}
-                onDelete={() => onDeleteScene(row.scene)}
-              />
+              <div key={`mobile-${row.id}`} id={`mobile-scene-${row.scene.id}`} data-mobile-scene-card>
+                <MobileTimelineSceneCard
+                  scene={row.scene}
+                  template={template}
+                  isReportMode={isReportMode}
+                  rowNumber={index + 1}
+                  onEdit={() => onEditScene(row.scene)}
+                  onDuplicate={() => onDuplicateScene(row.scene)}
+                  onDelete={() => onDeleteScene(row.scene)}
+                />
+              </div>
             );
           }
 

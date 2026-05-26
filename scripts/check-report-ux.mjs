@@ -7,6 +7,7 @@ const read = (path) => readFileSync(join(root, path), 'utf8');
 
 const desktopTimeline = read('src/components/sections/schedule/DesktopTimelineRows.tsx');
 const mobileTimeline = read('src/components/sections/schedule/MobileTimelineCards.tsx');
+const mobileScheduleList = read('src/components/sections/schedule/MobileScheduleList.tsx');
 const reportPanel = read('src/components/sections/ReportPanel.tsx');
 
 const checks = [
@@ -29,6 +30,13 @@ const checks = [
   {
     name: 'report panel has color-coded completion/ng/pending summary strip',
     ok: reportPanel.includes('현장 체크 요약') && reportPanel.includes('남은 확인') && reportPanel.includes('재확인'),
+  },
+  {
+    name: 'mobile field bar can jump to the next unchecked scene',
+    ok: mobileTimeline.includes('다음 확인으로 이동')
+      && mobileTimeline.includes('scrollIntoView')
+      && mobileScheduleList.includes('data-mobile-scene-card')
+      && mobileScheduleList.includes('mobile-scene-'),
   },
 ];
 

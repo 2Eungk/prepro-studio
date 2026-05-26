@@ -212,6 +212,10 @@ export function MobileFieldControlBar({
 }) {
   const focusStatus = focusScene?.status || 'pending';
   const statusLabel = focusStatus === 'done' ? '완료' : focusStatus === 'ng' ? 'NG' : '대기';
+  const goFocusScene = () => {
+    if (!focusScene) return;
+    document.getElementById(`mobile-scene-${focusScene.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
 
   return (
     <section className="sticky top-[4.75rem] z-20 rounded-2xl border border-teal-400/25 bg-neutral-950/95 p-3 shadow-2xl shadow-black/45 backdrop-blur lg:hidden" data-pdf-ignore="true" data-html2canvas-ignore="true">
@@ -267,11 +271,20 @@ export function MobileFieldControlBar({
           </button>
         ))}
       </div>
-      <div className="mt-3 grid grid-cols-2 gap-2">
+      <div className="mt-3 grid gap-2 sm:grid-cols-3">
         <div className="rounded-xl border border-neutral-900 bg-black/45 px-3 py-2">
           <div className="text-[9px] font-black uppercase tracking-widest text-neutral-600">상태</div>
           <div className="mt-1 text-xs font-black text-neutral-300">{statusLabel}</div>
         </div>
+        <button
+          type="button"
+          onClick={goFocusScene}
+          disabled={!focusScene}
+          className="rounded-xl border border-teal-400/25 bg-teal-400/10 px-3 py-2 text-left text-xs font-black text-teal-100 disabled:border-neutral-900 disabled:bg-black/45 disabled:text-neutral-600"
+        >
+          다음 확인으로 이동
+          <span className="mt-1 block truncate text-[10px] font-bold text-teal-100/60">{focusScene ? `#${focusRowNumber} ${statusLabel}` : '확인할 항목 없음'}</span>
+        </button>
         <button
           type="button"
           onClick={onGoReport}
