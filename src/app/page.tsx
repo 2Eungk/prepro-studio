@@ -895,22 +895,29 @@ const storyboardFallback = (name: string) =>
 
 const waitForImages = async (root: HTMLElement) => {
   const images = Array.from(root.querySelectorAll('img'));
+  const imageTimeoutMs = 2500;
 
   await Promise.all(images.map(async (image) => {
-    if (image.complete && image.naturalWidth > 0) {
-      if ('decode' in image) {
-        await image.decode().catch(() => undefined);
-      }
-      return;
-    }
+    const waitWithTimeout = () => new Promise<void>((resolve) => {
+      const timeout = window.setTimeout(() => resolve(), imageTimeoutMs);
+      const done = () => {
+        window.clearTimeout(timeout);
+        resolve();
+      };
 
-    await new Promise<void>((resolve) => {
-      image.addEventListener('load', () => resolve(), { once: true });
-      image.addEventListener('error', () => resolve(), { once: true });
+      image.addEventListener('load', done, { once: true });
+      image.addEventListener('error', done, { once: true });
     });
 
+    if (!(image.complete && image.naturalWidth > 0)) {
+      await waitWithTimeout();
+    }
+
     if ('decode' in image) {
-      await image.decode().catch(() => undefined);
+      await Promise.race([
+        image.decode().catch(() => undefined),
+        new Promise((resolve) => window.setTimeout(resolve, imageTimeoutMs)),
+      ]);
     }
   }));
 };
@@ -2563,7 +2570,7 @@ export default function Home() {
       await waitForImages(target);
 
       const canvas = await html2canvas(target, {
-        scale: 3,
+        scale: 2,
         backgroundColor: '#0a0a0a',
         useCORS: true,
         logging: false,
@@ -2671,17 +2678,8 @@ export default function Home() {
     ].join('\n');
 
     try {
-      if (navigator.share && urlText.length < 7000) {
-        await navigator.share({
-          title: shareTitle,
-          text: `${shareSummary}\n기획서, 촬영표, 콜시트, 콘티, 예산, 리포트를 한 번에 정리합니다.`,
-          url: urlText,
-        });
-        setShareStatus('공유 열림');
-      } else {
-        await navigator.clipboard.writeText(shareCopy);
-        setShareStatus(urlText.length > 7000 ? '긴 공유문구 복사됨' : '공유문구 복사됨');
-      }
+      await navigator.clipboard.writeText(shareCopy);
+      setShareStatus(urlText.length > 7000 ? '긴 공유문구 복사됨' : '공유문구 복사됨');
     } catch {
       window.prompt('공유 링크', shareCopy);
       setShareStatus('링크 생성됨');
