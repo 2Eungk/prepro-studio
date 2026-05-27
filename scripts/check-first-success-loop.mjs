@@ -229,6 +229,49 @@ const checks = [
       && readinessChecklist.indexOf("!acknowledgedCheckIdSet.has(item.id)") > readinessChecklist.indexOf('const topRiskItems = checks')
       && readinessChecklist.indexOf("!acknowledgedCheckIdSet.has(item.id)") < readinessChecklist.indexOf('.slice(0, 3)'),
   },
+  {
+    name: 'readiness exposes a prominent departure-check mode CTA near progress',
+    ok: readinessChecklist.includes('출발 전 확인 시작')
+      && readinessChecklist.includes('필드 체크 모드')
+      && readinessChecklist.includes('onStartDepartureMode')
+      && readinessChecklist.includes('min-h-14')
+      && readinessChecklist.includes('text-base font-black')
+      && readinessChecklist.includes('bg-white text-black')
+      && readinessChecklist.indexOf('출발 전 확인 시작') > readinessChecklist.indexOf('출발 전 확인 {remainingRiskCount}개 남음')
+      && readinessChecklist.indexOf('출발 전 확인 시작') < readinessChecklist.indexOf('오늘 먼저 확인'),
+  },
+  {
+    name: 'departure-check mode activation scrolls and focuses a stable checklist anchor',
+    ok: page.includes('const departureChecklistAnchorId = \'departure-checklist\';')
+      && page.includes('const [isDepartureMode, setIsDepartureMode] = useState(false);')
+      && page.includes('const handleStartDepartureMode = () => {')
+      && page.includes('setIsDepartureMode(true);')
+      && page.includes('document.getElementById(departureChecklistAnchorId)')
+      && page.includes("target?.scrollIntoView({ behavior: 'smooth', block: 'start' });")
+      && page.includes('target?.focus({ preventScroll: true });')
+      && readinessChecklist.includes('id={departureAnchorId}')
+      && readinessChecklist.includes('tabIndex={-1}')
+      && page.includes('departureAnchorId={departureChecklistAnchorId}')
+      && page.includes('isDepartureMode={isDepartureMode}')
+      && page.includes('onStartDepartureMode={handleStartDepartureMode}'),
+  },
+  {
+    name: 'departure-check mode makes progress and top risks visually primary on mobile without hiding full actions',
+    ok: readinessChecklist.includes('isDepartureMode')
+      && readinessChecklist.includes('ring-4 ring-cyan-300/70')
+      && readinessChecklist.includes('sm:grid-cols-2')
+      && readinessChecklist.includes('md:grid-cols-3')
+      && readinessChecklist.includes('text-4xl font-black')
+      && readinessChecklist.includes('출발 전 모드')
+      && readinessChecklist.includes('현장 출발 직전에는 남은 위험과 우선 조치만 크게 봅니다')
+      && readinessChecklist.includes('전체 체크리스트와 데이터 수정 액션은 아래에 그대로 유지됩니다')
+      && readinessChecklist.includes('visibleGroups.map((group) =>')
+      && readinessChecklist.includes('onClick={() => onAction(item.id)}')
+      && readinessChecklist.includes('onAcknowledge(item.id);')
+      && readinessChecklist.includes('onUnacknowledge(item.id);')
+      && readinessChecklist.indexOf('출발 전 모드') < readinessChecklist.indexOf('오늘 먼저 확인')
+      && readinessChecklist.indexOf('오늘 먼저 확인') < readinessChecklist.indexOf('visibleGroups.map((group) =>'),
+  },
 ];
 
 const failed = checks.filter((check) => !check.ok);

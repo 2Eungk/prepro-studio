@@ -31,17 +31,23 @@ export default function ReadinessChecklist({
   checks,
   summary,
   acknowledgedCheckIds = [],
+  departureAnchorId,
+  isDepartureMode = false,
   postFirstScenePrompt = false,
   onAction,
   onAcknowledge,
+  onStartDepartureMode,
   onUnacknowledge,
 }: {
   checks: ReadinessCheckItem[];
   summary: ReadinessSummary;
   acknowledgedCheckIds?: string[];
+  departureAnchorId: string;
+  isDepartureMode?: boolean;
   postFirstScenePrompt?: boolean;
   onAction: (checkId: string) => void;
   onAcknowledge: (checkId: string) => void;
+  onStartDepartureMode: () => void;
   onUnacknowledge: (checkId: string) => void;
 }) {
   const acknowledgedCheckIdSet = new Set(acknowledgedCheckIds);
@@ -70,13 +76,17 @@ export default function ReadinessChecklist({
   const topRiskItems = topRiskItemsSource.slice(0, 3);
 
   return (
-    <div className={`rounded-2xl border p-5 ${
-      summary.status === 'critical'
-        ? 'border-red-500/30 bg-red-500/5'
-        : summary.status === 'warning'
-          ? 'border-amber-500/30 bg-amber-500/5'
-          : 'border-green-500/20 bg-green-500/5'
-    }`}>
+    <div
+      id={departureAnchorId}
+      tabIndex={-1}
+      className={`scroll-mt-24 rounded-2xl border p-5 outline-none transition-all ${
+        summary.status === 'critical'
+          ? 'border-red-500/30 bg-red-500/5'
+          : summary.status === 'warning'
+            ? 'border-amber-500/30 bg-amber-500/5'
+            : 'border-green-500/20 bg-green-500/5'
+      } ${isDepartureMode ? 'ring-4 ring-cyan-300/70 shadow-2xl shadow-cyan-950/40' : ''}`}
+    >
       {postFirstScenePrompt && (
         <div className="mb-4 rounded-xl border border-teal-400/20 bg-teal-400/10 p-4">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -137,7 +147,7 @@ export default function ReadinessChecklist({
             }`}>
               출발 전 확인 {remainingRiskCount}개 남음
             </div>
-            <div className={`mt-1 text-3xl font-black leading-none ${
+            <div className={`mt-1 ${isDepartureMode ? 'text-4xl font-black' : 'text-3xl font-black'} leading-none ${
               remainingRiskCount > 0 ? 'text-red-100' : 'text-teal-100'
             }`}>
               {remainingRiskCount}
@@ -147,12 +157,45 @@ export default function ReadinessChecklist({
             <div className="text-base font-black text-teal-50">
               이번 촬영 확인 {acknowledgedRiskCount}개 완료
             </div>
-            <div className="mt-1 text-3xl font-black leading-none text-teal-100">
+            <div className={`mt-1 ${isDepartureMode ? 'text-4xl font-black' : 'text-3xl font-black'} leading-none text-teal-100`}>
               {acknowledgedRiskCount}
             </div>
           </div>
         </div>
       ) : null}
+      <div className={`mb-4 rounded-2xl border px-4 py-4 ${
+        isDepartureMode
+          ? 'border-cyan-200 bg-cyan-100 text-black'
+          : 'border-neutral-800 bg-black/40 text-neutral-100'
+      }`}>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <div className={`text-[10px] font-black uppercase tracking-[0.22em] ${
+              isDepartureMode ? 'text-cyan-900' : 'text-neutral-500'
+            }`}>
+              출발 전 모드 · 필드 체크 모드
+            </div>
+            <p className={`mt-1 text-sm font-black leading-relaxed ${
+              isDepartureMode ? 'text-black' : 'text-neutral-200'
+            }`}>
+              현장 출발 직전에는 남은 위험과 우선 조치만 크게 봅니다.
+            </p>
+            <p className={`mt-1 text-xs font-bold leading-relaxed ${
+              isDepartureMode ? 'text-cyan-950' : 'text-neutral-500'
+            }`}>
+              전체 체크리스트와 데이터 수정 액션은 아래에 그대로 유지됩니다.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onStartDepartureMode}
+            className="inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-xl border border-white bg-white text-black px-5 py-3 text-base font-black shadow-lg shadow-black/25 transition-colors hover:bg-cyan-50 sm:w-auto"
+          >
+            <span>출발 전 확인 시작</span>
+            <ArrowRight className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
       <div className="mb-4 rounded-xl border border-neutral-800 bg-black/35 p-3">
         <div className="mb-2 flex items-center justify-between gap-3">
           <div className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-500">오늘 먼저 확인</div>

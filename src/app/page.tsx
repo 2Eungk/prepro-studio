@@ -1169,6 +1169,7 @@ export default function Home() {
   const [scheduleLocationFilter, setScheduleLocationFilter] = useState('all');
   const [peopleIssueFilter, setPeopleIssueFilter] = useState(false);
   const [acknowledgedReadinessCheckIds, setAcknowledgedReadinessCheckIds] = useState<string[]>([]);
+  const [isDepartureMode, setIsDepartureMode] = useState(false);
   const pdfRef = useRef<HTMLDivElement>(null);
   const cueSheetPdfRef = useRef<HTMLDivElement>(null);
   const reportPdfRef = useRef<HTMLDivElement>(null);
@@ -1267,6 +1268,7 @@ export default function Home() {
   const activeShootingStartTime = activeDay.firstShotTime ?? (activeDayIndex === 0 ? shootingStartTime : null);
   const autoSaveLabel = lastSavedAt ? `${format(lastSavedAt, 'HH:mm')} 자동 저장` : '자동 저장 대기';
   const apiStorageLabel = planningAiSettings.rememberKey && planningAiSettings.apiKey.trim() ? 'API 키 로컬 저장' : 'API 키 저장 안 함';
+  const departureChecklistAnchorId = 'departure-checklist';
 
   useEffect(() => {
     const timer = window.setTimeout(() => setLastSavedAt(new Date()), 450);
@@ -2128,6 +2130,15 @@ export default function Home() {
 
   const handleUnacknowledgeReadinessCheck = (checkId: string) => {
     setAcknowledgedReadinessCheckIds((current) => current.filter((id) => id !== checkId));
+  };
+
+  const handleStartDepartureMode = () => {
+    setIsDepartureMode(true);
+    requestAnimationFrame(() => {
+      const target = document.getElementById(departureChecklistAnchorId);
+      target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      target?.focus({ preventScroll: true });
+    });
   };
 
   const templateLabel = template === 'event' ? '행사/스케치' : template === 'ad' ? '광고/브랜디드' : template === 'musicvideo' ? '뮤직비디오' : template === 'dance' ? '댄스커버' : '영화/단편';
@@ -3742,10 +3753,13 @@ export default function Home() {
             <ReadinessChecklist
               checks={readinessChecks}
               acknowledgedCheckIds={acknowledgedReadinessCheckIds}
+              departureAnchorId={departureChecklistAnchorId}
+              isDepartureMode={isDepartureMode}
               postFirstScenePrompt={scenes.length > 0}
               summary={readinessSummary}
               onAction={handleReadinessAction}
               onAcknowledge={handleAcknowledgeReadinessCheck}
+              onStartDepartureMode={handleStartDepartureMode}
               onUnacknowledge={handleUnacknowledgeReadinessCheck}
             />
           </>
