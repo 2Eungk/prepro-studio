@@ -294,7 +294,7 @@ export default function ReadinessChecklist({
                                   event.stopPropagation();
                                   onUnacknowledge(item.id);
                                 }}
-                                className="mt-2 inline-flex min-h-8 items-center gap-1.5 rounded-lg border border-teal-300/30 bg-black/30 px-3 py-1.5 text-[10px] font-black text-teal-100 transition-colors hover:border-amber-300/50 hover:text-amber-100"
+                                className="mt-2 inline-flex w-full min-h-11 items-center justify-center gap-2 rounded-lg border border-teal-300/30 bg-black/30 px-3 py-2 text-xs font-black text-teal-100 transition-colors hover:border-amber-300/50 hover:text-amber-100"
                               >
                                 <Circle className="h-3.5 w-3.5" />
                                 <span>다시 확인 필요</span>
@@ -310,7 +310,7 @@ export default function ReadinessChecklist({
                                 event.stopPropagation();
                                 onAcknowledge(item.id);
                               }}
-                              className="inline-flex min-h-8 items-center gap-1.5 rounded-lg border border-neutral-700 bg-black/35 px-3 py-1.5 text-[10px] font-black text-neutral-300 transition-colors hover:border-teal-300/50 hover:text-teal-100"
+                              className="inline-flex w-full min-h-11 items-center justify-center gap-2 rounded-lg border border-neutral-700 bg-black/35 px-3 py-2 text-xs font-black text-neutral-300 transition-colors hover:border-teal-300/50 hover:text-teal-100"
                             >
                               <CheckCircle2 className="h-3.5 w-3.5" />
                               <span>현장 확인 완료</span>

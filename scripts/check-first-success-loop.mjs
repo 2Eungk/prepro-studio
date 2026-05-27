@@ -181,6 +181,13 @@ const checks = [
       && readinessChecklist.includes('onAcknowledge(item.id);'),
   },
   {
+    name: 'readiness acknowledgement controls use mobile-sized touch targets',
+    ok: readinessChecklist.includes('w-full min-h-11')
+      && readinessChecklist.includes('text-xs font-black')
+      && readinessChecklist.indexOf('w-full min-h-11') > readinessChecklist.indexOf('onUnacknowledge(item.id);')
+      && readinessChecklist.indexOf('w-full min-h-11') < readinessChecklist.indexOf('onAcknowledge(item.id);'),
+  },
+  {
     name: 'readiness top-risk summary excludes session-acknowledged warning and critical items',
     ok: readinessChecklist.includes('const acknowledgedCheckIdSet = new Set(acknowledgedCheckIds);')
       && readinessChecklist.includes("!acknowledgedCheckIdSet.has(item.id)")
