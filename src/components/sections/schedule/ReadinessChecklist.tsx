@@ -30,14 +30,19 @@ const readinessGroups = [
 export default function ReadinessChecklist({
   checks,
   summary,
+  acknowledgedCheckIds = [],
   postFirstScenePrompt = false,
   onAction,
+  onAcknowledge,
 }: {
   checks: ReadinessCheckItem[];
   summary: ReadinessSummary;
+  acknowledgedCheckIds?: string[];
   postFirstScenePrompt?: boolean;
   onAction: (checkId: string) => void;
+  onAcknowledge: (checkId: string) => void;
 }) {
+  const acknowledgedCheckIdSet = new Set(acknowledgedCheckIds);
   const groupedCheckIds = new Set<string>(readinessGroups.flatMap((group) => [...group.itemIds]));
   const groupedChecks = readinessGroups.map((group) => ({
     ...group,
@@ -50,8 +55,11 @@ export default function ReadinessChecklist({
     ...groupedChecks,
     ...(ungroupedChecks.length > 0 ? [{ label: '추가 확인', items: ungroupedChecks }] : []),
   ];
+  const acknowledgedRiskItems = checks.filter((item) =>
+    (item.status === 'critical' || item.status === 'warning') && acknowledgedCheckIdSet.has(item.id)
+  );
   const topRiskItems = checks
-    .filter((item) => item.status === 'critical' || item.status === 'warning')
+    .filter((item) => (item.status === 'critical' || item.status === 'warning') && !acknowledgedCheckIdSet.has(item.id))
     .slice(0, 3);
 
   return (
@@ -138,6 +146,11 @@ export default function ReadinessChecklist({
               </button>
             ))}
           </div>
+        ) : acknowledgedRiskItems.length > 0 ? (
+          <div className="flex min-h-12 items-center gap-2 rounded-xl border border-teal-400/20 bg-teal-400/10 px-3 py-2 text-xs font-black text-teal-100">
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+            <span>이번 촬영만 확인 완료 · 원본 준비 데이터는 유지됨</span>
+          </div>
         ) : (
           <div className="flex min-h-12 items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-3 py-2 text-xs font-black text-green-200">
             <CheckCircle2 className="h-4 w-4 shrink-0" />
@@ -154,36 +167,68 @@ export default function ReadinessChecklist({
                 <div className="h-px flex-1 bg-neutral-800/80" />
               </div>
               <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
-                {group.items.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => onAction(item.id)}
-                    className={`group rounded-xl border bg-neutral-950/80 px-4 py-3 text-left transition-all hover:bg-neutral-900/80 ${
-                      item.status === 'critical'
-                        ? 'border-red-500/30 hover:border-red-400/50'
-                        : item.status === 'warning'
-                          ? 'border-amber-500/25 hover:border-amber-400/45'
-                          : 'border-neutral-800 hover:border-neutral-600'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      {item.status === 'ok' ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-400" />
-                      ) : item.status === 'warning' ? (
-                        <Circle className="h-4 w-4 text-amber-300" />
-                      ) : (
-                        <XCircle className="h-4 w-4 text-red-300" />
+                {group.items.map((item) => {
+                  const acknowledgeable = item.status === 'critical' || item.status === 'warning';
+                  const isAcknowledged = acknowledgeable && acknowledgedCheckIdSet.has(item.id);
+
+                  return (
+                    <div
+                      key={item.id}
+                      className={`group rounded-xl border bg-neutral-950/80 px-4 py-3 text-left transition-all hover:bg-neutral-900/80 ${
+                        item.status === 'critical'
+                          ? 'border-red-500/30 hover:border-red-400/50'
+                          : item.status === 'warning'
+                            ? 'border-amber-500/25 hover:border-amber-400/45'
+                            : 'border-neutral-800 hover:border-neutral-600'
+                      }`}
+                    >
+                      <button type="button" onClick={() => onAction(item.id)} className="block w-full text-left">
+                        <div className="flex items-center gap-2">
+                          {item.status === 'ok' ? (
+                            <CheckCircle2 className="h-4 w-4 text-green-400" />
+                          ) : item.status === 'warning' ? (
+                            <Circle className="h-4 w-4 text-amber-300" />
+                          ) : (
+                            <XCircle className="h-4 w-4 text-red-300" />
+                          )}
+                          <div className="text-xs font-black text-neutral-200">{item.label}</div>
+                        </div>
+                        <div className="mt-1 text-xs font-bold leading-relaxed text-neutral-500">{item.detail}</div>
+                        <div className="mt-3 flex items-center gap-1.5 text-[10px] font-black text-neutral-600 transition-colors group-hover:text-teal-200">
+                          <span>{item.actionLabel}</span>
+                          <ArrowRight className="h-3 w-3" />
+                        </div>
+                      </button>
+                      {acknowledgeable && (
+                        <div className="mt-3 border-t border-neutral-800/80 pt-3">
+                          {isAcknowledged ? (
+                            <div className="rounded-lg border border-teal-400/25 bg-teal-400/10 px-3 py-2">
+                              <div className="flex items-center gap-1.5 text-[10px] font-black text-teal-200">
+                                <CheckCircle2 className="h-3.5 w-3.5" />
+                                <span>현장 확인 완료</span>
+                              </div>
+                              <p className="mt-1 text-[10px] font-bold leading-relaxed text-neutral-500">
+                                이번 촬영만 확인한 표시입니다. 원본 준비 데이터는 바뀌지 않습니다.
+                              </p>
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                onAcknowledge(item.id);
+                              }}
+                              className="inline-flex min-h-8 items-center gap-1.5 rounded-lg border border-neutral-700 bg-black/35 px-3 py-1.5 text-[10px] font-black text-neutral-300 transition-colors hover:border-teal-300/50 hover:text-teal-100"
+                            >
+                              <CheckCircle2 className="h-3.5 w-3.5" />
+                              <span>현장 확인 완료</span>
+                            </button>
+                          )}
+                        </div>
                       )}
-                      <div className="text-xs font-black text-neutral-200">{item.label}</div>
                     </div>
-                    <div className="mt-1 text-xs font-bold leading-relaxed text-neutral-500">{item.detail}</div>
-                    <div className="mt-3 flex items-center gap-1.5 text-[10px] font-black text-neutral-600 transition-colors group-hover:text-teal-200">
-                      <span>{item.actionLabel}</span>
-                      <ArrowRight className="h-3 w-3" />
-                    </div>
-                  </button>
-                ))}
+                  );
+                })}
               </div>
             </section>
           )

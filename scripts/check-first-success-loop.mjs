@@ -123,7 +123,7 @@ const checks = [
       && readinessChecklist.includes("itemIds: ['shortFilmPackage']")
       && readinessChecklist.indexOf("label: '지금 할 일'") < readinessChecklist.indexOf("label: '촬영 전 확인'")
       && readinessChecklist.indexOf("label: '촬영 전 확인'") < readinessChecklist.indexOf("label: '제출/정산'")
-      && readinessChecklist.includes('group.items.map((item) => (')
+      && readinessChecklist.includes('group.items.map((item) =>')
       && readinessChecklist.includes('group.items.length > 0'),
   },
   {
@@ -135,6 +135,44 @@ const checks = [
       && readinessChecklist.includes('topRiskItems.map((item) => (')
       && readinessChecklist.includes('onClick={() => onAction(item.id)}')
       && readinessChecklist.indexOf('오늘 먼저 확인') < readinessChecklist.indexOf('<div className="space-y-4">'),
+  },
+  {
+    name: 'readiness warning and critical items expose a field acknowledgement action',
+    ok: readinessChecklist.includes('acknowledgedCheckIds')
+      && readinessChecklist.includes('onAcknowledge')
+      && readinessChecklist.includes('acknowledgeable')
+      && readinessChecklist.includes('현장 확인 완료')
+      && readinessChecklist.includes("onClick={(event) => {")
+      && readinessChecklist.includes('event.stopPropagation();')
+      && readinessChecklist.includes('onAcknowledge(item.id);'),
+  },
+  {
+    name: 'readiness top-risk summary excludes session-acknowledged warning and critical items',
+    ok: readinessChecklist.includes('const acknowledgedCheckIdSet = new Set(acknowledgedCheckIds);')
+      && readinessChecklist.includes("!acknowledgedCheckIdSet.has(item.id)")
+      && readinessChecklist.indexOf("!acknowledgedCheckIdSet.has(item.id)") > readinessChecklist.indexOf('const topRiskItems = checks')
+      && readinessChecklist.indexOf("!acknowledgedCheckIdSet.has(item.id)") < readinessChecklist.indexOf('.slice(0, 3)'),
+  },
+  {
+    name: 'readiness acknowledged items stay visible with session-only non-fix copy',
+    ok: readinessChecklist.includes('isAcknowledged')
+      && readinessChecklist.includes('이번 촬영만 확인')
+      && readinessChecklist.includes('원본 준비 데이터는 바뀌지 않습니다')
+      && readinessChecklist.includes('acknowledgedCheckIdSet.has(item.id)')
+      && readinessChecklist.includes('group.items.map((item) => {')
+      && readinessChecklist.includes('return (')
+      && readinessChecklist.lastIndexOf('이번 촬영만 확인') > readinessChecklist.indexOf('group.items.map((item) => {'),
+  },
+  {
+    name: 'readiness acknowledgement is session state passed from the page and reset with project/session changes',
+    ok: page.includes('const [acknowledgedReadinessCheckIds, setAcknowledgedReadinessCheckIds] = useState<string[]>([]);')
+      && page.includes('const handleAcknowledgeReadinessCheck = (checkId: string) => {')
+      && page.includes('setAcknowledgedReadinessCheckIds((current) => current.includes(checkId) ? current : [...current, checkId]);')
+      && page.includes('setAcknowledgedReadinessCheckIds([]);')
+      && page.includes('acknowledgedCheckIds={acknowledgedReadinessCheckIds}')
+      && page.includes('onAcknowledge={handleAcknowledgeReadinessCheck}')
+      && !page.includes('localStorage.setItem(\'prepro-readiness')
+      && !page.includes('localStorage.setItem("prepro-readiness'),
   },
 ];
 

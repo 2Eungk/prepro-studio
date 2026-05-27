@@ -1168,6 +1168,7 @@ export default function Home() {
   const [scheduleIssueFilter, setScheduleIssueFilter] = useState<ScheduleIssueFilter>('all');
   const [scheduleLocationFilter, setScheduleLocationFilter] = useState('all');
   const [peopleIssueFilter, setPeopleIssueFilter] = useState(false);
+  const [acknowledgedReadinessCheckIds, setAcknowledgedReadinessCheckIds] = useState<string[]>([]);
   const pdfRef = useRef<HTMLDivElement>(null);
   const cueSheetPdfRef = useRef<HTMLDivElement>(null);
   const reportPdfRef = useRef<HTMLDivElement>(null);
@@ -2121,6 +2122,10 @@ export default function Home() {
     return { critical, warning, ok, status };
   }, [readinessChecks]);
 
+  const handleAcknowledgeReadinessCheck = (checkId: string) => {
+    setAcknowledgedReadinessCheckIds((current) => current.includes(checkId) ? current : [...current, checkId]);
+  };
+
   const templateLabel = template === 'event' ? '행사/스케치' : template === 'ad' ? '광고/브랜디드' : template === 'musicvideo' ? '뮤직비디오' : template === 'dance' ? '댄스커버' : '영화/단편';
   const pdfKindLabel = activeTab === 'report' || isReportMode ? '결과 리포트' : copy.scheduleTitle;
   const pdfButtonText = (fallback: string) => isExportingPdf ? 'PDF 생성 중...' : pdfStatus || fallback;
@@ -2736,6 +2741,7 @@ export default function Home() {
         importData(json);
         setOptimizationSummary(null);
         setSampleProjectNotice('');
+        setAcknowledgedReadinessCheckIds([]);
         setFileStatus('가져오기 완료');
         window.setTimeout(() => setFileStatus(''), 2200);
       } catch {
@@ -3069,12 +3075,14 @@ export default function Home() {
   const handleLoadSampleData = (askConfirm = true) => {
     if (askConfirm && !confirm(`${template === 'event' ? '행사' : template === 'ad' ? '광고' : template === 'musicvideo' ? '뮤직비디오' : template === 'dance' ? '댄스커버' : '단편영화'} 샘플 데이터를 로드하시겠습니까?`)) return;
 
+    setAcknowledgedReadinessCheckIds([]);
     loadSampleData();
     finishSampleDataLoad();
   };
 
   const handleResetProject = () => {
     setSampleProjectNotice('');
+    setAcknowledgedReadinessCheckIds([]);
     resetProject();
   };
 
@@ -3374,6 +3382,7 @@ export default function Home() {
       const keepGoing = confirm('제작 유형을 바꾸면 기존 일정 데이터는 유지되지만 입력 폼과 표시 컬럼이 해당 유형 기준으로 바뀝니다. 계속 바꿀까요?');
       if (!keepGoing) return;
     }
+    setAcknowledgedReadinessCheckIds([]);
     setTemplate(nextTemplate);
   };
 
@@ -3728,9 +3737,11 @@ export default function Home() {
 
             <ReadinessChecklist
               checks={readinessChecks}
+              acknowledgedCheckIds={acknowledgedReadinessCheckIds}
               postFirstScenePrompt={scenes.length > 0}
               summary={readinessSummary}
               onAction={handleReadinessAction}
+              onAcknowledge={handleAcknowledgeReadinessCheck}
             />
           </>
         )}
