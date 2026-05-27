@@ -47,6 +47,15 @@ const checks = [
       && mobileScheduleList.includes('mobile-scene-'),
   },
   {
+    name: 'mobile empty schedule actions use field-sized touch targets',
+    ok: mobileScheduleList.includes('prepro-btn prepro-btn--primary min-h-11')
+      && mobileScheduleList.includes('prepro-btn prepro-btn--secondary min-h-11')
+      && mobileScheduleList.includes('prepro-btn prepro-btn--quiet min-h-11')
+      && !mobileScheduleList.includes('prepro-btn prepro-btn--primary h-9')
+      && !mobileScheduleList.includes('prepro-btn prepro-btn--secondary h-9')
+      && !mobileScheduleList.includes('prepro-btn prepro-btn--quiet h-9'),
+  },
+  {
     name: 'report mode entry returns operators to the schedule checkpoint',
     ok: page.includes('handleEnableReportMode')
       && page.includes("setActiveTab('schedule')")

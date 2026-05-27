@@ -140,17 +140,17 @@ export default function MobileScheduleList({
           <p className="mt-2 text-sm font-bold leading-relaxed text-neutral-600">{isScheduleFiltered ? '검색어나 필터 조건을 조금 넓혀보세요.' : copyEmptyHint}</p>
           <div className="mt-5 flex flex-wrap justify-center gap-2">
             {isScheduleFiltered && (
-              <button onClick={onResetFilters} className="prepro-btn prepro-btn--secondary h-9">
+              <button onClick={onResetFilters} className="prepro-btn prepro-btn--secondary min-h-11">
                 필터 초기화
               </button>
             )}
-            <button onClick={onNewScene} className="prepro-btn prepro-btn--primary h-9">
+            <button onClick={onNewScene} className="prepro-btn prepro-btn--primary min-h-11">
               <Plus className="h-3.5 w-3.5" /> 직접 추가
             </button>
-            <button onClick={onOpenAnalyzer} className="prepro-btn prepro-btn--secondary h-9">
+            <button onClick={onOpenAnalyzer} className="prepro-btn prepro-btn--secondary min-h-11">
               <Brain className="h-3.5 w-3.5" /> {analyzerLabelByTemplate[template]}
             </button>
-            <button onClick={onLoadSampleData} className="prepro-btn prepro-btn--quiet h-9">
+            <button onClick={onLoadSampleData} className="prepro-btn prepro-btn--quiet min-h-11">
               샘플
             </button>
           </div>
