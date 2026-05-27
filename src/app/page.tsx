@@ -505,7 +505,7 @@ const planningTemplateDefinitions: Record<TemplateType, PlanningSectionDefinitio
       fields: [
         { id: 'locations', label: '주요 장소', placeholder: '장소명, 실내/실외, 허가 필요 여부를 적으세요.', kind: 'long' },
         { id: 'artPropsCostume', label: '미술 / 소품 / 의상', placeholder: '키 소품, 의상 변화, 세트 드레싱, 구매/대여 필요 항목을 적으세요.', kind: 'long' },
-        { id: 'technicalNeeds', label: '기술 요구', placeholder: '카메라, 렌즈, 조명, 그립, 특수장비, 동시녹음 요구를 적으세요.', kind: 'long' },
+        { id: 'technicalNeeds', label: '기술 요구', placeholder: '카메라, 렌즈, 조명, 그립, 특수장비, 동시녹음 요구와 자체 보유·렌탈·구매·대여처·픽업/반납 시간을 적으세요.', kind: 'long' },
         { id: 'mustHave', label: '필수 확보 컷', placeholder: '편집에서 반드시 필요한 안전 컷, 인서트, 리액션, 마스터를 적으세요.', kind: 'long' },
         { id: 'lowBudgetPlan', label: '저예산 압축안', placeholder: '장소 통합, 인원 축소, 장비 대체, 컷 우선순위, 포기 가능한 요소를 적으세요.', kind: 'long' },
         { id: 'risk', label: '촬영 리스크', placeholder: '날씨, 소음, 야간, 허가, 아역/차량/액션, 보험, 데이터 백업 리스크를 적으세요.', kind: 'long' },
@@ -741,6 +741,14 @@ const planningScheduleSourceField: Record<TemplateType, { sectionId: string; fie
   event: { sectionId: 'program', fieldId: 'runOfShow' },
   musicvideo: { sectionId: 'structure', fieldId: 'cueSheet' },
   dance: { sectionId: 'structure', fieldId: 'cueSheet' },
+};
+
+const equipmentPlanningField: Record<TemplateType, { sectionId: string; fieldId: string }> = {
+  film: { sectionId: 'production', fieldId: 'technicalNeeds' },
+  ad: { sectionId: 'production', fieldId: 'lowBudgetPlan' },
+  event: { sectionId: 'operation', fieldId: 'dataPlan' },
+  musicvideo: { sectionId: 'production', fieldId: 'lowBudgetPlan' },
+  dance: { sectionId: 'camera', fieldId: 'cameraPlan' },
 };
 
 const planningScheduleLabel: Record<TemplateType, string> = {
@@ -1401,6 +1409,8 @@ export default function Home() {
     { provider: 'Public APIs', url: 'https://github.com/public-apis/public-apis', note: '날씨, 위치, 이미지, 공공데이터 등 무료/공개 API 후보를 찾는 레퍼런스 목록입니다.', actionLabel: '목록 보기' },
   ];
   const planningScheduleSource = planningScheduleSourceField[template];
+  const equipmentPlanningSource = equipmentPlanningField[template];
+  const equipmentPlanningAnchor = `planning-field-${equipmentPlanningSource.sectionId}-${equipmentPlanningSource.fieldId}`;
   const planningScheduleLines = useMemo(() => {
     const source = planning.sections[planningScheduleSource.sectionId]?.[planningScheduleSource.fieldId] || '';
     return source
@@ -1981,6 +1991,9 @@ export default function Home() {
     const scenesWithoutStoryboard = scenes.filter((scene) => !scene.visualRef).length;
     const scenesWithoutLocation = scenes.filter((scene) => !scene.location?.trim()).length;
     const scenesWithoutPeople = scenes.filter((scene) => !scene.cast?.trim() && (!scene.castIds || scene.castIds.length === 0)).length;
+    const scenesWithoutGear = scenes.filter((scene) => !scene.cameraGear?.trim()).length;
+    const equipmentPlanningValue = planning.sections[equipmentPlanningSource.sectionId]?.[equipmentPlanningSource.fieldId] || '';
+    const equipmentPlanningReady = scenes.some((scene) => scene.cameraGear?.trim()) || Boolean(equipmentPlanningValue.trim());
     const filmBreakdownMissing = template === 'film'
       ? scenes.filter((scene) => !scene.props && !scene.costume && !scene.soundNote && !scene.specialInstruction && !scene.insertNote).length
       : 0;
@@ -2026,6 +2039,17 @@ export default function Home() {
             : `${copy.storyboardLabel} 연결 완료`,
         status: scenes.length === 0 || scenesWithoutStoryboard > 0 ? 'warning' : 'ok',
         actionLabel: scenes.length === 0 ? `${copy.item} 추가` : `${copy.storyboardLabel} 보기`,
+      },
+      {
+        id: 'equipmentPlan',
+        label: '장비 / 렌탈',
+        detail: !equipmentPlanningReady
+          ? '자체 보유·렌탈·구매·대여처·픽업/반납 시간과 백업·미디어·전원 계획 필요'
+          : scenesWithoutGear > 0
+            ? `${scenesWithoutGear}개 ${copy.itemPlural} 장비 미작성 · 백업·미디어·전원 재확인`
+            : '장비, 백업, 미디어, 전원 계획 확인 완료',
+        status: equipmentPlanningReady ? 'ok' : 'warning',
+        actionLabel: '기술/장비 입력',
       },
       ...(template === 'film' ? [{
         id: 'sceneBreakdown',
@@ -2086,7 +2110,7 @@ export default function Home() {
         actionLabel: scenes.length === 0 ? `${copy.item} 추가` : '입력 확인',
       },
     ] satisfies { id: string; label: string; detail: string; status: 'ok' | 'warning' | 'critical'; actionLabel: string }[];
-  }, [callSheetStats.missingCallTime, callSheetStats.missingContact, copy.item, copy.itemPlural, copy.storyboardLabel, isShortFilmMode, locations, people.length, scenes, shortFilmReadinessSummary.critical, shortFilmReadinessSummary.status, shortFilmReadinessSummary.warning, template, timelineStats.risk, timelineStats.totalMinutes, timelineStats.wrapTime]);
+  }, [callSheetStats.missingCallTime, callSheetStats.missingContact, copy.item, copy.itemPlural, copy.storyboardLabel, equipmentPlanningSource.fieldId, equipmentPlanningSource.sectionId, isShortFilmMode, locations, people.length, planning.sections, scenes, shortFilmReadinessSummary.critical, shortFilmReadinessSummary.status, shortFilmReadinessSummary.warning, template, timelineStats.risk, timelineStats.totalMinutes, timelineStats.wrapTime]);
 
   const readinessSummary = useMemo(() => {
     const critical = readinessChecks.filter((item) => item.status === 'critical').length;
@@ -3564,6 +3588,10 @@ export default function Home() {
         } else {
           setActiveTab('storyboard');
         }
+        break;
+      case 'equipmentPlan':
+        setActiveTab('planning');
+        focusPlanningAnchor('details', equipmentPlanningAnchor);
         break;
       case 'shortFilmPackage':
         setActiveTab('planning');

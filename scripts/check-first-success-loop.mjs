@@ -98,6 +98,20 @@ const checks = [
       && readinessChecklist.includes("id: 'people'")
       && readinessChecklist.includes('onClick={() => onAction(item.id)}'),
   },
+  {
+    name: 'readiness checklist covers equipment rental and backup planning',
+    ok: page.includes("id: 'equipmentPlan'")
+      && page.includes("label: '장비 / 렌탈'")
+      && page.includes('scenesWithoutGear')
+      && page.includes('equipmentPlanningReady')
+      && page.includes('자체 보유·렌탈·구매·대여처·픽업/반납 시간')
+      && page.includes('백업·미디어·전원')
+      && page.includes("case 'equipmentPlan':")
+      && page.includes("focusPlanningAnchor('details', equipmentPlanningAnchor)")
+      && page.includes("film: { sectionId: 'production', fieldId: 'technicalNeeds' }")
+      && page.indexOf("id: 'equipmentPlan'") > page.indexOf("id: 'storyboard'")
+      && page.indexOf("case 'equipmentPlan':") < page.indexOf("case 'duration':"),
+  },
 ];
 
 const failed = checks.filter((check) => !check.ok);
