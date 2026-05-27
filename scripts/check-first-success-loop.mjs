@@ -9,6 +9,7 @@ const page = read('src/app/page.tsx');
 const workspaceOnboarding = read('src/components/layout/WorkspaceOnboarding.tsx');
 const sceneLocationField = read('src/components/sections/schedule/SceneLocationField.tsx');
 const mobileScheduleList = read('src/components/sections/schedule/MobileScheduleList.tsx');
+const readinessChecklist = read('src/components/sections/schedule/ReadinessChecklist.tsx');
 
 const scheduleActionsStart = page.indexOf(": activeTab === 'schedule'");
 const scheduleActionsEnd = page.indexOf(": activeTab === 'cueSheet'", scheduleActionsStart);
@@ -82,6 +83,20 @@ const checks = [
       && mobileScheduleList.includes('{analyzerLabelByTemplate[template]}')
       && mobileScheduleList.indexOf('onOpenAnalyzer') < mobileScheduleList.indexOf('onLoadSampleData')
       && page.includes('onOpenAnalyzer={openScriptAnalyzer}'),
+  },
+  {
+    name: 'post-first-scene prompt focuses next steps above departure checklist',
+    ok: readinessChecklist.includes('postFirstScenePrompt')
+      && readinessChecklist.includes('첫 씬 저장 완료')
+      && readinessChecklist.includes('장소 확정하기')
+      && readinessChecklist.includes('콘티 연결하기')
+      && readinessChecklist.includes('출연/스태프 추가하기')
+      && readinessChecklist.indexOf('첫 씬 저장 완료') < readinessChecklist.indexOf('출발 전 체크리스트')
+      && page.includes('postFirstScenePrompt={scenes.length > 0}')
+      && readinessChecklist.includes("id: 'permit'")
+      && readinessChecklist.includes("id: 'storyboard'")
+      && readinessChecklist.includes("id: 'people'")
+      && readinessChecklist.includes('onClick={() => onAction(item.id)}'),
   },
 ];
 

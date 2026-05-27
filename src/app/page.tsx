@@ -3700,6 +3700,7 @@ export default function Home() {
 
             <ReadinessChecklist
               checks={readinessChecks}
+              postFirstScenePrompt={scenes.length > 0}
               summary={readinessSummary}
               onAction={handleReadinessAction}
             />

@@ -15,13 +15,21 @@ export type ReadinessSummary = {
   status: string;
 };
 
+const postFirstSceneActions = [
+  { id: 'permit', label: '장소 확정하기' },
+  { id: 'storyboard', label: '콘티 연결하기' },
+  { id: 'people', label: '출연/스태프 추가하기' },
+] as const;
+
 export default function ReadinessChecklist({
   checks,
   summary,
+  postFirstScenePrompt = false,
   onAction,
 }: {
   checks: ReadinessCheckItem[];
   summary: ReadinessSummary;
+  postFirstScenePrompt?: boolean;
   onAction: (checkId: string) => void;
 }) {
   return (
@@ -32,6 +40,29 @@ export default function ReadinessChecklist({
           ? 'border-amber-500/30 bg-amber-500/5'
           : 'border-green-500/20 bg-green-500/5'
     }`}>
+      {postFirstScenePrompt && (
+        <div className="mb-4 rounded-xl border border-teal-400/20 bg-teal-400/10 p-4">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-teal-200/80">첫 씬 저장 완료</div>
+              <p className="mt-1 text-sm font-black text-neutral-100">다음은 한 가지만 이어서 정리해도 충분합니다.</p>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-3 lg:min-w-[520px]">
+              {postFirstSceneActions.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => onAction(item.id)}
+                  className="group flex min-h-11 items-center justify-between gap-2 rounded-xl border border-neutral-800 bg-black/45 px-3 py-2 text-left text-xs font-black text-neutral-200 transition-colors hover:border-teal-300/50 hover:bg-neutral-950"
+                >
+                  <span>{item.label}</span>
+                  <ArrowRight className="h-3.5 w-3.5 shrink-0 text-neutral-500 transition-colors group-hover:text-teal-200" />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <div className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-500">현장 준비 체크</div>
