@@ -8,6 +8,7 @@ const read = (path) => readFileSync(join(root, path), 'utf8');
 const page = read('src/app/page.tsx');
 const workspaceOnboarding = read('src/components/layout/WorkspaceOnboarding.tsx');
 const sceneLocationField = read('src/components/sections/schedule/SceneLocationField.tsx');
+const mobileScheduleList = read('src/components/sections/schedule/MobileScheduleList.tsx');
 
 const scheduleActionsStart = page.indexOf(": activeTab === 'schedule'");
 const scheduleActionsEnd = page.indexOf(": activeTab === 'cueSheet'", scheduleActionsStart);
@@ -73,6 +74,14 @@ const checks = [
       && emptyScheduleGuide.includes('data-first-action="recommended-analyzer"')
       && emptyScheduleGuide.indexOf('추천 빠른 시작') < emptyScheduleGuide.indexOf('직접 추가')
       && emptyScheduleGuide.indexOf('data-first-action="recommended-analyzer"') < emptyScheduleGuide.indexOf('data-first-action="manual-entry"'),
+  },
+  {
+    name: 'mobile empty schedule keeps analyzer import available before sample data',
+    ok: mobileScheduleList.includes('onOpenAnalyzer')
+      && mobileScheduleList.includes('analyzerLabelByTemplate')
+      && mobileScheduleList.includes('{analyzerLabelByTemplate[template]}')
+      && mobileScheduleList.indexOf('onOpenAnalyzer') < mobileScheduleList.indexOf('onLoadSampleData')
+      && page.includes('onOpenAnalyzer={openScriptAnalyzer}'),
   },
 ];
 

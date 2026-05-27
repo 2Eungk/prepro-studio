@@ -4031,6 +4031,7 @@ export default function Home() {
               onEditBreak={openBreakModal}
               onEditScene={openSceneEditor}
               onGoReport={() => setActiveTab('report')}
+              onOpenAnalyzer={openScriptAnalyzer}
               onLoadSampleData={handleLoadSampleData}
               onNewScene={openNewSceneForm}
               onResetFilters={resetScheduleFilters}

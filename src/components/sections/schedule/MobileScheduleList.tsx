@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import type { BreakItem, Scene, TemplateType } from '@/types/schedule';
-import { Plus } from 'lucide-react';
+import { Brain, Plus } from 'lucide-react';
 
 type TimelineRow =
   | { id: string; type: 'scene'; scene: Scene }
@@ -71,6 +71,7 @@ type MobileScheduleListProps = {
   onEditBreak: (item: BreakItem) => void;
   onEditScene: (scene: Scene) => void;
   onGoReport: () => void;
+  onOpenAnalyzer: () => void;
   onLoadSampleData: () => void;
   onNewScene: () => void;
   onResetFilters: () => void;
@@ -99,12 +100,21 @@ export default function MobileScheduleList({
   onEditBreak,
   onEditScene,
   onGoReport,
+  onOpenAnalyzer,
   onLoadSampleData,
   onNewScene,
   onResetFilters,
   onSetStatusFilter,
   onToggleReportMode,
 }: MobileScheduleListProps) {
+  const analyzerLabelByTemplate: Record<TemplateType, string> = {
+    event: '식순 정리',
+    ad: '구성 분석',
+    musicvideo: 'MV 콘티',
+    dance: '타임코드 콘티',
+    film: '시나리오 분석',
+  };
+
   return (
     <div className="mobile-timeline-cards space-y-3 p-3 lg:hidden">
       {activeDaySceneCount > 0 && (
@@ -136,6 +146,9 @@ export default function MobileScheduleList({
             )}
             <button onClick={onNewScene} className="prepro-btn prepro-btn--primary h-9">
               <Plus className="h-3.5 w-3.5" /> 직접 추가
+            </button>
+            <button onClick={onOpenAnalyzer} className="prepro-btn prepro-btn--secondary h-9">
+              <Brain className="h-3.5 w-3.5" /> {analyzerLabelByTemplate[template]}
             </button>
             <button onClick={onLoadSampleData} className="prepro-btn prepro-btn--quiet h-9">
               샘플
