@@ -21,6 +21,12 @@ const postFirstSceneActions = [
   { id: 'people', label: '출연/스태프 추가하기' },
 ] as const;
 
+const readinessGroups = [
+  { label: '지금 할 일', itemIds: ['schedule', 'metadata', 'duration'] },
+  { label: '촬영 전 확인', itemIds: ['permit', 'people', 'storyboard', 'equipmentPlan', 'sceneBreakdown', 'locationScout', 'weather'] },
+  { label: '제출/정산', itemIds: ['shortFilmPackage'] },
+] as const;
+
 export default function ReadinessChecklist({
   checks,
   summary,
@@ -32,6 +38,19 @@ export default function ReadinessChecklist({
   postFirstScenePrompt?: boolean;
   onAction: (checkId: string) => void;
 }) {
+  const groupedCheckIds = new Set<string>(readinessGroups.flatMap((group) => [...group.itemIds]));
+  const groupedChecks = readinessGroups.map((group) => ({
+    ...group,
+    items: group.itemIds
+      .map((id) => checks.find((item) => item.id === id))
+      .filter((item): item is ReadinessCheckItem => Boolean(item)),
+  }));
+  const ungroupedChecks = checks.filter((item) => !groupedCheckIds.has(item.id));
+  const visibleGroups = [
+    ...groupedChecks,
+    ...(ungroupedChecks.length > 0 ? [{ label: '추가 확인', items: ungroupedChecks }] : []),
+  ];
+
   return (
     <div className={`rounded-2xl border p-5 ${
       summary.status === 'critical'
@@ -88,36 +107,48 @@ export default function ReadinessChecklist({
           ))}
         </div>
       </div>
-      <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
-        {checks.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => onAction(item.id)}
-            className={`group rounded-xl border bg-neutral-950/80 px-4 py-3 text-left transition-all hover:bg-neutral-900/80 ${
-              item.status === 'critical'
-                ? 'border-red-500/30 hover:border-red-400/50'
-                : item.status === 'warning'
-                  ? 'border-amber-500/25 hover:border-amber-400/45'
-                  : 'border-neutral-800 hover:border-neutral-600'
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              {item.status === 'ok' ? (
-                <CheckCircle2 className="h-4 w-4 text-green-400" />
-              ) : item.status === 'warning' ? (
-                <Circle className="h-4 w-4 text-amber-300" />
-              ) : (
-                <XCircle className="h-4 w-4 text-red-300" />
-              )}
-              <div className="text-xs font-black text-neutral-200">{item.label}</div>
-            </div>
-            <div className="mt-1 text-xs font-bold leading-relaxed text-neutral-500">{item.detail}</div>
-            <div className="mt-3 flex items-center gap-1.5 text-[10px] font-black text-neutral-600 transition-colors group-hover:text-teal-200">
-              <span>{item.actionLabel}</span>
-              <ArrowRight className="h-3 w-3" />
-            </div>
-          </button>
+      <div className="space-y-4">
+        {visibleGroups.map((group) => (
+          group.items.length > 0 && (
+            <section key={group.label}>
+              <div className="mb-2 flex items-center gap-2">
+                <div className="text-[11px] font-black text-neutral-300">{group.label}</div>
+                <div className="h-px flex-1 bg-neutral-800/80" />
+              </div>
+              <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+                {group.items.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => onAction(item.id)}
+                    className={`group rounded-xl border bg-neutral-950/80 px-4 py-3 text-left transition-all hover:bg-neutral-900/80 ${
+                      item.status === 'critical'
+                        ? 'border-red-500/30 hover:border-red-400/50'
+                        : item.status === 'warning'
+                          ? 'border-amber-500/25 hover:border-amber-400/45'
+                          : 'border-neutral-800 hover:border-neutral-600'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      {item.status === 'ok' ? (
+                        <CheckCircle2 className="h-4 w-4 text-green-400" />
+                      ) : item.status === 'warning' ? (
+                        <Circle className="h-4 w-4 text-amber-300" />
+                      ) : (
+                        <XCircle className="h-4 w-4 text-red-300" />
+                      )}
+                      <div className="text-xs font-black text-neutral-200">{item.label}</div>
+                    </div>
+                    <div className="mt-1 text-xs font-bold leading-relaxed text-neutral-500">{item.detail}</div>
+                    <div className="mt-3 flex items-center gap-1.5 text-[10px] font-black text-neutral-600 transition-colors group-hover:text-teal-200">
+                      <span>{item.actionLabel}</span>
+                      <ArrowRight className="h-3 w-3" />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </section>
+          )
         ))}
       </div>
     </div>

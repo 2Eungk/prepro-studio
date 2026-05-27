@@ -112,6 +112,20 @@ const checks = [
       && page.indexOf("id: 'equipmentPlan'") > page.indexOf("id: 'storyboard'")
       && page.indexOf("case 'equipmentPlan':") < page.indexOf("case 'duration':"),
   },
+  {
+    name: 'readiness checklist groups departure items into scannable priority sections',
+    ok: readinessChecklist.includes('const readinessGroups')
+      && readinessChecklist.includes("label: '지금 할 일'")
+      && readinessChecklist.includes("itemIds: ['schedule', 'metadata', 'duration']")
+      && readinessChecklist.includes("label: '촬영 전 확인'")
+      && readinessChecklist.includes("itemIds: ['permit', 'people', 'storyboard', 'equipmentPlan', 'sceneBreakdown', 'locationScout', 'weather']")
+      && readinessChecklist.includes("label: '제출/정산'")
+      && readinessChecklist.includes("itemIds: ['shortFilmPackage']")
+      && readinessChecklist.indexOf("label: '지금 할 일'") < readinessChecklist.indexOf("label: '촬영 전 확인'")
+      && readinessChecklist.indexOf("label: '촬영 전 확인'") < readinessChecklist.indexOf("label: '제출/정산'")
+      && readinessChecklist.includes('group.items.map((item) => (')
+      && readinessChecklist.includes('group.items.length > 0'),
+  },
 ];
 
 const failed = checks.filter((check) => !check.ok);
