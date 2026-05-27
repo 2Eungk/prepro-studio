@@ -60,9 +60,14 @@ export default function ReadinessChecklist({
   const acknowledgedRiskItems = checks.filter((item) =>
     (item.status === 'critical' || item.status === 'warning') && acknowledgedCheckIdSet.has(item.id)
   );
-  const topRiskItems = checks
-    .filter((item) => (item.status === 'critical' || item.status === 'warning') && !acknowledgedCheckIdSet.has(item.id))
-    .slice(0, 3);
+  const topRiskItemsSource = checks.filter((item) =>
+    (item.status === 'critical' || item.status === 'warning') && !acknowledgedCheckIdSet.has(item.id)
+  );
+  const totalRiskCount = checks.filter((item) => item.status === 'critical' || item.status === 'warning').length;
+  const remainingRiskCount = topRiskItemsSource.length;
+  const acknowledgedRiskCount = acknowledgedRiskItems.length;
+  const hasRiskProgress = totalRiskCount > 0;
+  const topRiskItems = topRiskItemsSource.slice(0, 3);
 
   return (
     <div className={`rounded-2xl border p-5 ${
@@ -120,11 +125,39 @@ export default function ReadinessChecklist({
           ))}
         </div>
       </div>
+      {hasRiskProgress ? (
+        <div className="mb-4 grid gap-3 sm:grid-cols-2">
+          <div className={`rounded-2xl border-2 px-4 py-4 shadow-lg ${
+            remainingRiskCount > 0
+              ? 'border-red-300/70 bg-red-950/65 shadow-red-950/30'
+              : 'border-teal-300/70 bg-teal-950/65 shadow-teal-950/25'
+          }`}>
+            <div className={`text-base font-black ${
+              remainingRiskCount > 0 ? 'text-red-50' : 'text-teal-50'
+            }`}>
+              출발 전 확인 {remainingRiskCount}개 남음
+            </div>
+            <div className={`mt-1 text-3xl font-black leading-none ${
+              remainingRiskCount > 0 ? 'text-red-100' : 'text-teal-100'
+            }`}>
+              {remainingRiskCount}
+            </div>
+          </div>
+          <div className="rounded-2xl border-2 border-teal-300/60 bg-teal-950/65 px-4 py-4 shadow-lg shadow-teal-950/25">
+            <div className="text-base font-black text-teal-50">
+              이번 촬영 확인 {acknowledgedRiskCount}개 완료
+            </div>
+            <div className="mt-1 text-3xl font-black leading-none text-teal-100">
+              {acknowledgedRiskCount}
+            </div>
+          </div>
+        </div>
+      ) : null}
       <div className="mb-4 rounded-xl border border-neutral-800 bg-black/35 p-3">
         <div className="mb-2 flex items-center justify-between gap-3">
           <div className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-500">오늘 먼저 확인</div>
           {topRiskItems.length > 0 && (
-            <div className="text-[10px] font-black text-neutral-600">{topRiskItems.length}개 우선</div>
+            <div className="rounded-full border border-amber-300/40 bg-amber-950/60 px-2.5 py-1 text-xs font-black text-amber-100">{topRiskItems.length}개 우선</div>
           )}
         </div>
         {topRiskItems.length > 0 ? (
@@ -148,10 +181,10 @@ export default function ReadinessChecklist({
               </button>
             ))}
           </div>
-        ) : acknowledgedRiskItems.length > 0 ? (
-          <div className="flex min-h-12 items-center gap-2 rounded-xl border border-teal-400/20 bg-teal-400/10 px-3 py-2 text-xs font-black text-teal-100">
+        ) : remainingRiskCount === 0 && acknowledgedRiskCount > 0 ? (
+          <div className="flex min-h-14 items-center gap-2 rounded-xl border-2 border-teal-300/60 bg-teal-950/65 px-4 py-3 text-base font-black text-teal-50">
             <CheckCircle2 className="h-4 w-4 shrink-0" />
-            <span>이번 촬영만 확인 완료 · 원본 준비 데이터는 유지됨</span>
+            <span>이번 촬영 확인 완료 · 원본 준비 데이터는 유지됨</span>
           </div>
         ) : (
           <div className="flex min-h-12 items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-3 py-2 text-xs font-black text-green-200">

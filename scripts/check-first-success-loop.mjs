@@ -137,6 +137,40 @@ const checks = [
       && readinessChecklist.indexOf('오늘 먼저 확인') < readinessChecklist.indexOf('<div className="space-y-4">'),
   },
   {
+    name: 'readiness checklist computes durable risk progress counts',
+    ok: readinessChecklist.includes('const totalRiskCount = checks.filter((item) => item.status === \'critical\' || item.status === \'warning\').length;')
+      && readinessChecklist.includes('const remainingRiskCount = topRiskItemsSource.length;')
+      && readinessChecklist.includes('const acknowledgedRiskCount = acknowledgedRiskItems.length;')
+      && readinessChecklist.includes('const hasRiskProgress = totalRiskCount > 0;')
+      && readinessChecklist.indexOf('const acknowledgedRiskItems = checks.filter') < readinessChecklist.indexOf('const topRiskItemsSource = checks.filter')
+      && readinessChecklist.indexOf('const topRiskItemsSource = checks.filter') < readinessChecklist.indexOf('const topRiskItems = topRiskItemsSource.slice(0, 3);'),
+  },
+  {
+    name: 'readiness checklist shows high-visibility remaining and completed summary before top risks',
+    ok: readinessChecklist.includes('출발 전 확인 {remainingRiskCount}개 남음')
+      && readinessChecklist.includes('이번 촬영 확인 {acknowledgedRiskCount}개 완료')
+      && readinessChecklist.includes('text-3xl font-black')
+      && readinessChecklist.includes('text-base font-black')
+      && readinessChecklist.includes('border-2')
+      && readinessChecklist.includes('bg-red-950/65')
+      && readinessChecklist.includes('bg-teal-950/65')
+      && readinessChecklist.includes('text-red-50')
+      && readinessChecklist.includes('text-teal-50')
+      && readinessChecklist.includes('remainingRiskCount === 0 && acknowledgedRiskCount > 0')
+      && readinessChecklist.includes('이번 촬영 확인 완료 · 원본 준비 데이터는 유지됨')
+      && readinessChecklist.indexOf('출발 전 확인 {remainingRiskCount}개 남음') < readinessChecklist.indexOf('오늘 먼저 확인')
+      && readinessChecklist.indexOf('이번 촬영 확인 {acknowledgedRiskCount}개 완료') < readinessChecklist.indexOf('오늘 먼저 확인')
+      && !readinessChecklist.includes('text-neutral-600">{topRiskItems.length}개 우선'),
+  },
+  {
+    name: 'readiness checklist preserves good-ready state when no risk progress exists',
+    ok: readinessChecklist.includes('hasRiskProgress ? (')
+      && readinessChecklist.includes(') : null')
+      && readinessChecklist.includes('오늘 출발 준비 양호')
+      && readinessChecklist.indexOf('hasRiskProgress ? (') < readinessChecklist.indexOf('오늘 먼저 확인')
+      && readinessChecklist.indexOf('오늘 출발 준비 양호') > readinessChecklist.indexOf('오늘 먼저 확인'),
+  },
+  {
     name: 'readiness warning and critical items expose a field acknowledgement action',
     ok: readinessChecklist.includes('acknowledgedCheckIds')
       && readinessChecklist.includes('onAcknowledge')
