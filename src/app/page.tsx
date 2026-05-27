@@ -2126,6 +2126,10 @@ export default function Home() {
     setAcknowledgedReadinessCheckIds((current) => current.includes(checkId) ? current : [...current, checkId]);
   };
 
+  const handleUnacknowledgeReadinessCheck = (checkId: string) => {
+    setAcknowledgedReadinessCheckIds((current) => current.filter((id) => id !== checkId));
+  };
+
   const templateLabel = template === 'event' ? '행사/스케치' : template === 'ad' ? '광고/브랜디드' : template === 'musicvideo' ? '뮤직비디오' : template === 'dance' ? '댄스커버' : '영화/단편';
   const pdfKindLabel = activeTab === 'report' || isReportMode ? '결과 리포트' : copy.scheduleTitle;
   const pdfButtonText = (fallback: string) => isExportingPdf ? 'PDF 생성 중...' : pdfStatus || fallback;
@@ -3742,6 +3746,7 @@ export default function Home() {
               summary={readinessSummary}
               onAction={handleReadinessAction}
               onAcknowledge={handleAcknowledgeReadinessCheck}
+              onUnacknowledge={handleUnacknowledgeReadinessCheck}
             />
           </>
         )}

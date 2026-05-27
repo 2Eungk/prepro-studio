@@ -34,6 +34,7 @@ export default function ReadinessChecklist({
   postFirstScenePrompt = false,
   onAction,
   onAcknowledge,
+  onUnacknowledge,
 }: {
   checks: ReadinessCheckItem[];
   summary: ReadinessSummary;
@@ -41,6 +42,7 @@ export default function ReadinessChecklist({
   postFirstScenePrompt?: boolean;
   onAction: (checkId: string) => void;
   onAcknowledge: (checkId: string) => void;
+  onUnacknowledge: (checkId: string) => void;
 }) {
   const acknowledgedCheckIdSet = new Set(acknowledgedCheckIds);
   const groupedCheckIds = new Set<string>(readinessGroups.flatMap((group) => [...group.itemIds]));
@@ -209,6 +211,20 @@ export default function ReadinessChecklist({
                               </div>
                               <p className="mt-1 text-[10px] font-bold leading-relaxed text-neutral-500">
                                 이번 촬영만 확인한 표시입니다. 원본 준비 데이터는 바뀌지 않습니다.
+                              </p>
+                              <button
+                                type="button"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  onUnacknowledge(item.id);
+                                }}
+                                className="mt-2 inline-flex min-h-8 items-center gap-1.5 rounded-lg border border-teal-300/30 bg-black/30 px-3 py-1.5 text-[10px] font-black text-teal-100 transition-colors hover:border-amber-300/50 hover:text-amber-100"
+                              >
+                                <Circle className="h-3.5 w-3.5" />
+                                <span>다시 확인 필요</span>
+                              </button>
+                              <p className="mt-1 text-[10px] font-bold leading-relaxed text-neutral-500">
+                                이번 촬영 확인 표시만 해제합니다. 원본 준비 데이터는 바뀌지 않습니다.
                               </p>
                             </div>
                           ) : (

@@ -164,6 +164,18 @@ const checks = [
       && readinessChecklist.lastIndexOf('이번 촬영만 확인') > readinessChecklist.indexOf('group.items.map((item) => {'),
   },
   {
+    name: 'readiness acknowledged warning and critical items expose a reversible undo action',
+    ok: readinessChecklist.includes('onUnacknowledge')
+      && readinessChecklist.includes('다시 확인 필요')
+      && readinessChecklist.includes('원본 준비 데이터는 바뀌지 않습니다')
+      && readinessChecklist.includes('이번 촬영 확인 표시만 해제합니다')
+      && readinessChecklist.includes('onClick={(event) => {')
+      && readinessChecklist.includes('event.stopPropagation();')
+      && readinessChecklist.includes('onUnacknowledge(item.id);')
+      && readinessChecklist.indexOf('다시 확인 필요') > readinessChecklist.indexOf('isAcknowledged ? (')
+      && readinessChecklist.indexOf('onUnacknowledge(item.id);') > readinessChecklist.indexOf('isAcknowledged ? ('),
+  },
+  {
     name: 'readiness acknowledgement is session state passed from the page and reset with project/session changes',
     ok: page.includes('const [acknowledgedReadinessCheckIds, setAcknowledgedReadinessCheckIds] = useState<string[]>([]);')
       && page.includes('const handleAcknowledgeReadinessCheck = (checkId: string) => {')
@@ -173,6 +185,15 @@ const checks = [
       && page.includes('onAcknowledge={handleAcknowledgeReadinessCheck}')
       && !page.includes('localStorage.setItem(\'prepro-readiness')
       && !page.includes('localStorage.setItem("prepro-readiness'),
+  },
+  {
+    name: 'readiness unacknowledge removes the item from session state so it can return to top risk',
+    ok: page.includes('const handleUnacknowledgeReadinessCheck = (checkId: string) => {')
+      && page.includes('setAcknowledgedReadinessCheckIds((current) => current.filter((id) => id !== checkId));')
+      && page.includes('onUnacknowledge={handleUnacknowledgeReadinessCheck}')
+      && readinessChecklist.includes("!acknowledgedCheckIdSet.has(item.id)")
+      && readinessChecklist.indexOf("!acknowledgedCheckIdSet.has(item.id)") > readinessChecklist.indexOf('const topRiskItems = checks')
+      && readinessChecklist.indexOf("!acknowledgedCheckIdSet.has(item.id)") < readinessChecklist.indexOf('.slice(0, 3)'),
   },
 ];
 
