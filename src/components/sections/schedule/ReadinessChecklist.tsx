@@ -50,6 +50,9 @@ export default function ReadinessChecklist({
     ...groupedChecks,
     ...(ungroupedChecks.length > 0 ? [{ label: '추가 확인', items: ungroupedChecks }] : []),
   ];
+  const topRiskItems = checks
+    .filter((item) => item.status === 'critical' || item.status === 'warning')
+    .slice(0, 3);
 
   return (
     <div className={`rounded-2xl border p-5 ${
@@ -106,6 +109,41 @@ export default function ReadinessChecklist({
             </div>
           ))}
         </div>
+      </div>
+      <div className="mb-4 rounded-xl border border-neutral-800 bg-black/35 p-3">
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <div className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-500">오늘 먼저 확인</div>
+          {topRiskItems.length > 0 && (
+            <div className="text-[10px] font-black text-neutral-600">{topRiskItems.length}개 우선</div>
+          )}
+        </div>
+        {topRiskItems.length > 0 ? (
+          <div className="grid gap-2 md:grid-cols-3">
+            {topRiskItems.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onAction(item.id)}
+                className={`group flex min-h-12 items-center justify-between gap-3 rounded-xl border bg-neutral-950/85 px-3 py-2 text-left transition-all hover:bg-neutral-900/85 ${
+                  item.status === 'critical'
+                    ? 'border-red-500/30 hover:border-red-400/50'
+                    : 'border-amber-500/25 hover:border-amber-400/45'
+                }`}
+              >
+                <span className="min-w-0">
+                  <span className="block truncate text-xs font-black text-neutral-200">{item.label}</span>
+                  <span className="mt-0.5 block truncate text-[11px] font-bold text-neutral-500">{item.detail}</span>
+                </span>
+                <ArrowRight className="h-3.5 w-3.5 shrink-0 text-neutral-600 transition-colors group-hover:text-teal-200" />
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="flex min-h-12 items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-3 py-2 text-xs font-black text-green-200">
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+            <span>오늘 출발 준비 양호</span>
+          </div>
+        )}
       </div>
       <div className="space-y-4">
         {visibleGroups.map((group) => (

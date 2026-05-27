@@ -126,6 +126,16 @@ const checks = [
       && readinessChecklist.includes('group.items.map((item) => (')
       && readinessChecklist.includes('group.items.length > 0'),
   },
+  {
+    name: 'readiness checklist surfaces a compact field-day top-risk summary',
+    ok: readinessChecklist.includes('오늘 먼저 확인')
+      && readinessChecklist.includes('오늘 출발 준비 양호')
+      && readinessChecklist.includes("item.status === 'critical' || item.status === 'warning'")
+      && readinessChecklist.includes('.slice(0, 3)')
+      && readinessChecklist.includes('topRiskItems.map((item) => (')
+      && readinessChecklist.includes('onClick={() => onAction(item.id)}')
+      && readinessChecklist.indexOf('오늘 먼저 확인') < readinessChecklist.indexOf('<div className="space-y-4">'),
+  },
 ];
 
 const failed = checks.filter((check) => !check.ok);
