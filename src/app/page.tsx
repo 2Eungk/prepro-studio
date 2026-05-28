@@ -3707,8 +3707,24 @@ export default function Home() {
           )}
 
           {sampleProjectNotice && !isFirstRun && (
-            <section className="rounded-2xl border border-amber-400/25 bg-amber-400/10 p-4" data-html2canvas-ignore="true">
-              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <section className="rounded-2xl border border-amber-400/25 bg-amber-400/10 p-3 md:p-4" data-html2canvas-ignore="true">
+              <details className="md:hidden">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
+                  <span className="min-w-0">
+                    <span className="block text-[10px] font-black uppercase tracking-[0.2em] text-amber-200">Sample project</span>
+                    <span className="mt-1 block truncate text-sm font-black text-neutral-100">샘플 보기 중 · 내 프로젝트로 쓰기</span>
+                  </span>
+                  <span className="shrink-0 rounded-full border border-amber-300/25 bg-black/20 px-2.5 py-1 text-[10px] font-black text-amber-100">열기</span>
+                </summary>
+                <div className="mt-3 border-t border-amber-300/10 pt-3">
+                  <p className="text-xs font-bold leading-relaxed text-neutral-500">지금 보고 있는 내용은 {sampleProjectNotice}입니다. 실제 프로젝트로 쓰려면 표시를 지우거나 새로 시작하세요.</p>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <button type="button" onClick={promoteSampleProject} className="prepro-btn prepro-btn--secondary">내 프로젝트로 사용</button>
+                    <button type="button" onClick={handleResetProject} className="prepro-btn prepro-btn--quiet">새로 시작</button>
+                  </div>
+                </div>
+              </details>
+              <div className="hidden flex-col gap-3 md:flex lg:flex-row lg:items-center lg:justify-between">
                 <div className="min-w-0">
                   <div className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-200">Sample project</div>
                   <p className="mt-1 text-sm font-black text-neutral-100">지금 보고 있는 내용은 {sampleProjectNotice}입니다.</p>

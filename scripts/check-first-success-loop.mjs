@@ -111,6 +111,16 @@ const checks = [
       && appHeader.indexOf('브라우저에만 저장 · 백업 필요') < appHeader.indexOf('서버 DB에 프로젝트를 저장하지 않습니다.'),
   },
   {
+    name: 'mobile sample project notice stays compact before field controls',
+    ok: page.includes('샘플 보기 중 · 내 프로젝트로 쓰기')
+      && page.includes('실제 프로젝트로 쓰려면 표시를 지우거나 새로 시작하세요.')
+      && page.includes('<details className="md:hidden">')
+      && page.includes('<div className="hidden flex-col gap-3 md:flex')
+      && page.includes('rounded-2xl border border-amber-400/25 bg-amber-400/10 p-3 md:p-4')
+      && page.indexOf('샘플 보기 중 · 내 프로젝트로 쓰기') < page.indexOf('내 프로젝트로 사용')
+      && page.indexOf('샘플 보기 중 · 내 프로젝트로 쓰기') < page.indexOf('<ShootDaySelector'),
+  },
+  {
     name: 'post-first-scene prompt focuses next steps above departure checklist',
     ok: readinessChecklist.includes('postFirstScenePrompt')
       && readinessChecklist.includes('첫 씬 저장 완료')
