@@ -166,47 +166,84 @@ export default function PeoplePanel({
             콜타임과 연락처 누락이 없습니다.
           </div>
         ) : (
-          <div className="overflow-x-auto custom-scrollbar">
-            <table className="w-full min-w-[760px] text-left text-sm">
-              <thead className="border-b border-neutral-800 text-[10px] uppercase tracking-widest text-neutral-500">
-                <tr>
-                  <th className="px-3 py-3 font-black">콜</th>
-                  <th className="px-3 py-3 font-black">이름</th>
-                  <th className="px-3 py-3 font-black">구분</th>
-                  <th className="px-3 py-3 font-black">첫 투입</th>
-                  <th className="px-3 py-3 font-black">연결</th>
-                  <th className="px-3 py-3 font-black">상태</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-900">
-                {filteredCallSheetPeople.map(({ person, assignedCount, firstLocation, firstStartTime, missingCallTime, missingContact }) => (
-                  <tr key={person.id} className="hover:bg-neutral-900/60">
-                    <td className="px-3 py-3 font-mono text-lg font-black text-cyan-300">{person.callTime || '미정'}</td>
-                    <td className="px-3 py-3">
-                      <div className="font-black text-neutral-100">{person.name}</div>
-                      <div className="mt-0.5 text-xs text-neutral-500">{person.role || (person.category === 'cast' ? '출연진' : '스태프')}</div>
-                    </td>
-                    <td className="px-3 py-3">
-                      <span className={`rounded-full px-3 py-1 text-[10px] font-black uppercase ${person.category === 'cast' ? 'bg-indigo-500/10 text-indigo-300' : 'bg-amber-500/10 text-amber-300'}`}>
-                        {personCategoryLabels[person.category]}
-                      </span>
-                    </td>
-                    <td className="px-3 py-3 text-neutral-300">
-                      <div className="font-bold">{firstLocation || '미정'}</div>
-                      <div className="mt-0.5 text-xs text-neutral-600">{firstStartTime ? `${format(firstStartTime, 'HH:mm')} 첫 일정` : '시간 미정'}</div>
-                    </td>
-                    <td className="px-3 py-3 text-neutral-400">{assignedCount}개 {copy.itemPlural}</td>
-                    <td className="px-3 py-3">
-                      <div className="flex flex-wrap gap-1.5">
-                        {missingCallTime && <span className="rounded bg-amber-500/10 px-2 py-1 text-[10px] font-bold text-amber-300">콜 미정</span>}
-                        {missingContact && <span className="rounded bg-red-500/10 px-2 py-1 text-[10px] font-bold text-red-300">연락처 없음</span>}
-                        {!missingCallTime && !missingContact && <span className="rounded bg-green-500/10 px-2 py-1 text-[10px] font-bold text-green-300">확인 완료</span>}
-                      </div>
-                    </td>
+          <div>
+            <div className="space-y-3 md:hidden">
+              {filteredCallSheetPeople.map(({ person, assignedCount, firstLocation, firstStartTime, missingCallTime, missingContact }) => (
+                <div key={person.id} className="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="font-mono text-2xl font-black leading-none text-cyan-300">{person.callTime || '미정'}</div>
+                      <div className="mt-3 font-black text-neutral-100">{person.name}</div>
+                      <div className="mt-1 text-xs font-bold text-neutral-500">{person.role || (person.category === 'cast' ? '출연진' : '스태프')}</div>
+                    </div>
+                    <span className={`shrink-0 rounded-full px-3 py-1 text-[10px] font-black uppercase ${person.category === 'cast' ? 'bg-indigo-500/10 text-indigo-300' : 'bg-amber-500/10 text-amber-300'}`}>
+                      {personCategoryLabels[person.category]}
+                    </span>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
+                    <div className="rounded-xl border border-neutral-800 bg-black/30 px-3 py-2">
+                      <div className="text-[9px] font-black uppercase tracking-widest text-neutral-600">첫 투입</div>
+                      <div className="mt-1 truncate font-bold text-neutral-200">{firstLocation || '미정'}</div>
+                      <div className="mt-0.5 text-[11px] font-bold text-neutral-600">{firstStartTime ? `${format(firstStartTime, 'HH:mm')} 첫 일정` : '시간 미정'}</div>
+                    </div>
+                    <div className="rounded-xl border border-neutral-800 bg-black/30 px-3 py-2">
+                      <div className="text-[9px] font-black uppercase tracking-widest text-neutral-600">연결</div>
+                      <div className="mt-1 font-bold text-neutral-300">{assignedCount}개 {copy.itemPlural}</div>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {missingCallTime && <span className="rounded bg-amber-500/10 px-2 py-1 text-[10px] font-bold text-amber-300">콜 미정</span>}
+                    {missingContact && <span className="rounded bg-red-500/10 px-2 py-1 text-[10px] font-bold text-red-300">연락처 없음</span>}
+                    {!missingCallTime && !missingContact && <span className="rounded bg-green-500/10 px-2 py-1 text-[10px] font-bold text-green-300">확인 완료</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="hidden overflow-x-auto custom-scrollbar md:block">
+              <table className="w-full min-w-[760px] text-left text-sm">
+                <thead className="border-b border-neutral-800 text-[10px] uppercase tracking-widest text-neutral-500">
+                  <tr>
+                    <th className="px-3 py-3 font-black">콜</th>
+                    <th className="px-3 py-3 font-black">이름</th>
+                    <th className="px-3 py-3 font-black">구분</th>
+                    <th className="px-3 py-3 font-black">첫 투입</th>
+                    <th className="px-3 py-3 font-black">연결</th>
+                    <th className="px-3 py-3 font-black">상태</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-neutral-900">
+                  {filteredCallSheetPeople.map(({ person, assignedCount, firstLocation, firstStartTime, missingCallTime, missingContact }) => (
+                    <tr key={person.id} className="hover:bg-neutral-900/60">
+                      <td className="px-3 py-3 font-mono text-lg font-black text-cyan-300">{person.callTime || '미정'}</td>
+                      <td className="px-3 py-3">
+                        <div className="font-black text-neutral-100">{person.name}</div>
+                        <div className="mt-0.5 text-xs text-neutral-500">{person.role || (person.category === 'cast' ? '출연진' : '스태프')}</div>
+                      </td>
+                      <td className="px-3 py-3">
+                        <span className={`rounded-full px-3 py-1 text-[10px] font-black uppercase ${person.category === 'cast' ? 'bg-indigo-500/10 text-indigo-300' : 'bg-amber-500/10 text-amber-300'}`}>
+                          {personCategoryLabels[person.category]}
+                        </span>
+                      </td>
+                      <td className="px-3 py-3 text-neutral-300">
+                        <div className="font-bold">{firstLocation || '미정'}</div>
+                        <div className="mt-0.5 text-xs text-neutral-600">{firstStartTime ? `${format(firstStartTime, 'HH:mm')} 첫 일정` : '시간 미정'}</div>
+                      </td>
+                      <td className="px-3 py-3 text-neutral-400">{assignedCount}개 {copy.itemPlural}</td>
+                      <td className="px-3 py-3">
+                        <div className="flex flex-wrap gap-1.5">
+                          {missingCallTime && <span className="rounded bg-amber-500/10 px-2 py-1 text-[10px] font-bold text-amber-300">콜 미정</span>}
+                          {missingContact && <span className="rounded bg-red-500/10 px-2 py-1 text-[10px] font-bold text-red-300">연락처 없음</span>}
+                          {!missingCallTime && !missingContact && <span className="rounded bg-green-500/10 px-2 py-1 text-[10px] font-bold text-green-300">확인 완료</span>}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
