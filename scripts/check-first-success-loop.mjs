@@ -131,6 +131,16 @@ const checks = [
       && page.indexOf('샘플 보기 중 · 내 프로젝트로 쓰기') < page.indexOf('<ShootDaySelector'),
   },
   {
+    name: 'mobile workflow bar keeps next action and weather control on one compact row',
+    ok: workspaceOnboarding.includes('p-2.5 md:p-3')
+      && workspaceOnboarding.includes('hidden text-[11px] font-bold text-neutral-600 sm:block')
+      && workspaceOnboarding.includes('grid grid-cols-[minmax(0,1fr)_auto] gap-2')
+      && workspaceOnboarding.includes('min-h-12 min-w-0')
+      && workspaceOnboarding.includes('hidden truncate text-[10px] font-bold opacity-70 sm:block')
+      && workspaceOnboarding.includes('<span className="sm:hidden">날씨</span>')
+      && workspaceOnboarding.indexOf('grid grid-cols-[minmax(0,1fr)_auto] gap-2') < workspaceOnboarding.indexOf('<span className="sm:hidden">날씨</span>'),
+  },
+  {
     name: 'post-first-scene prompt focuses next steps above departure checklist',
     ok: readinessChecklist.includes('postFirstScenePrompt')
       && readinessChecklist.includes('첫 씬 저장 완료')
