@@ -236,30 +236,40 @@ export default function ReadinessChecklist({
           </div>
         )}
       </div>
-      <div className="space-y-4">
-        {visibleGroups.map((group) => (
-          group.items.length > 0 && (
-            <section key={group.label}>
-              <div className="mb-2 flex items-center gap-2">
-                <div className="text-[11px] font-black text-neutral-300">{group.label}</div>
-                <div className="h-px flex-1 bg-neutral-800/80" />
-              </div>
-              <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
-                {group.items.map((item) => {
-                  const acknowledgeable = item.status === 'critical' || item.status === 'warning';
-                  const isAcknowledged = acknowledgeable && acknowledgedCheckIdSet.has(item.id);
+      <details className="group/details rounded-xl border border-neutral-800 bg-black/20 p-3" open={isDepartureMode}>
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 text-left [&::-webkit-details-marker]:hidden">
+          <span className="min-w-0">
+            <span className="block text-xs font-black text-neutral-200">전체 체크리스트 펼쳐보기</span>
+            <span className="mt-0.5 block text-[11px] font-bold text-neutral-600">출발 전에는 크게, 평소에는 우선 위험만 먼저 봅니다.</span>
+          </span>
+          <span className="shrink-0 rounded-full border border-neutral-700 px-2.5 py-1 text-[10px] font-black text-neutral-400 group-open/details:text-teal-200">
+            {checks.length}개
+          </span>
+        </summary>
+        <div className="mt-3 space-y-4 border-t border-neutral-800/80 pt-3">
+          {visibleGroups.map((group) => (
+            group.items.length > 0 && (
+              <section key={group.label}>
+                <div className="mb-2 flex items-center gap-2">
+                  <div className="text-[11px] font-black text-neutral-300">{group.label}</div>
+                  <div className="h-px flex-1 bg-neutral-800/80" />
+                </div>
+                <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+                  {group.items.map((item) => {
+                    const acknowledgeable = item.status === 'critical' || item.status === 'warning';
+                    const isAcknowledged = acknowledgeable && acknowledgedCheckIdSet.has(item.id);
 
-                  return (
-                    <div
-                      key={item.id}
-                      className={`group rounded-xl border bg-neutral-950/80 px-4 py-3 text-left transition-all hover:bg-neutral-900/80 ${
-                        item.status === 'critical'
-                          ? 'border-red-500/30 hover:border-red-400/50'
-                          : item.status === 'warning'
-                            ? 'border-amber-500/25 hover:border-amber-400/45'
-                            : 'border-neutral-800 hover:border-neutral-600'
-                      }`}
-                    >
+                    return (
+                      <div
+                        key={item.id}
+                        className={`group rounded-xl border bg-neutral-950/80 px-4 py-3 text-left transition-all hover:bg-neutral-900/80 ${
+                          item.status === 'critical'
+                            ? 'border-red-500/30 hover:border-red-400/50'
+                            : item.status === 'warning'
+                              ? 'border-amber-500/25 hover:border-amber-400/45'
+                              : 'border-neutral-800 hover:border-neutral-600'
+                        }`}
+                      >
                       <button type="button" onClick={() => onAction(item.id)} className="block w-full text-left">
                         <div className="flex items-center gap-2">
                           {item.status === 'ok' ? (
@@ -325,7 +335,8 @@ export default function ReadinessChecklist({
             </section>
           )
         ))}
-      </div>
+        </div>
+      </details>
     </div>
   );
 }

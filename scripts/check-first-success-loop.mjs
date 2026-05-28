@@ -6,9 +6,11 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const read = (path) => readFileSync(join(root, path), 'utf8');
 
 const page = read('src/app/page.tsx');
+const appHeader = read('src/components/header/AppHeader.tsx');
 const workspaceOnboarding = read('src/components/layout/WorkspaceOnboarding.tsx');
 const sceneLocationField = read('src/components/sections/schedule/SceneLocationField.tsx');
 const mobileScheduleList = read('src/components/sections/schedule/MobileScheduleList.tsx');
+const mobileTimelineCards = read('src/components/sections/schedule/MobileTimelineCards.tsx');
 const readinessChecklist = read('src/components/sections/schedule/ReadinessChecklist.tsx');
 
 const scheduleActionsStart = page.indexOf(": activeTab === 'schedule'");
@@ -85,6 +87,30 @@ const checks = [
       && page.includes('onOpenAnalyzer={openScriptAnalyzer}'),
   },
   {
+    name: 'mobile timeline labels time blocks separately from scene numbering',
+    ok: mobileScheduleList.includes("rowNumber={filteredTimelineRows.slice(0, index + 1).filter((item) => item.type === 'scene').length}")
+      && mobileTimelineCards.includes('타임라인 ${rowNumber}번째 시간 블록')
+      && mobileTimelineCards.includes('시간')
+      && page.includes("rowNumber: focusRowIndex >= 0 ? timelineRows.slice(0, focusRowIndex + 1).filter((row) => row.type === 'scene').length : undefined")
+      && mobileScheduleList.indexOf("rowNumber={filteredTimelineRows.slice(0, index + 1).filter((item) => item.type === 'scene').length}") < mobileScheduleList.indexOf('onEdit={() => onEditScene(row.scene)}')
+      && mobileTimelineCards.indexOf('title={`타임라인 ${rowNumber}번째 시간 블록`}') < mobileTimelineCards.indexOf('>\n          시간\n        </span>'),
+  },
+  {
+    name: 'mobile header keeps backup education compact before the schedule',
+    ok: appHeader.includes('flex gap-2 overflow-x-auto rounded-xl')
+      && appHeader.includes('prepro-btn prepro-btn--ghost shrink-0')
+      && appHeader.includes('<details className="rounded-2xl border border-teal-400/25')
+      && appHeader.includes('md:hidden')
+      && appHeader.includes('브라우저에만 저장 · 백업 필요')
+      && appHeader.includes('자세히 / JSON 백업 열기')
+      && appHeader.includes('hidden rounded-2xl border border-teal-400/25')
+      && appHeader.includes('md:block')
+      && appHeader.includes('hidden items-center gap-1.5 rounded-full')
+      && appHeader.includes('{templateLabel} / {weatherLabel || location || \'날씨 위치 미정\'} / {activeShootingDate}')
+      && appHeader.includes('<section className="hidden rounded-2xl border border-neutral-900 bg-neutral-950/70 p-4 md:block">')
+      && appHeader.indexOf('브라우저에만 저장 · 백업 필요') < appHeader.indexOf('서버 DB에 프로젝트를 저장하지 않습니다.'),
+  },
+  {
     name: 'post-first-scene prompt focuses next steps above departure checklist',
     ok: readinessChecklist.includes('postFirstScenePrompt')
       && readinessChecklist.includes('첫 씬 저장 완료')
@@ -134,7 +160,16 @@ const checks = [
       && readinessChecklist.includes('.slice(0, 3)')
       && readinessChecklist.includes('topRiskItems.map((item) => (')
       && readinessChecklist.includes('onClick={() => onAction(item.id)}')
-      && readinessChecklist.indexOf('오늘 먼저 확인') < readinessChecklist.indexOf('<div className="space-y-4">'),
+      && readinessChecklist.indexOf('오늘 먼저 확인') < readinessChecklist.indexOf('전체 체크리스트 펼쳐보기'),
+  },
+  {
+    name: 'readiness full checklist is collapsed by default and opens for departure mode',
+    ok: readinessChecklist.includes('<details className="group/details')
+      && readinessChecklist.includes('open={isDepartureMode}')
+      && readinessChecklist.includes('전체 체크리스트 펼쳐보기')
+      && readinessChecklist.includes('출발 전에는 크게, 평소에는 우선 위험만 먼저 봅니다.')
+      && readinessChecklist.indexOf('오늘 먼저 확인') < readinessChecklist.indexOf('<details className="group/details')
+      && readinessChecklist.indexOf('<details className="group/details') < readinessChecklist.indexOf('group.items.map((item) =>'),
   },
   {
     name: 'readiness checklist computes durable risk progress counts',

@@ -146,7 +146,7 @@ export default function DesktopScheduleTable({
                         scene={row.scene}
                         template={template}
                         isReportMode={isReportMode}
-                        rowNumber={index + 1}
+                        rowNumber={timelineRows.slice(0, index + 1).filter((item) => item.type === 'scene').length}
                         onEdit={() => onEditScene(row.scene)}
                         onDuplicate={() => onDuplicateScene(row.scene)}
                         onDelete={() => onDeleteScene(row.scene)}

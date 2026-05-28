@@ -322,8 +322,11 @@ export function MobileTimelineBreakCard({
   return (
     <article className="rounded-xl border border-amber-500/25 bg-amber-500/[0.055] p-4 text-amber-100">
       <div className="flex items-start gap-3">
-        <span className="flex h-7 min-w-7 items-center justify-center rounded-full border border-amber-500/30 bg-black text-[11px] font-black text-amber-300">
-          {rowNumber}
+        <span
+          className="flex h-7 min-w-9 items-center justify-center rounded-full border border-amber-500/30 bg-black px-1.5 text-[10px] font-black text-amber-300"
+          title={`타임라인 ${rowNumber}번째 시간 블록`}
+        >
+          시간
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">

@@ -141,15 +141,15 @@ export default function AppHeader({
 }: AppHeaderProps) {
   return (
     <>
-      <header className="flex flex-col gap-8">
-        <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5 pb-6 border-b border-neutral-900">
-          <div className="flex items-center gap-5 min-w-0">
-            <div className="shrink-0 rounded-xl border border-neutral-800 bg-neutral-950 p-3 text-indigo-300">
-              <Film className="w-8 h-8 text-current" />
+      <header className="flex flex-col gap-4 md:gap-8">
+        <div className="flex flex-col gap-4 border-b border-neutral-900 pb-4 md:gap-5 md:pb-6 xl:flex-row xl:items-center xl:justify-between">
+          <div className="flex min-w-0 items-center gap-3 md:gap-5">
+            <div className="shrink-0 rounded-xl border border-neutral-800 bg-neutral-950 p-2.5 text-indigo-300 md:p-3">
+              <Film className="h-7 w-7 text-current md:h-8 md:w-8" />
             </div>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl font-black uppercase leading-none text-neutral-100 md:text-3xl">PrePro Studio</h1>
+                <h1 className="text-[1.7rem] font-black uppercase leading-none text-neutral-100 md:text-3xl">PrePro Studio</h1>
                 <span className="shrink-0 rounded-md border border-neutral-800 bg-neutral-950 px-2 py-0.5 text-[10px] font-black text-neutral-500 whitespace-nowrap">v1.3</span>
               </div>
               <p className="mt-1 text-xs font-bold text-neutral-500">
@@ -160,11 +160,11 @@ export default function AppHeader({
                   <CheckCircle2 className="h-3 w-3" />
                   {autoSaveLabel}
                 </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-800 bg-neutral-950 px-2.5 py-1 text-[10px] font-black text-neutral-500">
+                <span className="hidden items-center gap-1.5 rounded-full border border-neutral-800 bg-neutral-950 px-2.5 py-1 text-[10px] font-black text-neutral-500 sm:inline-flex">
                   <Save className="h-3 w-3" />
                   이 브라우저에만 저장
                 </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-800 bg-neutral-950 px-2.5 py-1 text-[10px] font-black text-neutral-500">
+                <span className="hidden items-center gap-1.5 rounded-full border border-neutral-800 bg-neutral-950 px-2.5 py-1 text-[10px] font-black text-neutral-500 sm:inline-flex">
                   <KeyRound className="h-3 w-3" />
                   {apiStorageLabel}
                 </span>
@@ -172,10 +172,10 @@ export default function AppHeader({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 rounded-xl border border-neutral-800 bg-neutral-950 p-1.5 sm:flex sm:flex-wrap sm:items-center xl:justify-end">
+          <div className="flex gap-2 overflow-x-auto rounded-xl border border-neutral-800 bg-neutral-950 p-1.5 custom-scrollbar sm:flex-wrap sm:items-center xl:justify-end">
             <button
               onClick={() => confirm('현재 프로젝트를 비우고 새로 시작할까요? 자동 저장된 데이터도 초기화됩니다.') && onResetProject()}
-              className="prepro-btn prepro-btn--ghost"
+              className="prepro-btn prepro-btn--ghost shrink-0"
               title="새 프로젝트"
             >
               <Plus className="h-4 w-4" />
@@ -183,14 +183,14 @@ export default function AppHeader({
             </button>
             <button
               onClick={onExportJSON}
-              className={`prepro-btn ${fileStatus === '백업 저장됨' ? 'prepro-btn--secondary' : 'prepro-btn--ghost'}`}
+              className={`prepro-btn shrink-0 ${fileStatus === '백업 저장됨' ? 'prepro-btn--secondary' : 'prepro-btn--ghost'}`}
               title="JSON 백업 파일로 내보내기"
             >
               <Save className="h-4 w-4" />
               <span>{fileStatus === '백업 저장됨' ? '백업됨' : '백업'}</span>
             </button>
             <label
-              className={`prepro-btn cursor-pointer ${fileStatus && fileStatus !== '백업 저장됨' ? 'prepro-btn--secondary' : 'prepro-btn--ghost'}`}
+              className={`prepro-btn shrink-0 cursor-pointer ${fileStatus && fileStatus !== '백업 저장됨' ? 'prepro-btn--secondary' : 'prepro-btn--ghost'}`}
               title="JSON 백업 파일 가져오기"
             >
               <FolderOpen className="h-4 w-4" />
@@ -199,7 +199,7 @@ export default function AppHeader({
             </label>
             <button
               onClick={onCopyShareLink}
-              className={`prepro-btn ${shareStatus ? 'prepro-btn--secondary' : 'prepro-btn--ghost'}`}
+              className={`prepro-btn shrink-0 ${shareStatus ? 'prepro-btn--secondary' : 'prepro-btn--ghost'}`}
               title="공유 링크 복사"
             >
               <Share2 className="h-4 w-4" />
@@ -208,7 +208,7 @@ export default function AppHeader({
             <div className="mx-1 hidden h-5 w-px bg-neutral-800 sm:block"></div>
             <button
               onClick={() => onSetIsReportMode(!isReportMode)}
-              className={`prepro-btn col-span-2 sm:col-span-1 ${isReportMode ? 'prepro-btn--secondary' : 'prepro-btn--quiet'}`}
+              className={`prepro-btn shrink-0 ${isReportMode ? 'prepro-btn--secondary' : 'prepro-btn--quiet'}`}
             >
               <FileText className="w-4 h-4" />
               {isReportMode ? '리포트 모드 ON' : '리포트 모드 OFF'}
@@ -216,7 +216,43 @@ export default function AppHeader({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-teal-400/25 bg-[linear-gradient(135deg,rgba(94,215,207,0.12),rgba(242,161,75,0.055)_62%,rgba(255,255,255,0.025))] p-4">
+        <details className="rounded-2xl border border-teal-400/25 bg-[linear-gradient(135deg,rgba(94,215,207,0.12),rgba(242,161,75,0.055)_62%,rgba(255,255,255,0.025))] p-3 md:hidden">
+          <summary className="flex cursor-pointer list-none items-center gap-3 [&::-webkit-details-marker]:hidden">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-teal-300/25 bg-black/35 text-teal-100">
+              <ShieldCheck className="h-5 w-5" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-sm font-black text-neutral-100">브라우저에만 저장 · 백업 필요</span>
+              <span className="mt-0.5 block text-[11px] font-bold text-neutral-500">자세히 / JSON 백업 열기</span>
+            </span>
+          </summary>
+          <div className="mt-3 border-t border-teal-400/10 pt-3">
+            <p className="text-xs font-bold leading-relaxed text-neutral-500">
+              서버 DB에 프로젝트를 저장하지 않습니다. 다른 기기에서 열거나 공유하기 전에는 JSON 백업을 내려받아 보관하세요.
+            </p>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={onExportJSON}
+                className="prepro-btn prepro-btn--secondary"
+                title="현재 프로젝트를 JSON 백업 파일로 저장"
+              >
+                <Save className="h-4 w-4" />
+                JSON 백업
+              </button>
+              <label
+                className="prepro-btn prepro-btn--quiet cursor-pointer"
+                title="저장해 둔 JSON 백업 파일 가져오기"
+              >
+                <FolderOpen className="h-4 w-4" />
+                백업 복원
+                <input type="file" className="hidden" accept=".json" onChange={onImportJSON} />
+              </label>
+            </div>
+          </div>
+        </details>
+
+        <div className="hidden rounded-2xl border border-teal-400/25 bg-[linear-gradient(135deg,rgba(94,215,207,0.12),rgba(242,161,75,0.055)_62%,rgba(255,255,255,0.025))] p-4 md:block">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex min-w-0 gap-3">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-teal-300/25 bg-black/35 text-teal-100">
@@ -326,7 +362,48 @@ export default function AppHeader({
       </nav>
 
       <div className="space-y-5">
-        <section className="rounded-2xl border border-neutral-900 bg-neutral-950/70 p-4">
+        <details className="rounded-2xl border border-neutral-900 bg-neutral-950/70 p-3 md:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
+            <span className="min-w-0">
+              <span className="block text-[10px] font-black uppercase tracking-[0.22em] text-neutral-600">{workspaceLanguage.setupLabel}</span>
+              <span className="mt-1 block truncate text-sm font-bold text-neutral-300">
+                {templateLabel} / {weatherLabel || location || '날씨 위치 미정'} / {activeShootingDate}
+              </span>
+            </span>
+            <span className="shrink-0 rounded-full border border-neutral-800 bg-black px-2.5 py-1 text-[10px] font-black text-neutral-500">설정</span>
+          </summary>
+          <div className="mt-3 border-t border-neutral-900 pt-3">
+            <div className="prepro-segment grid-cols-2">
+              {productionTemplateOptions.map((option) => {
+                const Icon = option.icon;
+                const selected = template === option.id;
+
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => onTemplateChange(option.id)}
+                    className={`prepro-segment__item ${selected ? 'is-active' : ''}`}
+                    title={option.name}
+                  >
+                    <Icon className="h-3.5 w-3.5 shrink-0" />
+                    <span className="truncate">{option.shortName}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              type="button"
+              onClick={() => onSetShowProjectSetup((value) => !value)}
+              className="prepro-btn prepro-btn--secondary mt-3 h-11 w-full"
+            >
+              {showProjectSetup ? '설정 접기' : '날짜/날씨 설정'}
+              <RefreshCw className={`h-3.5 w-3.5 transition-transform ${showProjectSetup ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
+        </details>
+
+        <section className="hidden rounded-2xl border border-neutral-900 bg-neutral-950/70 p-4 md:block">
           <div className="grid gap-4 xl:grid-cols-[minmax(220px,0.72fr)_minmax(420px,0.86fr)_auto] xl:items-center">
             <div className="min-w-0">
               <div className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-600">{workspaceLanguage.setupLabel}</div>

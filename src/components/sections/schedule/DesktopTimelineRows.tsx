@@ -295,7 +295,12 @@ export function SortableBreakRow({
   return (
     <tr ref={setNodeRef} style={style} className="border-b border-amber-500/20 bg-amber-500/5 text-amber-200/90 group hover:bg-amber-500/10">
       <td className="px-4 py-3 text-center">
-        <span className="pdf-order-index inline-flex h-5 min-w-5 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/10 px-1 text-[10px] font-black text-amber-300">{rowNumber}</span>
+        <span
+          className="pdf-order-index inline-flex h-5 min-w-8 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/10 px-1.5 text-[9px] font-black text-amber-300"
+          title={`타임라인 ${rowNumber}번째 시간 블록`}
+        >
+          시간
+        </span>
         <div {...attributes} {...listeners} data-pdf-ignore="true" data-html2canvas-ignore="true" className="inline-flex cursor-grab items-center justify-center rounded p-1 transition-colors hover:bg-amber-500/10 active:cursor-grabbing">
           <GripVertical className="w-4 h-4 text-amber-400" />
         </div>

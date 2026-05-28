@@ -2306,7 +2306,7 @@ export default function Home() {
 
     return {
       scene: focusRow?.type === 'scene' ? focusRow.scene : undefined,
-      rowNumber: focusRowIndex >= 0 ? focusRowIndex + 1 : undefined,
+      rowNumber: focusRowIndex >= 0 ? timelineRows.slice(0, focusRowIndex + 1).filter((row) => row.type === 'scene').length : undefined,
       nextBreakLabel: nextBreak?.type === 'break' ? `다음 시간 블록: ${nextBreak.breakItem.label}` : undefined,
     };
   }, [timelineRows]);
