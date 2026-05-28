@@ -178,9 +178,9 @@ export function MobileTimelineSceneCard({
         </div>
       ) : (
         <div className="mt-4 flex flex-wrap gap-2" data-pdf-ignore="true" data-html2canvas-ignore="true">
-          <button onClick={onEdit} className="prepro-btn prepro-btn--secondary h-9">편집</button>
-          <button onClick={onDuplicate} className="prepro-btn prepro-btn--quiet h-9">복제</button>
-          <button onClick={onDelete} className="prepro-btn prepro-btn--danger h-9">삭제</button>
+          <button onClick={onEdit} className="prepro-btn prepro-btn--secondary min-h-11">편집</button>
+          <button onClick={onDuplicate} className="prepro-btn prepro-btn--quiet min-h-11">복제</button>
+          <button onClick={onDelete} className="prepro-btn prepro-btn--danger min-h-11">삭제</button>
         </div>
       )}
     </article>
@@ -355,8 +355,8 @@ export function MobileTimelineBreakCard({
       <div className="mt-3 text-base font-black text-amber-100">{item.label}</div>
       <div className="mt-1 text-xs font-bold text-amber-100/50">{locationName || '장소 미정'}</div>
       <div className="mt-4 flex flex-wrap gap-2" data-pdf-ignore="true" data-html2canvas-ignore="true">
-        <button onClick={onEdit} className="prepro-btn prepro-btn--warm h-9">편집</button>
-        <button onClick={onDelete} className="prepro-btn prepro-btn--danger h-9">삭제</button>
+        <button onClick={onEdit} className="prepro-btn prepro-btn--warm min-h-11">편집</button>
+        <button onClick={onDelete} className="prepro-btn prepro-btn--danger min-h-11">삭제</button>
       </div>
     </article>
   );

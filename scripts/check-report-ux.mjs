@@ -56,6 +56,17 @@ const checks = [
       && !mobileScheduleList.includes('prepro-btn prepro-btn--quiet h-9'),
   },
   {
+    name: 'mobile timeline card actions use field-sized touch targets',
+    ok: mobileTimeline.includes('prepro-btn prepro-btn--secondary min-h-11')
+      && mobileTimeline.includes('prepro-btn prepro-btn--quiet min-h-11')
+      && mobileTimeline.includes('prepro-btn prepro-btn--warm min-h-11')
+      && mobileTimeline.includes('prepro-btn prepro-btn--danger min-h-11')
+      && !mobileTimeline.includes('prepro-btn prepro-btn--secondary h-9')
+      && !mobileTimeline.includes('prepro-btn prepro-btn--quiet h-9')
+      && !mobileTimeline.includes('prepro-btn prepro-btn--warm h-9')
+      && !mobileTimeline.includes('prepro-btn prepro-btn--danger h-9'),
+  },
+  {
     name: 'report mode entry returns operators to the schedule checkpoint',
     ok: page.includes('handleEnableReportMode')
       && page.includes("setActiveTab('schedule')")
