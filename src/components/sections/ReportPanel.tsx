@@ -97,20 +97,20 @@ export default function ReportPanel({
   storyboardFallback,
 }: ReportPanelProps) {
   return (
-    <div ref={reportPdfRef} className="pdf-export-root rounded-3xl border border-neutral-800 bg-neutral-950 p-6">
-      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <div ref={reportPdfRef} className="pdf-export-root rounded-3xl border border-neutral-800 bg-neutral-950 p-4 md:p-6">
+      <div className="mb-4 flex flex-col gap-2 md:mb-6 md:flex-row md:items-center md:justify-between md:gap-3">
         <div>
           <h2 className="text-xl font-black text-neutral-100">{reportTitleByTemplate[template]}</h2>
           <p className="text-sm text-neutral-500">{shootingDate} · {location || '촬영지 미정'} · {templateLabel}</p>
         </div>
-        <div data-html2canvas-ignore="true" className="flex flex-wrap gap-2">
-          <button onClick={onEnableReportMode} className="prepro-btn prepro-btn--secondary h-12 px-5 text-sm">
+        <div data-html2canvas-ignore="true" className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:flex md:w-auto md:flex-wrap">
+          <button onClick={onEnableReportMode} className="prepro-btn prepro-btn--secondary min-h-11 w-full justify-center px-4 text-sm md:h-12 md:min-h-0 md:w-auto md:px-5">
             리포트 모드 켜기
           </button>
           <button
             onClick={onExportPDF}
             disabled={isExportingPdf}
-            className="prepro-btn prepro-btn--primary h-12 px-5 text-sm"
+            className="prepro-btn prepro-btn--primary min-h-11 w-full justify-center px-4 text-sm md:h-12 md:min-h-0 md:w-auto md:px-5"
           >
             <Download className={`h-4 w-4 ${isExportingPdf ? 'animate-pulse' : ''}`} /> {pdfButtonText('결과 PDF')}
           </button>
@@ -148,7 +148,7 @@ export default function ReportPanel({
           </div>
         </div>
       )}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-5 md:gap-3">
         {[
           { label: '완료', value: `${reportStats.done}개`, tone: 'text-green-400' },
           { label: 'NG', value: `${reportStats.ng}개`, tone: 'text-red-400' },
@@ -156,14 +156,14 @@ export default function ReportPanel({
           { label: template === 'event' ? '운영 시간' : isMusicTimelineTemplate ? '총 구간' : '총 촬영', value: `${reportStats.totalMinutes}분`, tone: 'text-cyan-400' },
           { label: '완료율', value: `${reportStats.completionRate}%`, tone: 'text-indigo-400' },
         ].map((item) => (
-          <div key={item.label} className="rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3">
+          <div key={item.label} className="rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2 md:px-4 md:py-3">
             <div className="text-[10px] uppercase tracking-widest text-neutral-500 font-black">{item.label}</div>
-            <div className={`mt-1 text-xl font-black ${item.tone}`}>{item.value}</div>
+            <div className={`mt-1 text-lg font-black md:text-xl ${item.tone}`}>{item.value}</div>
           </div>
         ))}
       </div>
-      <div className="mt-4 rounded-2xl border border-neutral-800 bg-black/35 p-4">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+      <div className="mt-3 rounded-2xl border border-neutral-800 bg-black/35 p-3 md:mt-4 md:p-4">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2 md:mb-3">
           <div>
             <h3 className="text-sm font-black text-neutral-100">현장 체크 요약</h3>
             <p className="mt-1 text-xs font-bold text-neutral-500">완료/재확인/남은 확인을 한 줄에서 바로 판단합니다.</p>
@@ -171,19 +171,19 @@ export default function ReportPanel({
           <span className="rounded-full border border-indigo-400/20 bg-indigo-500/10 px-3 py-1 text-[10px] font-black text-indigo-200">{reportStats.completionRate}% 완료</span>
         </div>
         <div className="grid gap-2 md:grid-cols-3">
-          <div className="rounded-xl border border-green-400/20 bg-green-500/10 px-4 py-3">
+          <div className="rounded-xl border border-green-400/20 bg-green-500/10 px-3 py-2 md:px-4 md:py-3">
             <div className="text-[10px] font-black uppercase tracking-widest text-green-200/70">완료</div>
-            <div className="mt-1 text-2xl font-black text-green-200">{reportStats.done}개</div>
+            <div className="mt-1 text-xl font-black text-green-200 md:text-2xl">{reportStats.done}개</div>
             <div className="mt-1 text-xs font-bold text-green-100/60">{reportStats.doneMinutes}분 확보</div>
           </div>
-          <div className="rounded-xl border border-red-400/25 bg-red-500/10 px-4 py-3">
+          <div className="rounded-xl border border-red-400/25 bg-red-500/10 px-3 py-2 md:px-4 md:py-3">
             <div className="text-[10px] font-black uppercase tracking-widest text-red-200/70">재확인</div>
-            <div className="mt-1 text-2xl font-black text-red-200">{reportStats.ng}개</div>
+            <div className="mt-1 text-xl font-black text-red-200 md:text-2xl">{reportStats.ng}개</div>
             <div className="mt-1 text-xs font-bold text-red-100/60">{reportStats.ngMinutes}분 리커버리 후보</div>
           </div>
-          <div className="rounded-xl border border-neutral-700 bg-neutral-900 px-4 py-3">
+          <div className="rounded-xl border border-neutral-700 bg-neutral-900 px-3 py-2 md:px-4 md:py-3">
             <div className="text-[10px] font-black uppercase tracking-widest text-neutral-500">남은 확인</div>
-            <div className="mt-1 text-2xl font-black text-neutral-100">{reportStats.pending}개</div>
+            <div className="mt-1 text-xl font-black text-neutral-100 md:text-2xl">{reportStats.pending}개</div>
             <div className="mt-1 text-xs font-bold text-neutral-500">{reportStats.pendingMinutes}분 대기</div>
           </div>
         </div>
@@ -191,18 +191,18 @@ export default function ReportPanel({
       <div className="mt-4 rounded-xl border border-neutral-900 bg-black/40 px-4 py-2 text-right text-[10px] font-bold text-neutral-600">
         Created with PrePro Studio
       </div>
-      <div className="mt-6 rounded-2xl border border-neutral-800 bg-neutral-900/70 p-4">
-        <div className="mb-3 flex items-center justify-between text-xs font-black uppercase tracking-widest text-neutral-500">
+      <div className="mt-4 rounded-2xl border border-neutral-800 bg-neutral-900/70 p-3 md:mt-6 md:p-4">
+        <div className="mb-2 flex items-center justify-between text-xs font-black uppercase tracking-widest text-neutral-500 md:mb-3">
           <span>진행률</span>
           <span className="text-neutral-300">{reportStats.doneMinutes}분 완료 / {reportStats.totalMinutes || 0}분</span>
         </div>
         <div className="h-3 overflow-hidden rounded-full bg-neutral-800">
           <div className="h-full rounded-full bg-green-500" style={{ width: `${reportStats.completionRate}%` }} />
         </div>
-        <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
-          <div className="rounded-lg bg-green-500/10 px-3 py-2 text-green-300">완료 {reportStats.doneMinutes}분</div>
-          <div className="rounded-lg bg-red-500/10 px-3 py-2 text-red-300">NG {reportStats.ngMinutes}분</div>
-          <div className="rounded-lg bg-neutral-800 px-3 py-2 text-neutral-300">대기 {reportStats.pendingMinutes}분</div>
+        <div className="mt-2 grid grid-cols-3 gap-2 text-xs md:mt-3">
+          <div className="rounded-lg bg-green-500/10 px-2 py-2 text-green-300 md:px-3">완료 {reportStats.doneMinutes}분</div>
+          <div className="rounded-lg bg-red-500/10 px-2 py-2 text-red-300 md:px-3">NG {reportStats.ngMinutes}분</div>
+          <div className="rounded-lg bg-neutral-800 px-2 py-2 text-neutral-300 md:px-3">대기 {reportStats.pendingMinutes}분</div>
         </div>
       </div>
 
