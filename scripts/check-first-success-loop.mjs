@@ -111,6 +111,18 @@ const checks = [
       && appHeader.indexOf('브라우저에만 저장 · 백업 필요') < appHeader.indexOf('서버 DB에 프로젝트를 저장하지 않습니다.'),
   },
   {
+    name: 'mobile workspace nav hides long captions while preserving scrollable touch targets',
+    ok: appHeader.includes('py-1.5 backdrop-blur md:py-2')
+      && appHeader.includes('space-y-1.5 overflow-x-auto custom-scrollbar md:space-y-2')
+      && appHeader.includes('min-h-11 min-w-[72px]')
+      && appHeader.includes('md:min-w-[112px]')
+      && appHeader.includes('mt-1 hidden text-[10px] font-bold text-neutral-600 md:block')
+      && appHeader.includes('min-h-11 min-w-[112px]')
+      && appHeader.includes('md:min-w-[136px]')
+      && appHeader.indexOf('min-h-11 min-w-[72px]') < appHeader.indexOf('mt-1 hidden text-[10px] font-bold text-neutral-600 md:block')
+      && appHeader.indexOf('min-h-11 min-w-[112px]') > appHeader.indexOf('mainWorkspaceTabs'),
+  },
+  {
     name: 'mobile field control keeps status filters collapsed until needed',
     ok: mobileTimelineCards.includes('group/mobile-field-filters')
       && mobileTimelineCards.includes('open={statusFilter !== \'all\'}')

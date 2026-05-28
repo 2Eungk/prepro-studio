@@ -288,8 +288,8 @@ export default function AppHeader({
         </div>
       </header>
 
-      <nav className="sticky top-0 z-30 -mx-2 border-y border-neutral-900 bg-black/90 px-2 py-2 backdrop-blur">
-        <div className="space-y-2 overflow-x-auto custom-scrollbar">
+      <nav className="sticky top-0 z-30 -mx-2 border-y border-neutral-900 bg-black/90 px-2 py-1.5 backdrop-blur md:py-2">
+        <div className="space-y-1.5 overflow-x-auto custom-scrollbar md:space-y-2">
           <div className="inline-flex min-w-max rounded-2xl border border-neutral-900 bg-neutral-950/60 p-1">
             {mainWorkspaceGroups.map((group, index) => {
               const groupTabs = mainWorkspaceTabs.filter((tab) => tab.group === group);
@@ -301,20 +301,20 @@ export default function AppHeader({
                   key={group}
                   type="button"
                   onClick={() => firstTab && onSetActiveTab(firstTab.id)}
-                  className={`flex min-w-[112px] items-center gap-2 rounded-xl border px-3 py-2 text-left transition-all ${
+                  className={`flex min-h-11 min-w-[72px] items-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-left transition-all md:min-w-[112px] md:gap-2 md:px-3 md:py-2 ${
                     groupIsActive
                       ? 'border-teal-400/30 bg-teal-400/10 text-teal-50'
                       : 'border-transparent text-neutral-500 hover:bg-neutral-900/80 hover:text-neutral-200'
                   }`}
                 >
-                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-black ${
+                  <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-black md:h-6 md:w-6 ${
                     groupIsActive ? 'bg-teal-300 text-black' : 'bg-neutral-900 text-neutral-600'
                   }`}>
                     {index + 1}
                   </span>
                   <span>
-                    <span className="block text-sm font-black leading-none">{group}</span>
-                    <span className="mt-1 block text-[10px] font-bold text-neutral-600">
+                    <span className="block text-xs font-black leading-none md:text-sm">{group}</span>
+                    <span className="mt-1 hidden text-[10px] font-bold text-neutral-600 md:block">
                       {groupTabs.map((tab) => tab.label).join(' · ')}
                     </span>
                   </span>
@@ -335,7 +335,7 @@ export default function AppHeader({
                     key={tab.id}
                     onClick={() => onSetActiveTab(tab.id)}
                     aria-current={isActive ? 'page' : undefined}
-                    className={`relative flex min-h-11 min-w-[136px] items-center gap-2 rounded-xl border px-3 py-2 text-left transition-all lg:min-w-[156px] ${
+                    className={`relative flex min-h-11 min-w-[112px] items-center gap-1.5 rounded-xl border px-2.5 py-2 text-left transition-all md:min-w-[136px] md:gap-2 md:px-3 lg:min-w-[156px] ${
                       isActive
                         ? 'border-teal-400/35 bg-neutral-900 text-white'
                         : 'border-transparent bg-transparent text-neutral-500 hover:bg-neutral-950 hover:text-neutral-200'
