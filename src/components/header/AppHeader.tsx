@@ -139,6 +139,8 @@ export default function AppHeader({
   productionTemplateOptions,
   sameText,
 }: AppHeaderProps) {
+  const activeWorkspaceGroup = mainWorkspaceTabs.find((item) => item.id === activeTab)?.group;
+
   return (
     <>
       <header className="flex flex-col gap-4 md:gap-8">
@@ -290,7 +292,7 @@ export default function AppHeader({
 
       <nav className="sticky top-0 z-30 -mx-2 border-y border-neutral-900 bg-black/90 px-2 py-1.5 backdrop-blur md:py-2">
         <div className="space-y-1.5 overflow-x-auto custom-scrollbar md:space-y-2">
-          <div className="inline-flex min-w-max rounded-2xl border border-neutral-900 bg-neutral-950/60 p-1">
+          <div className="hidden min-w-max rounded-2xl border border-neutral-900 bg-neutral-950/60 p-1 md:inline-flex">
             {mainWorkspaceGroups.map((group, index) => {
               const groupTabs = mainWorkspaceTabs.filter((tab) => tab.group === group);
               const groupIsActive = groupTabs.some((tab) => tab.id === activeTab);
@@ -324,8 +326,34 @@ export default function AppHeader({
           </div>
 
           <div className="inline-flex min-w-max items-stretch gap-1 rounded-2xl border border-neutral-900 bg-neutral-950/45 p-1">
+            {mainWorkspaceGroups.map((group, index) => {
+              const groupTabs = mainWorkspaceTabs.filter((tab) => tab.group === group);
+              const groupIsActive = group === activeWorkspaceGroup;
+              const firstTab = groupTabs[0];
+
+              return (
+                <button
+                  key={group}
+                  type="button"
+                  onClick={() => firstTab && onSetActiveTab(firstTab.id)}
+                  className={`flex min-h-11 min-w-[64px] items-center justify-center gap-1.5 rounded-xl border px-2 py-1.5 text-center transition-all md:hidden ${
+                    groupIsActive
+                      ? 'border-teal-400/30 bg-teal-400/10 text-teal-50'
+                      : 'border-transparent text-neutral-500 hover:bg-neutral-900/80 hover:text-neutral-200'
+                  }`}
+                >
+                  <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-black ${
+                    groupIsActive ? 'bg-teal-300 text-black' : 'bg-neutral-900 text-neutral-600'
+                  }`}>
+                    {index + 1}
+                  </span>
+                  <span className="text-xs font-black leading-none">{group}</span>
+                </button>
+              );
+            })}
+            <div className="mx-0.5 my-2 w-px shrink-0 bg-neutral-800 md:hidden" />
             {mainWorkspaceTabs
-              .filter((tab) => tab.group === mainWorkspaceTabs.find((item) => item.id === activeTab)?.group)
+              .filter((tab) => tab.group === activeWorkspaceGroup)
               .map((tab) => {
                 const Icon = tab.Icon;
                 const isActive = activeTab === tab.id;
