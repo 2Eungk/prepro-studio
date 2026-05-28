@@ -11,6 +11,7 @@ const mobileScheduleList = read('src/components/sections/schedule/MobileSchedule
 const page = read('src/app/page.tsx');
 const scheduleControls = read('src/components/sections/schedule/ScheduleControlsPanel.tsx');
 const reportPanel = read('src/components/sections/ReportPanel.tsx');
+const peoplePanel = read('src/components/sections/PeoplePanel.tsx');
 
 const checks = [
   {
@@ -104,6 +105,16 @@ const checks = [
       && page.indexOf('resetScheduleFilters();', page.indexOf("case 'schedule':")) < page.indexOf("setActiveTab('schedule');", page.indexOf("case 'schedule':"))
       && page.indexOf('resetScheduleFilters();', page.indexOf("case 'duration':")) > page.indexOf("case 'duration':")
       && page.indexOf('resetScheduleFilters();', page.indexOf("case 'duration':")) < page.indexOf("setActiveTab('schedule');", page.indexOf("case 'duration':")),
+  },
+  {
+    name: 'people panel mobile call sheet actions stack before desktop layout',
+    ok: peoplePanel.includes('flex flex-col gap-3 md:flex-row md:items-center md:justify-between')
+      && peoplePanel.includes('grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:flex md:w-auto')
+      && peoplePanel.includes('min-h-12 w-full justify-center px-5 text-sm md:w-auto')
+      && peoplePanel.includes('grid grid-cols-1 gap-2 text-xs sm:grid-cols-3')
+      && peoplePanel.includes('prepro-btn min-h-11 w-full justify-center md:h-9 md:min-h-0 md:w-auto')
+      && peoplePanel.includes("pdfButtonText('콜시트 PDF')")
+      && peoplePanel.includes('누락 인원만 보기'),
   },
 ];
 

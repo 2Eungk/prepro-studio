@@ -94,20 +94,20 @@ export default function PeoplePanel({
 }: PeoplePanelProps) {
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <div>
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="min-w-0">
           <h2 className="text-xl font-black text-neutral-100">인원 DB</h2>
           <p className="text-sm text-neutral-500">{descriptionByTemplate[template]}</p>
         </div>
-        <div className="flex flex-wrap justify-end gap-2">
+        <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:flex md:w-auto md:flex-wrap md:justify-end">
           <button
             onClick={onExportPDF}
             disabled={isExportingPdf}
-            className="prepro-btn prepro-btn--secondary h-12 px-5 text-sm"
+            className="prepro-btn prepro-btn--secondary min-h-12 w-full justify-center px-5 text-sm md:w-auto"
           >
             <Download className={`h-4 w-4 ${isExportingPdf ? 'animate-pulse' : ''}`} /> {pdfButtonText('콜시트 PDF')}
           </button>
-          <button onClick={onNewPerson} className="prepro-btn prepro-btn--primary h-12 px-5 text-sm">
+          <button onClick={onNewPerson} className="prepro-btn prepro-btn--primary min-h-12 w-full justify-center px-5 text-sm md:w-auto">
             + 인원 추가
           </button>
         </div>
@@ -121,13 +121,13 @@ export default function PeoplePanel({
             <p className="mt-1 text-sm text-neutral-500">{shootingDate} · {location || '촬영지 미정'} · {templateLabel}</p>
           </div>
           <div className="flex flex-col gap-2 md:items-end">
-            <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="grid grid-cols-1 gap-2 text-xs sm:grid-cols-3">
               {[
                 { label: '첫 콜', value: callSheetStats.earliestCall, tone: 'text-cyan-300' },
                 { label: '콜 미정', value: `${callSheetStats.missingCallTime}`, tone: callSheetStats.missingCallTime ? 'text-amber-300' : 'text-green-300' },
                 { label: '연락처 누락', value: `${callSheetStats.missingContact}`, tone: callSheetStats.missingContact ? 'text-red-300' : 'text-green-300' },
               ].map((item) => (
-                <div key={item.label} className="rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2 text-right">
+                <div key={item.label} className="rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2 text-left sm:text-right">
                   <div className="text-[9px] font-black uppercase tracking-widest text-neutral-600">{item.label}</div>
                   <div className={`mt-1 text-base font-black ${item.tone}`}>{item.value}</div>
                 </div>
@@ -137,7 +137,7 @@ export default function PeoplePanel({
               type="button"
               onClick={onToggleIssueFilter}
               disabled={callSheetStats.missingCallTime + callSheetStats.missingContact === 0}
-              className={`prepro-btn h-9 ${peopleIssueFilter ? 'prepro-btn--warm' : 'prepro-btn--secondary'}`}
+              className={`prepro-btn min-h-11 w-full justify-center md:h-9 md:min-h-0 md:w-auto ${peopleIssueFilter ? 'prepro-btn--warm' : 'prepro-btn--secondary'}`}
             >
               {peopleIssueFilter ? '전체 인원 보기' : '누락 인원만 보기'}
             </button>
