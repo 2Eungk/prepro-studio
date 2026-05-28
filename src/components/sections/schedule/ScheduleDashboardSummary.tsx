@@ -37,7 +37,7 @@ export default function ScheduleDashboardSummary({
 }) {
   return (
     <>
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+      <div className="grid grid-cols-3 gap-2 md:gap-3">
         {workflowSteps.map((step) => {
           const isActive = activeStep === step.id;
           const isDone = activeStep > step.id;
@@ -45,7 +45,7 @@ export default function ScheduleDashboardSummary({
           return (
             <div
               key={step.id}
-              className={`flex items-center gap-4 rounded-2xl border px-5 py-4 transition-all ${
+              className={`flex min-w-0 flex-col items-start gap-2 rounded-2xl border px-3 py-3 transition-all md:flex-row md:items-center md:gap-4 md:px-5 md:py-4 ${
                 isActive
                   ? 'border-neutral-700 bg-neutral-900 text-white'
                   : isDone
@@ -59,8 +59,8 @@ export default function ScheduleDashboardSummary({
                 {isDone ? <CheckCircle2 className="h-4 w-4" /> : step.id}
               </div>
               <div className="min-w-0">
-                <div className="whitespace-nowrap text-sm font-black [word-break:keep-all]">{step.label}</div>
-                <div className="truncate text-[11px] text-neutral-500">{step.detail}</div>
+                <div className="whitespace-nowrap text-xs font-black [word-break:keep-all] md:text-sm">{step.label}</div>
+                <div className="hidden truncate text-[11px] text-neutral-500 md:block">{step.detail}</div>
               </div>
             </div>
           );
