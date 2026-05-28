@@ -111,6 +111,16 @@ const checks = [
       && appHeader.indexOf('브라우저에만 저장 · 백업 필요') < appHeader.indexOf('서버 DB에 프로젝트를 저장하지 않습니다.'),
   },
   {
+    name: 'mobile field control keeps status filters collapsed until needed',
+    ok: mobileTimelineCards.includes('group/mobile-field-filters')
+      && mobileTimelineCards.includes('open={statusFilter !== \'all\'}')
+      && mobileTimelineCards.includes('상태 필터')
+      && mobileTimelineCards.includes('대기 {reportStats.pending} · NG {reportStats.ng} · 완료 {reportStats.done}')
+      && mobileTimelineCards.includes('group-open/mobile-field-filters:hidden')
+      && mobileTimelineCards.indexOf('group/mobile-field-filters') < mobileTimelineCards.indexOf('다음 확인으로 이동')
+      && mobileTimelineCards.indexOf('상태 필터') < mobileTimelineCards.indexOf('onSetStatusFilter(statusFilter === item.id ? \'all\' : item.id)'),
+  },
+  {
     name: 'mobile sample project notice stays compact before field controls',
     ok: page.includes('샘플 보기 중 · 내 프로젝트로 쓰기')
       && page.includes('실제 프로젝트로 쓰려면 표시를 지우거나 새로 시작하세요.')

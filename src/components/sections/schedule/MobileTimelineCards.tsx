@@ -249,29 +249,40 @@ export function MobileFieldControlBar({
       <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-neutral-900">
         <div className="h-full rounded-full bg-teal-300" style={{ width: `${reportStats.completionRate}%` }} />
       </div>
-      <div className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-black">
-        <span className="rounded-full border border-green-400/20 bg-green-500/10 px-2 py-1 text-green-200">완료 {reportStats.done}</span>
-        <span className="rounded-full border border-red-400/20 bg-red-500/10 px-2 py-1 text-red-200">NG {reportStats.ng}</span>
-        <span className="rounded-full border border-neutral-700 bg-neutral-900 px-2 py-1 text-neutral-300">대기 {reportStats.pending}</span>
-      </div>
-      <div className="mt-3 grid grid-cols-3 gap-2">
-        {([
-          { id: 'pending', label: '대기', value: reportStats.pending, tone: statusFilter === 'pending' ? 'border-neutral-500 bg-neutral-900 text-white' : 'border-neutral-800 bg-black text-neutral-500' },
-          { id: 'ng', label: 'NG', value: reportStats.ng, tone: statusFilter === 'ng' ? 'border-red-400/50 bg-red-500/10 text-red-200' : 'border-neutral-800 bg-black text-neutral-500' },
-          { id: 'done', label: '완료', value: reportStats.done, tone: statusFilter === 'done' ? 'border-green-400/50 bg-green-500/10 text-green-200' : 'border-neutral-800 bg-black text-neutral-500' },
-        ] satisfies Array<{ id: ScheduleStatusFilter; label: string; value: number; tone: string }>).map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => onSetStatusFilter(statusFilter === item.id ? 'all' : item.id)}
-            className={`min-h-11 rounded-xl border px-2 text-left transition-colors ${item.tone}`}
-          >
-            <span className="block text-[10px] font-black">{item.label}</span>
-            <span className="mt-0.5 block text-lg font-black">{item.value}</span>
-          </button>
-        ))}
-      </div>
-      <div className="mt-3 grid gap-2 sm:grid-cols-3">
+      <details className="group/mobile-field-filters mt-2 rounded-xl border border-neutral-900 bg-black/30" open={statusFilter !== 'all'}>
+        <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between gap-2 px-3 text-[10px] font-black text-neutral-400 [&::-webkit-details-marker]:hidden">
+          <span>상태 필터</span>
+          <span className="truncate text-neutral-600 group-open/mobile-field-filters:hidden">
+            대기 {reportStats.pending} · NG {reportStats.ng} · 완료 {reportStats.done}
+          </span>
+          <span className="hidden text-neutral-600 group-open/mobile-field-filters:inline">접기</span>
+        </summary>
+        <div className="space-y-2 border-t border-neutral-900 p-2">
+          <div className="flex flex-wrap gap-1.5 text-[10px] font-black">
+            <span className="rounded-full border border-green-400/20 bg-green-500/10 px-2 py-1 text-green-200">완료 {reportStats.done}</span>
+            <span className="rounded-full border border-red-400/20 bg-red-500/10 px-2 py-1 text-red-200">NG {reportStats.ng}</span>
+            <span className="rounded-full border border-neutral-700 bg-neutral-900 px-2 py-1 text-neutral-300">대기 {reportStats.pending}</span>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {([
+              { id: 'pending', label: '대기', value: reportStats.pending, tone: statusFilter === 'pending' ? 'border-neutral-500 bg-neutral-900 text-white' : 'border-neutral-800 bg-black text-neutral-500' },
+              { id: 'ng', label: 'NG', value: reportStats.ng, tone: statusFilter === 'ng' ? 'border-red-400/50 bg-red-500/10 text-red-200' : 'border-neutral-800 bg-black text-neutral-500' },
+              { id: 'done', label: '완료', value: reportStats.done, tone: statusFilter === 'done' ? 'border-green-400/50 bg-green-500/10 text-green-200' : 'border-neutral-800 bg-black text-neutral-500' },
+            ] satisfies Array<{ id: ScheduleStatusFilter; label: string; value: number; tone: string }>).map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onSetStatusFilter(statusFilter === item.id ? 'all' : item.id)}
+                className={`min-h-11 rounded-xl border px-2 text-left transition-colors ${item.tone}`}
+              >
+                <span className="block text-[10px] font-black">{item.label}</span>
+                <span className="mt-0.5 block text-lg font-black">{item.value}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </details>
+      <div className="mt-2 grid gap-2 sm:grid-cols-3">
         <div className="rounded-xl border border-neutral-900 bg-black/45 px-3 py-2">
           <div className="text-[9px] font-black uppercase tracking-widest text-neutral-600">상태</div>
           <div className="mt-1 text-xs font-black text-neutral-300">{statusLabel}</div>
