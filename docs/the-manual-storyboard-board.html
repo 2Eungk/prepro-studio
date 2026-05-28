@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Manual - 5월 31일 촬영 스토리보드 보드</title>
+  <style>
+    :root {
+      --bg: #0b0b0b;
+      --panel: #141414;
+      --panel-2: #1b1b1b;
+      --ink: #f4f4f5;
+      --muted: #a3a3a3;
+      --dim: #737373;
+      --line: #2b2b2b;
+      --accent: #5ed7cf;
+      --warm: #f2a14b;
+      --green: #84cc16;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+
+    main {
+      width: min(1280px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 36px 0 60px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(32px, 4vw, 56px);
+      letter-spacing: 0;
+      line-height: 1;
+    }
+
+    .subtitle {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      min-width: 360px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      background: var(--panel);
+      text-align: center;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--dim);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 20px;
+    }
+
+    .block {
+      break-inside: avoid;
+      margin-top: 22px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #0f0f0f;
+    }
+
+    .block-header {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px;
+      background: linear-gradient(90deg, rgba(94, 215, 207, 0.12), rgba(242, 161, 75, 0.08));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .block-title {
+      margin: 0;
+      color: var(--accent);
+      font-size: 20px;
+      font-weight: 950;
+    }
+
+    .block-goal {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .block-tag {
+      flex: 0 0 auto;
+      border: 1px solid rgba(94, 215, 207, 0.35);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .shot-row {
+      display: grid;
+      grid-template-columns: 34% 66%;
+      border-top: 1px solid var(--line);
+      min-height: 178px;
+    }
+
+    .shot-row:first-of-type {
+      border-top: 0;
+    }
+
+    .frame {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px;
+      background:
+        linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02)),
+        repeating-linear-gradient(0deg, transparent, transparent 23px, rgba(255,255,255,0.035) 24px);
+      border-right: 1px solid var(--line);
+    }
+
+    .frame-box {
+      aspect-ratio: 16 / 9;
+      border: 2px solid #e5e5e5;
+      border-radius: 8px;
+      background: #f8f8f8;
+      color: #111;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12);
+    }
+
+    .visual {
+      width: 100%;
+      text-align: center;
+      color: #111;
+      font-size: clamp(22px, 2.2vw, 34px);
+      font-weight: 950;
+      line-height: 1.2;
+      white-space: pre-line;
+    }
+
+    .frame-caption {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px 10px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .frame-caption b {
+      color: var(--ink);
+    }
+
+    .details {
+      display: grid;
+      grid-template-columns: 120px minmax(120px, 170px) minmax(140px, 190px) 1fr;
+      min-width: 0;
+    }
+
+    .cell {
+      padding: 14px 16px;
+      border-right: 1px solid var(--line);
+      min-width: 0;
+    }
+
+    .cell:last-child {
+      border-right: 0;
+    }
+
+    .label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--dim);
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .time {
+      color: var(--accent);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 18px;
+      font-weight: 950;
+      line-height: 1.25;
+    }
+
+    .duration {
+      margin-top: 8px;
+      color: var(--warm);
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .scene {
+      font-size: 14px;
+      font-weight: 950;
+      white-space: pre-line;
+    }
+
+    .lens {
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 900;
+      white-space: pre-line;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 750;
+      word-break: keep-all;
+    }
+
+    .note strong {
+      color: var(--ink);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .chip {
+      border: 1px solid rgba(94, 215, 207, 0.22);
+      border-radius: 999px;
+      padding: 5px 8px;
+      color: var(--accent);
+      background: rgba(94, 215, 207, 0.07);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .move-row {
+      padding: 14px 20px;
+      border-top: 1px solid rgba(242, 161, 75, 0.28);
+      background: rgba(242, 161, 75, 0.08);
+      color: var(--warm);
+      font-weight: 950;
+    }
+
+    .footer-note {
+      margin-top: 24px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px 20px;
+      color: var(--muted);
+      background: var(--panel);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    @media (max-width: 980px) {
+      main {
+        width: min(100vw - 24px, 760px);
+        padding-top: 20px;
+      }
+
+      .hero,
+      .shot-row,
+      .details {
+        grid-template-columns: 1fr;
+      }
+
+      .meta {
+        min-width: 0;
+      }
+
+      .frame {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .cell {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .cell:last-child {
+        border-bottom: 0;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        color: #111;
+      }
+
+      main {
+        width: 100%;
+        padding: 0;
+      }
+
+      .block,
+      .metric,
+      .footer-note {
+        border-color: #ccc;
+        background: #fff;
+      }
+
+      .shot-row {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div>
+        <h1>The Manual</h1>
+        <div class="subtitle">5월 31일 촬영 일촬표 기반 스토리보드 보드 · 카메라 포지션 & 렌즈 최적화 기준</div>
+      </div>
+      <div class="meta">
+        <div class="metric"><span>Blocks</span><strong>5</strong></div>
+        <div class="metric"><span>Runtime</span><strong>07:00-22:30</strong></div>
+        <div class="metric"><span>Priority</span><strong>렌즈 교체 최소</strong></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <header class="block-header">
+        <div>
+          <h2 class="block-title">BLOCK 1 · 이른 아침 거리</h2>
+          <p class="block-goal">목표: 해 뜬 직후의 자연광 활용. 광각/표준 짐벌 샷 먼저 밀고, 망원으로 마무리.</p>
+        </div>
+        <div class="block-tag">자연광 / 무빙 중심</div>
+      </header>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">🎥\nSETUP</div></div>
+          <div class="frame-caption"><span>프레임</span><b>스태프 집결 / 짐벌 세팅</b><span>톤</span><b>차가운 이른 아침</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">07:00<br>- 07:15</div><div class="duration">15분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">현장 세팅</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">-</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note">스태프 집결 및 카메라/짐벌 세팅. 이후 군중 동선과 카이로스의 이탈 방향을 먼저 맞춘다.</div></div>
+        </div>
+      </article>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">👥 👥 👥\n   🏃‍♂️💨\n[군중 속 표류]</div></div>
+          <div class="frame-caption"><span>프레임</span><b>군중은 직진, 카이로스만 방황</b><span>카메라</span><b>핸드헬드 흔들림</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">07:15<br>- 08:00</div><div class="duration">45분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">S# 22A, 22B<br>S# 14A</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">24-70mm<br>핸드헬드 / 짐벌<br>Low / Eye</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note">매뉴얼 없이 당황하며 뛰는 동선. 사람들은 질서정연하게 직진하고, 카이로스만 패턴을 잃고 방황한다.<div class="chips"><span class="chip">무빙</span><span class="chip">혼란</span><span class="chip">대조</span></div></div></div>
+        </div>
+      </article>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">🧍‍♂️   ☁️\n(CU)\n배경 압축</div></div>
+          <div class="frame-caption"><span>프레임</span><b>하늘 응시 타이트 샷</b><span>감정</span><b>혼란에서 정지</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">08:00<br>- 08:30</div><div class="duration">30분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">S# 22C</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">70-200mm<br>삼각대 픽스<br>Eye level</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note">뛰다가 멈춰서 하늘을 보는 타이트 샷. 망원으로 군중 배경을 날리고 인물의 얼굴과 호흡에 집중한다.</div></div>
+        </div>
+      </article>
+      <div class="move-row">08:30 - 09:00 · 아파트로 이동 및 거실 픽스 세팅</div>
+    </section>
+
+    <section class="block">
+      <header class="block-header">
+        <div>
+          <h2 class="block-title">BLOCK 2 · 아파트 거실</h2>
+          <p class="block-goal">목표: 삼각대 고정 후, 인서트 먼저 다 찍고 메인 동선 트래킹.</p>
+        </div>
+        <div class="block-tag">동일 앵글 인서트 몰아 찍기</div>
+      </header>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">⏰ 🖐️\n📄 👀\n탑뷰 타이트</div></div>
+          <div class="frame-caption"><span>프레임</span><b>알람 끄는 손 / 매뉴얼 확인</b><span>방식</span><b>픽스 인서트 반복</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">09:00<br>- 09:40</div><div class="duration">40분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">S# 2C, 2F, 2H<br>S# 2J, 2L, 2N<br>S# 13A</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">70-200mm<br>픽스<br>CS / High</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note"><strong>인서트 몰아찍기.</strong> 카메라 고정 후 시간대만 바꿔 알람 끄는 손을 반복 촬영. 매뉴얼 확인하는 눈빛과 종이 질감을 확보한다.</div></div>
+        </div>
+      </article>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">🥛🍌  ↔  🥤🍎\n🪥 👕\n🚶‍♂️</div></div>
+          <div class="frame-caption"><span>프레임</span><b>Day1 허겁지겁 vs Day2 여유</b><span>동선</span><b>냉장고 / 식탁 / 양치 / 거실</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">09:40<br>- 11:30</div><div class="duration">110분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">S# 2B, 2D, 2E<br>S# 2G, 2I, 2K, 2M<br>S# 13B-13F<br>S# 1E</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">24-70mm<br>픽스 & 트래킹<br>MS / MCU</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note"><strong>Day1 / Day2 템포 대비.</strong> 허겁지겁 먹는 1일 차와 여유롭게 음미하는 2일 차를 같은 공간, 유사 구도로 비교한다.</div></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="block">
+      <header class="block-header">
+        <div>
+          <h2 class="block-title">BLOCK 3 · 아파트 현관 및 계단</h2>
+          <p class="block-goal">목표: 현관문 주변 씬 클리어. 계단은 12-24mm 광각으로 긴장감 극대화.</p>
+        </div>
+        <div class="block-tag">광각 왜곡 활용</div>
+      </header>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">🎥\n복도 / 현관\nSETUP</div></div>
+          <div class="frame-caption"><span>프레임</span><b>실내외 노출 차이 체크</b><span>주의</span><b>문 주변 동선 확보</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">11:30<br>- 11:45</div><div class="duration">15분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">현장 세팅</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">-</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note">복도/현관 셋업. 실내외 노출 차이에 주의하며 조명과 카메라 위치를 먼저 고정한다.</div></div>
+        </div>
+      </article>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">🚪 ⏱️\n😰 🚪\n🚶‍♂️ 밖으로</div></div>
+          <div class="frame-caption"><span>프레임</span><b>문 앞 대기 / 뛰어 들어옴 / 팔로잉</b><span>감정</span><b>시간 압박</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">11:45<br>- 12:45</div><div class="duration">60분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">S# 3B-3E<br>S# 10A-10E<br>S# 19A, 19B</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">24-70mm<br>픽스 & 트래킹<br>High / Eye</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note">나가는 씬, 오후 3시 헐레벌떡 들어와 알람 끄는 씬, 문밖에서 시간 맞춰 대기하는 씬을 현관 위치에서 몰아찍는다.</div></div>
+        </div>
+      </article>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">🏃‍♂️ 🧗‍♂️\n🔑 😰\n좁은 복도 광각</div></div>
+          <div class="frame-caption"><span>프레임</span><b>계단 두 칸씩 질주 / 떨리는 손</b><span>카메라</span><b>렌즈 바짝 붙이기</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">12:45<br>- 13:30</div><div class="duration">45분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">S# 9A-9D</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">12-24mm<br>핸드헬드<br>MS / CU</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note">계단을 두 칸씩 뛰어오르는 역동적인 샷. 숨 가쁜 느낌을 위해 광각 렌즈를 인물과 손에 바짝 붙인다.</div></div>
+        </div>
+      </article>
+      <div class="move-row">13:30 - 14:30 · 점심 식사 및 로케이션(야외) 이동/세팅</div>
+    </section>
+
+    <section class="block">
+      <header class="block-header">
+        <div>
+          <h2 class="block-title">BLOCK 4 · 늦은 오후 거리</h2>
+          <p class="block-goal">목표: 골든아워 빛 활용. 망원으로 압축감 살리고, 표준으로 넓은 횡단보도 샷.</p>
+        </div>
+        <div class="block-tag">망원 타이트 샷 먼저</div>
+      </header>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">🎥\n거리 / 횡단보도\nSETUP</div></div>
+          <div class="frame-caption"><span>프레임</span><b>횡단보도 근처 자리 잡기</b><span>주의</span><b>신호 타이밍 체크</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">14:30<br>- 14:50</div><div class="duration">20분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">현장 세팅</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">-</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note">거리 셋업. 횡단보도 근처 자리 잡고 배우 질주 동선과 신호 타이밍을 사전에 맞춘다.</div></div>
+        </div>
+      </article>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">🚦 🏃‍♂️\n⌚ 👀\n아슬아슬 통과</div></div>
+          <div class="frame-caption"><span>프레임</span><b>신호 직전 통과 / 시계 줌인</b><span>감정</span><b>조급함 압축</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">14:50<br>- 16:10</div><div class="duration">80분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">S# 8C, 8D</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">70-200mm<br>픽스 / 트래킹<br>Low / High</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note">횡단보도를 건너는 순간을 타이트하게 잡는다. 배경 아웃포커싱으로 인물의 조급함과 시간 압박을 강조한다.</div></div>
+        </div>
+      </article>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">🏃‍♂️ 🛣️\n🧍‍♂️ 🌇\n풀샷 질주</div></div>
+          <div class="frame-caption"><span>프레임</span><b>넓은 거리 질주 / 하늘 응시</b><span>톤</span><b>골든아워 정지감</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">16:10<br>- 17:30</div><div class="duration">80분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">S# 8A, 8B<br>S# 18A, 18B</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">24-70mm<br>트래킹 & 픽스<br>WS / MS</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note">횡단보도를 향해 뛰는 전체적인 그림. 거리 한가운데 서서 10초간 하늘을 보는 장면으로 자유와 불안을 동시에 남긴다.</div></div>
+        </div>
+      </article>
+      <div class="move-row">17:30 - 18:30 · 저녁 식사 및 야간 침실 완벽 통제 세팅</div>
+    </section>
+
+    <section class="block">
+      <header class="block-header">
+        <div>
+          <h2 class="block-title">BLOCK 5 · 야간 침실 & 메인 폭발</h2>
+          <p class="block-goal">목표: 일상 씬을 먼저 정리하고, 마지막에 방을 난장판으로 만들며 에너지 폭발.</p>
+        </div>
+        <div class="block-tag">FX3 저조도 / 극단적 광각</div>
+      </header>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">💡\n실내 암막\n야간 조명</div></div>
+          <div class="frame-caption"><span>프레임</span><b>창밖 어두운 룩</b><span>주의</span><b>방 안 기본조명</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">18:30<br>- 19:00</div><div class="duration">30분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">야간 조명 셋업</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">-</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note">창밖 어두운 룩과 방 안 기본조명 세팅. 이후 파괴 씬 전까지 차분한 일상 컷을 먼저 클리어한다.</div></div>
+        </div>
+      </article>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">🛏️ 📱\n🚪 🚶‍♂️\n👁️</div></div>
+          <div class="frame-caption"><span>프레임</span><b>침대 통화 / 현관 진입 / 기상 탑뷰</b><span>톤</span><b>차분한 루틴</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">19:00<br>- 20:30</div><div class="duration">90분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">S# 11, 20<br>S# 1, 12, 31</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">24-70mm<br>픽스 & 팬<br>다양한 앵글</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note">창문 환기, 야간 통화, 기상 씬 등 침실에서 할 수 있는 모든 차분한 일상 컷을 먼저 끝낸다.</div></div>
+        </div>
+      </article>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">🖨️ 📄\n😨 🖐️\n무한 출력</div></div>
+          <div class="frame-caption"><span>프레임</span><b>프린터 / 경고문 / 떨리는 손</b><span>감정</span><b>패닉 상승</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">20:30<br>- 21:00</div><div class="duration">30분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">S# 21A-21F</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">70-200mm<br>픽스<br>CU / MCU</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note">매뉴얼이 다시 출력되며 패닉에 빠지는 타이트 샷. 동공, 손, 종이 흔들림 같은 미세한 떨림을 극대화한다.</div></div>
+        </div>
+      </article>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">⚠️\n더미 프린터\n안전 구역</div></div>
+          <div class="frame-caption"><span>프레임</span><b>파괴 전 미술/안전 세팅</b><span>주의</span><b>카메라 보호</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">21:00<br>- 21:20</div><div class="duration">20분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">파괴 셋업</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">-</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note">파괴될 프린터 더미 세팅, 파편 방향과 배우 동선을 기준으로 안전 구역 확보. 광각 메인과 망원 타이트 동시 운용 준비.</div></div>
+        </div>
+      </article>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">💥 🔨 🤬\nEXTREME LOW\n광각 왜곡</div></div>
+          <div class="frame-caption"><span>프레임</span><b>바닥에 붙은 로우 앵글</b><span>카메라</span><b>광각 메인 + 망원 타이트</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">21:20<br>- 22:00</div><div class="duration">40분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">S# 32A-32K</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">12-24mm<br>베이비 레그<br>Extreme Low / HH</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note"><strong>메인 액션 씬.</strong> 바닥에 붙은 앵글에서 거칠게 프린터를 부수는 장면. 카메라 2대 동시 운용 필수.</div></div>
+        </div>
+      </article>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">☀️ 💡\n아침 룩\n전환</div></div>
+          <div class="frame-caption"><span>프레임</span><b>잔해 유지 후 햇살 조명</b><span>톤</span><b>폭발 이후 고요함</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">22:00<br>- 22:10</div><div class="duration">10분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">아침 룩 전환</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">-</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note">파괴된 잔해를 그대로 두고, 조명만 아침 햇살 느낌으로 전환한다.</div></div>
+        </div>
+      </article>
+
+      <article class="shot-row">
+        <div class="frame">
+          <div class="frame-box"><div class="visual">☀️ 🕊️\n🏚️\n잔해 위 종이학</div></div>
+          <div class="frame-caption"><span>프레임</span><b>부서진 잔해 위 평온한 아침</b><span>엔딩</span><b>종이학 인서트</b></div>
+        </div>
+        <div class="details">
+          <div class="cell"><span class="label">시간</span><div class="time">22:10<br>- 22:30</div><div class="duration">20분</div></div>
+          <div class="cell"><span class="label">S# / 컷</span><div class="scene">S# 33A, 33B</div></div>
+          <div class="cell"><span class="label">렌즈 / 앵글</span><div class="lens">24-70mm<br>픽스</div></div>
+          <div class="cell"><span class="label">내용 / 연출 포인트</span><div class="note">부서진 잔해 위 평온한 아침, 종이학 인서트 후 크랭크업. 이전 파괴 씬과 대비되는 조용한 해방감으로 마무리.</div></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="footer-note">
+      현장 운영 메모: 렌즈 마운트 해제 횟수를 줄이는 순서로 블록화했다. FX3 듀얼 베이스 ISO와 자연광/야간 조명 전환만 안정적으로 잡으면, 이동과 세팅 지연 없이 밀고 갈 수 있는 구조다.
+    </section>
+  </main>
+</body>
+</html>
