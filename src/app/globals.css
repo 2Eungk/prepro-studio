@@ -27,20 +27,20 @@ body {
 
 .prepro-shell {
   --prepro-ink: #f3f4f6;
-  --prepro-muted: #a3a3a3;
-  --prepro-panel: #0b0b0b;
-  --prepro-surface: #151515;
-  --prepro-border: #262626;
-  --prepro-accent: #5ed7cf;
-  --prepro-accent-strong: #188f88;
-  --prepro-accent-soft: rgba(94, 215, 207, 0.12);
-  --prepro-warm: #f2a14b;
-  --prepro-warm-soft: rgba(242, 161, 75, 0.09);
+  --prepro-muted: #9ca3a8;
+  --prepro-panel: #080909;
+  --prepro-surface: #111314;
+  --prepro-surface-raised: #17191a;
+  --prepro-border: rgba(255, 255, 255, 0.13);
+  --prepro-line: rgba(255, 255, 255, 0.18);
+  --prepro-accent: #b8bec3;
+  --prepro-accent-strong: #2a2d2f;
+  --prepro-accent-soft: rgba(255, 255, 255, 0.075);
+  --prepro-warm: #b8a486;
+  --prepro-warm-soft: rgba(184, 164, 134, 0.08);
   color-scheme: dark;
   background:
-    radial-gradient(circle at 8% -8%, rgba(94, 215, 207, 0.12), rgba(8, 8, 8, 0) 28%),
-    radial-gradient(circle at 95% 4%, rgba(242, 161, 75, 0.08), rgba(8, 8, 8, 0) 24%),
-    linear-gradient(180deg, rgba(11, 13, 13, 0.98) 0%, #000 36%),
+    linear-gradient(180deg, #090a0a 0%, #050505 42%, #000 100%),
     #000;
 }
 
@@ -66,6 +66,19 @@ body {
   border-color: rgba(196, 199, 208, 0.22) !important;
 }
 
+.prepro-shell [class*="text-teal-"] {
+  color: #c4c9cd !important;
+}
+
+.prepro-shell [class*="bg-teal-"] {
+  background-color: rgba(255, 255, 255, 0.07) !important;
+  background-image: none !important;
+}
+
+.prepro-shell [class*="border-teal-"] {
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
 .prepro-shell [class*="text-indigo-"] {
   color: var(--prepro-accent) !important;
 }
@@ -86,7 +99,7 @@ body {
 .prepro-shell .bg-teal-500,
 .prepro-shell .bg-teal-600 {
   background-color: var(--prepro-accent-strong) !important;
-  background-image: linear-gradient(135deg, #1aa39b 0%, #146f6a 62%, #8a5a25 150%) !important;
+  background-image: none !important;
 }
 
 .prepro-shell [class*="text-amber-"] {
@@ -106,7 +119,7 @@ body {
 .prepro-shell .bg-gradient-to-l,
 .prepro-shell .bg-gradient-to-b,
 .prepro-shell .bg-gradient-to-t {
-  background-image: linear-gradient(135deg, rgba(103, 199, 192, 0.16), rgba(224, 160, 75, 0.08) 58%, rgba(255, 255, 255, 0.035)) !important;
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.035)) !important;
   color: #f5f5f5 !important;
   -webkit-text-fill-color: currentColor;
 }
@@ -115,7 +128,7 @@ body {
 .prepro-shell .bg-clip-text.bg-gradient-to-l,
 .prepro-shell .bg-clip-text.bg-gradient-to-b,
 .prepro-shell .bg-clip-text.bg-gradient-to-t {
-  background-image: linear-gradient(90deg, #f4f4f5 0%, var(--prepro-accent) 62%, var(--prepro-warm) 130%) !important;
+  background-image: linear-gradient(90deg, #f4f4f5 0%, #aeb4b9 100%) !important;
   color: transparent !important;
   -webkit-text-fill-color: transparent;
 }
@@ -200,6 +213,35 @@ body {
   background-color: rgba(30, 35, 36, 0.92) !important;
 }
 
+/* Matte graphite pass: neutralize decorative color washes into dark grey linework. */
+.prepro-shell [class*="bg-[linear-gradient"] {
+  background-image: none !important;
+  background-color: rgba(17, 19, 20, 0.82) !important;
+}
+
+.prepro-shell [class*="border-teal-"],
+.prepro-shell [class*="border-indigo-"] {
+  border-color: var(--prepro-line) !important;
+}
+
+.prepro-shell [class*="text-teal-"],
+.prepro-shell [class*="text-indigo-"] {
+  color: #c5cace !important;
+}
+
+.prepro-shell [class*="bg-teal-300"],
+.prepro-shell [class*="bg-teal-400"],
+.prepro-shell [class*="bg-indigo-500"] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #eef0f2 !important;
+}
+
+.prepro-shell .bg-teal-300.text-black,
+.prepro-shell .bg-teal-400.text-black {
+  background-color: #c5cace !important;
+  color: #050505 !important;
+}
+
 .prepro-shell [class*="text-[9px]"] {
   font-size: 0.625rem !important;
   line-height: 1.2rem !important;
@@ -264,37 +306,37 @@ body {
 }
 
 .prepro-btn--primary {
-  border-color: rgba(94, 215, 207, 0.36);
-  background: linear-gradient(135deg, #1aa39b 0%, #146f6a 72%, #8a5a25 150%);
-  color: #fff;
+  border-color: rgba(255, 255, 255, 0.32);
+  background: #242728;
+  color: #f4f6f7;
 }
 
 .prepro-btn--primary:hover:not(:disabled) {
-  border-color: rgba(159, 242, 235, 0.62);
-  background: linear-gradient(135deg, #23b9b0 0%, #188f88 72%, #a66b2a 150%);
+  border-color: rgba(255, 255, 255, 0.5);
+  background: #2d3032;
 }
 
 .prepro-btn--secondary {
-  border-color: rgba(255, 255, 255, 0.18);
-  background: #15191a;
+  border-color: rgba(255, 255, 255, 0.16);
+  background: #131516;
   color: #e1e5e8;
 }
 
 .prepro-btn--secondary:hover:not(:disabled) {
-  border-color: #404040;
-  background: #181818;
+  border-color: rgba(255, 255, 255, 0.28);
+  background: #1b1e1f;
   color: #f4f4f5;
 }
 
 .prepro-btn--ghost {
   border-color: transparent;
-  background: #15191a;
+  background: #101213;
   color: #b2bac1;
 }
 
 .prepro-btn--ghost:hover:not(:disabled) {
-  border-color: #333;
-  background: #191919;
+  border-color: rgba(255, 255, 255, 0.2);
+  background: #191b1c;
   color: #f4f4f5;
 }
 
@@ -305,8 +347,8 @@ body {
 }
 
 .prepro-btn--quiet:hover:not(:disabled) {
-  border-color: rgba(94, 215, 207, 0.3);
-  color: #c7fffa;
+  border-color: rgba(255, 255, 255, 0.26);
+  color: #eef0f2;
 }
 
 .prepro-btn--warm {
@@ -333,9 +375,9 @@ body {
 .prepro-segment {
   display: grid;
   gap: 0.375rem;
-  border: 1px solid #171717;
+  border: 1px solid rgba(255, 255, 255, 0.11);
   border-radius: 10px;
-  background: #050505;
+  background: #070808;
   padding: 0.25rem;
 }
 
@@ -355,13 +397,13 @@ body {
 }
 
 .prepro-segment__item:hover {
-  background: #141414;
+  background: #141617;
   color: #d4d4d4;
 }
 
 .prepro-segment__item.is-active {
-  border-color: rgba(94, 215, 207, 0.4);
-  background: rgba(94, 215, 207, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
+  background: #1f2223;
   color: #f4f4f5;
 }
 
@@ -376,13 +418,13 @@ body {
 }
 
 .prepro-action-card.is-primary {
-  border-color: rgba(94, 215, 207, 0.34);
-  background: rgba(94, 215, 207, 0.1);
+  border-color: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.055);
 }
 
 .prepro-action-card.is-primary:hover {
-  border-color: rgba(94, 215, 207, 0.58);
-  background: rgba(94, 215, 207, 0.14);
+  border-color: rgba(255, 255, 255, 0.36);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .prepro-shell button,
@@ -396,7 +438,7 @@ body {
 .prepro-shell input:focus-visible,
 .prepro-shell textarea:focus-visible,
 .prepro-shell select:focus-visible {
-  outline: 2px solid rgba(94, 215, 207, 0.42);
+  outline: 2px solid rgba(255, 255, 255, 0.34);
 }
 
 .prepro-shell section,

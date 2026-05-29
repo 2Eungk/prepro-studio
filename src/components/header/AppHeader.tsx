@@ -396,7 +396,7 @@ export default function AppHeader({
           <summary className="flex cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
             <span className="min-w-0">
               <span className="block text-[10px] font-black uppercase tracking-[0.22em] text-neutral-600">{workspaceLanguage.setupLabel}</span>
-              <span className="mt-1 block truncate text-sm font-bold text-neutral-300">
+              <span className="mt-1 block truncate text-sm font-bold text-neutral-300" suppressHydrationWarning>
                 {templateLabel} / {weatherLabel || location || '날씨 위치 미정'} / {activeShootingDate}
               </span>
             </span>
@@ -442,7 +442,7 @@ export default function AppHeader({
                 <span className="text-neutral-700">/</span>
                 <span>{weatherLabel || location || '날씨 위치 미정'}</span>
                 <span className="text-neutral-700">/</span>
-                <span>{activeShootingDate}</span>
+                <span suppressHydrationWarning>{activeShootingDate}</span>
               </div>
             </div>
             <div className="prepro-segment grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 xl:max-w-[760px]">
@@ -564,6 +564,7 @@ export default function AppHeader({
                     className="bg-transparent border-none text-sm focus:outline-none text-neutral-200 font-bold [color-scheme:dark] min-w-0"
                     value={activeShootingDate}
                     onChange={(event) => onActiveDayDateChange(event.target.value)}
+                    suppressHydrationWarning
                   />
                 </div>
               </div>
