@@ -275,28 +275,50 @@ export function FirstRunPanel({
                 </button>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                {actionChoices.map((item) => {
+                {actionChoices.map((item, index) => {
                   const Icon = item.Icon;
+                  const isRecommended = index === 0;
+                  const recommendedActionLabel = currentTemplate === 'film'
+                    ? '시나리오로 시작하기'
+                    : currentTemplate === 'event'
+                      ? '식순으로 시작하기'
+                      : currentTemplate === 'ad'
+                        ? '광고 구성으로 시작하기'
+                        : currentTemplate === 'musicvideo'
+                          ? 'MV 콘티로 시작하기'
+                          : '타임코드 콘티로 시작하기';
 
                   return (
                     <button
                       key={item.label}
                       type="button"
                       onClick={() => moveToAction(item)}
-                      className={`prepro-action-card group rounded-xl border p-5 text-left transition-all ${item.tone === 'primary' ? 'is-primary text-neutral-100' : 'text-neutral-300'}`}
+                      className={`prepro-action-card group rounded-xl border p-5 text-left transition-all ${
+                        isRecommended
+                          ? 'is-primary text-neutral-100 sm:col-span-2'
+                          : 'text-neutral-300'
+                      }`}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border ${
-                          item.tone === 'primary'
+                          isRecommended
                             ? 'border-teal-300/30 bg-teal-300/10 text-teal-200'
                             : 'border-neutral-800 bg-neutral-950 text-neutral-400 group-hover:text-neutral-200'
                         }`}>
                           <Icon className="h-5 w-5" />
                         </div>
+                        {isRecommended && (
+                          <span className="rounded-full border border-teal-300/30 bg-teal-300/10 px-2 py-1 text-[9px] font-black text-teal-100">추천</span>
+                        )}
                         <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-neutral-700 transition-all group-hover:translate-x-0.5 group-hover:text-neutral-300" />
                       </div>
-                      <div className="mt-5 text-lg font-black text-white">{item.label}</div>
-                      <p className="mt-2 min-h-12 text-sm font-bold leading-relaxed text-neutral-600">{item.detail}</p>
+                      {isRecommended && (
+                        <div className="mt-5 text-[10px] font-black uppercase tracking-[0.16em] text-teal-200">{item.label}</div>
+                      )}
+                      <div className={`${isRecommended ? 'mt-1 text-xl' : 'mt-5 text-lg'} font-black text-white`}>
+                        {isRecommended ? recommendedActionLabel : item.label}
+                      </div>
+                      <p className={`${isRecommended ? 'max-w-2xl' : 'min-h-12'} mt-2 text-sm font-bold leading-relaxed text-neutral-600`}>{item.detail}</p>
                     </button>
                   );
                 })}

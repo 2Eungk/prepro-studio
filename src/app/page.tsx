@@ -3424,21 +3424,21 @@ export default function Home() {
   ];
   const gettingStartedCards = [
     {
-      label: template === 'event' ? '식순 정리' : template === 'ad' ? '광고 구성 분석' : template === 'musicvideo' ? 'MV 타임코드 콘티' : template === 'dance' ? '타임코드 콘티' : '시나리오 분석',
-      detail: template === 'film' ? '대본/PDF/샷리스트를 넣어 촬영표 초안을 만듭니다.' : workspaceLanguage.gettingStarted.analyzer,
+      label: template === 'film' ? '대본이 있어요' : '자료가 있어요',
+      detail: template === 'film' ? '시나리오, PDF, 샷리스트를 넣으면 씬·장소·인물 초안으로 바로 시작합니다.' : workspaceLanguage.gettingStarted.analyzer,
       Icon: Brain,
       action: openScriptAnalyzer,
       tone: 'primary',
     },
     {
-      label: '직접 추가',
+      label: '직접 입력하기',
       detail: workspaceLanguage.gettingStarted.manual,
       Icon: Plus,
       action: openNewSceneForm,
-      tone: 'primary',
+      tone: 'neutral',
     },
     {
-      label: '기획부터 시작',
+      label: '기획부터 정리하기',
       detail: workspaceLanguage.gettingStarted.planning,
       Icon: FileText,
       action: () => {
@@ -3887,27 +3887,30 @@ export default function Home() {
                     첫 {copy.item}만 만들면 장소, 인원, 예산, 리포트는 자연스럽게 따라옵니다. 시작 방식 하나만 선택하세요.
                   </p>
                   <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                    <button type="button" onClick={openScriptAnalyzer} data-first-action="recommended-analyzer" className="rounded-2xl border border-teal-300/35 bg-teal-300/10 p-5 text-left transition-all hover:bg-teal-300/15">
+                    <button type="button" onClick={openScriptAnalyzer} data-first-action="recommended-analyzer" className="rounded-2xl border border-teal-300/45 bg-teal-300 p-5 text-left text-black shadow-xl shadow-teal-950/25 transition-all hover:bg-teal-200 sm:col-span-2">
                       <div className="flex items-start justify-between gap-3">
-                        <Brain className="h-5 w-5 text-teal-200" />
-                        <span className="rounded-full border border-teal-300/30 bg-teal-300/10 px-2 py-1 text-[9px] font-black text-teal-100">추천 빠른 시작</span>
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-black/10">
+                          <Brain className="h-5 w-5" />
+                        </div>
+                        <span className="rounded-full border border-black/10 bg-black/10 px-2 py-1 text-[9px] font-black">추천 빠른 시작</span>
                       </div>
-                      <div className="mt-4 text-lg font-black text-white">{template === 'event' ? '식순 정리' : template === 'ad' ? '광고 분석' : template === 'musicvideo' ? 'MV 콘티' : template === 'dance' ? '타임코드 콘티' : '시나리오 분석'}</div>
-                      <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">{template === 'film' ? '시나리오에서 씬·장소·인물을 추출합니다.' : workspaceLanguage.gettingStarted.analyzer}</p>
+                      <div className="mt-4 text-[10px] font-black uppercase tracking-[0.16em] opacity-70">{template === 'film' ? '대본이 있어요' : '자료가 있어요'}</div>
+                      <div className="mt-1 text-xl font-black">{template === 'film' ? '시나리오로 시작하기' : template === 'event' ? '식순으로 시작하기' : template === 'ad' ? '광고 구성으로 시작하기' : template === 'musicvideo' ? 'MV 콘티로 시작하기' : '타임코드 콘티로 시작하기'}</div>
+                      <p className="mt-2 max-w-xl text-sm font-bold leading-relaxed text-black/65">{template === 'film' ? '대본/PDF/샷리스트를 넣으면 씬·장소·인물을 추출해 첫 촬영표를 만듭니다.' : workspaceLanguage.gettingStarted.analyzer}</p>
                     </button>
-                    <button type="button" onClick={openNewSceneForm} data-first-action="manual-entry" className="rounded-2xl border border-teal-300/35 bg-teal-300/10 p-5 text-left transition-all hover:bg-teal-300/15">
-                      <Plus className="h-5 w-5 text-teal-200" />
-                      <div className="mt-4 text-lg font-black text-white">직접 추가</div>
+                    <button type="button" onClick={openNewSceneForm} data-first-action="manual-entry" className="rounded-2xl border border-neutral-800 bg-black/45 p-5 text-left transition-all hover:border-neutral-700 hover:bg-neutral-900/70">
+                      <Plus className="h-5 w-5 text-neutral-300" />
+                      <div className="mt-4 text-lg font-black text-white">직접 입력하기</div>
                       <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">장소와 내용만 넣어 첫 {copy.item}을 만듭니다.</p>
                     </button>
                     <button type="button" onClick={() => handleLoadSampleData(false)} className="rounded-2xl border border-neutral-800 bg-black/45 p-5 text-left transition-all hover:border-neutral-700 hover:bg-neutral-900/70">
                       <Database className="h-5 w-5 text-neutral-300" />
-                      <div className="mt-4 text-lg font-black text-white">샘플 보기</div>
+                      <div className="mt-4 text-lg font-black text-white">샘플로 둘러보기</div>
                       <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">완성 예시로 전체 흐름을 봅니다.</p>
                     </button>
                     <button type="button" onClick={() => setActiveTab('planning')} className="rounded-2xl border border-neutral-800 bg-black/45 p-5 text-left transition-all hover:border-neutral-700 hover:bg-neutral-900/70">
                       <FileText className="h-5 w-5 text-neutral-300" />
-                      <div className="mt-4 text-lg font-black text-white">기획부터</div>
+                      <div className="mt-4 text-lg font-black text-white">기획부터 정리하기</div>
                       <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">로그라인/브리프를 먼저 정리합니다.</p>
                     </button>
                   </div>

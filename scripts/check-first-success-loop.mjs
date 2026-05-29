@@ -98,8 +98,25 @@ const checks = [
     name: 'empty schedule guide marks the analyzer as the recommended fastest start',
     ok: emptyScheduleGuide.includes('추천 빠른 시작')
       && emptyScheduleGuide.includes('data-first-action="recommended-analyzer"')
-      && emptyScheduleGuide.indexOf('추천 빠른 시작') < emptyScheduleGuide.indexOf('직접 추가')
+      && emptyScheduleGuide.includes('대본이 있어요')
+      && emptyScheduleGuide.includes('시나리오로 시작하기')
+      && emptyScheduleGuide.includes('직접 입력하기')
+      && emptyScheduleGuide.includes('샘플로 둘러보기')
+      && emptyScheduleGuide.includes('기획부터 정리하기')
+      && emptyScheduleGuide.indexOf('추천 빠른 시작') < emptyScheduleGuide.indexOf('직접 입력하기')
       && emptyScheduleGuide.indexOf('data-first-action="recommended-analyzer"') < emptyScheduleGuide.indexOf('data-first-action="manual-entry"'),
+  },
+  {
+    name: 'first-run cards make scenario start primary without hiding secondary choices',
+    ok: page.includes("label: template === 'film' ? '대본이 있어요' : '자료가 있어요'")
+      && page.includes('시나리오, PDF, 샷리스트를 넣으면 씬·장소·인물 초안으로 바로 시작합니다.')
+      && page.includes("label: '직접 입력하기'")
+      && page.includes("label: '샘플로 둘러보기'")
+      && page.includes("label: '기획부터 정리하기'")
+      && workspaceOnboarding.includes('sm:col-span-2')
+      && workspaceOnboarding.includes("'시나리오로 시작하기'")
+      && workspaceOnboarding.includes('{isRecommended ? recommendedActionLabel : item.label}')
+      && page.indexOf("label: template === 'film' ? '대본이 있어요' : '자료가 있어요'") < page.indexOf("label: '직접 입력하기'"),
   },
   {
     name: 'mobile empty schedule keeps analyzer import available before sample data',
@@ -125,13 +142,31 @@ const checks = [
       && appHeader.includes('<details className="rounded-2xl border border-teal-400/25')
       && appHeader.includes('md:hidden')
       && appHeader.includes('브라우저에만 저장 · 백업 필요')
-      && appHeader.includes('자세히 / JSON 백업 열기')
+      && appHeader.includes('자세히 / 백업하기 열기')
       && appHeader.includes('hidden rounded-2xl border border-teal-400/25')
       && appHeader.includes('md:block')
       && appHeader.includes('hidden items-center gap-1.5 rounded-full')
       && appHeader.includes('{templateLabel} / {weatherLabel || location || \'날씨 위치 미정\'} / {activeShootingDate}')
       && appHeader.includes('<section className="hidden rounded-2xl border border-neutral-900 bg-neutral-950/70 p-4 md:block">')
       && appHeader.indexOf('브라우저에만 저장 · 백업 필요') < appHeader.indexOf('서버 DB에 프로젝트를 저장하지 않습니다.'),
+  },
+  {
+    name: 'top header actions stay focused and move management actions behind disclosure',
+    ok: appHeader.includes('<span>새 프로젝트</span>')
+      && appHeader.includes("'파일 가져오기'")
+      && appHeader.includes('<span>{shareStatus || \'공유\'}</span>')
+      && appHeader.includes('관리 메뉴 열기')
+      && appHeader.includes('백업하기')
+      && appHeader.includes('백업에서 복원')
+      && appHeader.includes('리포트 모드 켜기')
+      && appHeader.includes('리포트 모드 끄기')
+      && appHeader.indexOf('<span>새 프로젝트</span>') < appHeader.indexOf('관리 메뉴 열기')
+      && appHeader.indexOf('<span>{shareStatus || \'공유\'}</span>') < appHeader.indexOf('관리 메뉴 열기')
+      && !appHeader.includes('<span>새로</span>')
+      && !appHeader.includes(">JSON 백업<")
+      && !appHeader.includes('백업 복원')
+      && !appHeader.includes('리포트 모드 OFF')
+      && !appHeader.includes('리포트 모드 ON'),
   },
   {
     name: 'mobile workspace nav hides long captions while preserving scrollable touch targets',

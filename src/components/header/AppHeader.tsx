@@ -11,6 +11,7 @@ import {
   Film,
   FolderOpen,
   KeyRound,
+  MoreHorizontal,
   MapPin,
   Plus,
   RefreshCw,
@@ -183,22 +184,14 @@ export default function AppHeader({
               title="새 프로젝트"
             >
               <Plus className="h-4 w-4" />
-              <span>새로</span>
-            </button>
-            <button
-              onClick={onExportJSON}
-              className={`prepro-btn shrink-0 ${fileStatus === '백업 저장됨' ? 'prepro-btn--secondary' : 'prepro-btn--ghost'}`}
-              title="JSON 백업 파일로 내보내기"
-            >
-              <Save className="h-4 w-4" />
-              <span>{fileStatus === '백업 저장됨' ? '백업됨' : '백업'}</span>
+              <span>새 프로젝트</span>
             </button>
             <label
               className={`prepro-btn shrink-0 cursor-pointer ${fileStatus && fileStatus !== '백업 저장됨' ? 'prepro-btn--secondary' : 'prepro-btn--ghost'}`}
-              title="JSON 백업 파일 가져오기"
+              title="프로젝트 파일 가져오기"
             >
               <FolderOpen className="h-4 w-4" />
-              <span>{fileStatus && fileStatus !== '백업 저장됨' ? fileStatus : '가져오기'}</span>
+              <span>{fileStatus && fileStatus !== '백업 저장됨' ? fileStatus : '파일 가져오기'}</span>
               <input type="file" className="hidden" accept=".json" onChange={onImportJSON} />
             </label>
             <button
@@ -209,14 +202,41 @@ export default function AppHeader({
               <Share2 className="h-4 w-4" />
               <span>{shareStatus || '공유'}</span>
             </button>
-            <div className="mx-1 hidden h-5 w-px bg-neutral-800 sm:block"></div>
-            <button
-              onClick={() => onSetIsReportMode(!isReportMode)}
-              className={`prepro-btn shrink-0 ${isReportMode ? 'prepro-btn--secondary' : 'prepro-btn--quiet'}`}
-            >
-              <FileText className="w-4 h-4" />
-              {isReportMode ? '리포트 모드 ON' : '리포트 모드 OFF'}
-            </button>
+            <details className="group/header-actions shrink-0">
+              <summary className="prepro-btn prepro-btn--quiet cursor-pointer list-none [&::-webkit-details-marker]:hidden" title="관리 메뉴 열기">
+                <MoreHorizontal className="h-4 w-4" />
+                <span>관리</span>
+              </summary>
+              <div className="mt-2 w-[min(78vw,260px)] rounded-2xl border border-neutral-800 bg-neutral-950 p-2 shadow-2xl shadow-black/40">
+                <button
+                  type="button"
+                  onClick={onExportJSON}
+                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-xs font-black text-neutral-300 hover:bg-neutral-900 hover:text-neutral-100"
+                  title="현재 프로젝트를 백업 파일로 저장"
+                >
+                  <Save className="h-4 w-4 text-teal-200" />
+                  {fileStatus === '백업 저장됨' ? '백업 완료' : '백업하기'}
+                </button>
+                <label
+                  className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-left text-xs font-black text-neutral-300 hover:bg-neutral-900 hover:text-neutral-100"
+                  title="저장해 둔 백업 파일 가져오기"
+                >
+                  <FolderOpen className="h-4 w-4 text-neutral-400" />
+                  백업에서 복원
+                  <input type="file" className="hidden" accept=".json" onChange={onImportJSON} />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => onSetIsReportMode(!isReportMode)}
+                  className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-xs font-black hover:bg-neutral-900 ${
+                    isReportMode ? 'text-teal-100' : 'text-neutral-300 hover:text-neutral-100'
+                  }`}
+                >
+                  <FileText className="h-4 w-4 text-neutral-400" />
+                  {isReportMode ? '리포트 모드 끄기' : '리포트 모드 켜기'}
+                </button>
+              </div>
+            </details>
           </div>
         </div>
 
@@ -227,29 +247,29 @@ export default function AppHeader({
             </span>
             <span className="min-w-0">
               <span className="block text-sm font-black text-neutral-100">브라우저에만 저장 · 백업 필요</span>
-              <span className="mt-0.5 block text-[11px] font-bold text-neutral-500">자세히 / JSON 백업 열기</span>
+              <span className="mt-0.5 block text-[11px] font-bold text-neutral-500">자세히 / 백업하기 열기</span>
             </span>
           </summary>
           <div className="mt-3 border-t border-teal-400/10 pt-3">
             <p className="text-xs font-bold leading-relaxed text-neutral-500">
-              서버 DB에 프로젝트를 저장하지 않습니다. 다른 기기에서 열거나 공유하기 전에는 JSON 백업을 내려받아 보관하세요.
+              서버 DB에 프로젝트를 저장하지 않습니다. 다른 기기에서 열거나 공유하기 전에는 백업 파일을 내려받아 보관하세요.
             </p>
             <div className="mt-3 grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={onExportJSON}
                 className="prepro-btn prepro-btn--secondary"
-                title="현재 프로젝트를 JSON 백업 파일로 저장"
+                title="현재 프로젝트를 백업 파일로 저장"
               >
                 <Save className="h-4 w-4" />
-                JSON 백업
+                백업하기
               </button>
               <label
                 className="prepro-btn prepro-btn--quiet cursor-pointer"
-                title="저장해 둔 JSON 백업 파일 가져오기"
+                title="저장해 둔 백업 파일 가져오기"
               >
                 <FolderOpen className="h-4 w-4" />
-                백업 복원
+                백업에서 복원
                 <input type="file" className="hidden" accept=".json" onChange={onImportJSON} />
               </label>
             </div>
@@ -265,7 +285,7 @@ export default function AppHeader({
               <div className="min-w-0">
                 <div className="text-sm font-black text-neutral-100">회원가입 없이, 작업 데이터는 이 브라우저에만 저장됩니다.</div>
                 <p className="mt-1 text-xs font-bold leading-relaxed text-neutral-500">
-                  서버 DB에 프로젝트를 저장하지 않습니다. 다른 기기에서 열거나 공유하기 전에는 JSON 백업을 내려받아 보관하세요.
+                  서버 DB에 프로젝트를 저장하지 않습니다. 다른 기기에서 열거나 공유하기 전에는 백업 파일을 내려받아 보관하세요.
                 </p>
               </div>
             </div>
@@ -274,17 +294,17 @@ export default function AppHeader({
                 type="button"
                 onClick={onExportJSON}
                 className="prepro-btn prepro-btn--secondary"
-                title="현재 프로젝트를 JSON 백업 파일로 저장"
+                title="현재 프로젝트를 백업 파일로 저장"
               >
                 <Save className="h-4 w-4" />
-                JSON 백업
+                백업하기
               </button>
               <label
                 className="prepro-btn prepro-btn--quiet cursor-pointer"
-                title="저장해 둔 JSON 백업 파일 가져오기"
+                title="저장해 둔 백업 파일 가져오기"
               >
                 <FolderOpen className="h-4 w-4" />
-                백업 복원
+                백업에서 복원
                 <input type="file" className="hidden" accept=".json" onChange={onImportJSON} />
               </label>
             </div>
