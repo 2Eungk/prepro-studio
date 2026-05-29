@@ -10,6 +10,7 @@
     "lint": "eslint",
     "security:gitleaks": "gitleaks git --redact --verbose --config .gitleaks.toml",
     "check:storyboards": "node scripts/check-storyboards.mjs",
+    "curate:storyboards": "node scripts/curate-storyboard-quality.mjs",
     "check:report-ux": "node scripts/check-report-ux.mjs",
     "check:first-success-loop": "node scripts/check-first-success-loop.mjs",
     "release:check": "npm run lint && npm run check:storyboards && npm run check:report-ux && npm run check:first-success-loop && npm run build"
@@ -38,6 +39,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

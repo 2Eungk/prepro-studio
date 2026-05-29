@@ -5,16 +5,20 @@ const rootDir = process.cwd();
 const dbPath = path.join(rootDir, 'src/data/storyboardDb.ts');
 const publicDir = path.join(rootDir, 'public');
 const expectedRatio = 16 / 9;
+const curatedRangeStart = 111;
+const curatedRangeEnd = 210;
+const minCuratedBytes = 50 * 1024;
 const pngSignature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
 const dbSource = fs.readFileSync(dbPath, 'utf8');
 const urls = [...dbSource.matchAll(/url: '([^']+)'/g)].map((match) => match[1]);
-const expectedCount = urls.length;
+const expectedCount = 210;
 const duplicateUrls = urls.filter((url, index) => urls.indexOf(url) !== index);
 const missing = [];
 const badFormat = [];
 const badRatio = [];
 const badNames = [];
+const lowDetail = [];
 
 urls.forEach((url, index) => {
   const expectedName = `/shot_${String(index + 1).padStart(2, '0')}.png`;
@@ -41,6 +45,11 @@ urls.forEach((url, index) => {
   if (Math.abs(ratio - expectedRatio) > 0.01) {
     badRatio.push({ url, width, height });
   }
+
+  const shotNumber = index + 1;
+  if (shotNumber >= curatedRangeStart && shotNumber <= curatedRangeEnd && bytes.length < minCuratedBytes) {
+    lowDetail.push({ url, bytes: bytes.length, minBytes: minCuratedBytes });
+  }
 });
 
 const report = {
@@ -51,6 +60,7 @@ const report = {
   badNames,
   badFormat,
   badRatio,
+  lowDetail,
 };
 
 const hasErrors =
@@ -60,11 +70,15 @@ const hasErrors =
   duplicateUrls.length > 0 ||
   badNames.length > 0 ||
   badFormat.length > 0 ||
-  badRatio.length > 0;
+  badRatio.length > 0 ||
+  lowDetail.length > 0;
 
 if (hasErrors) {
   console.error(JSON.stringify(report, null, 2));
   process.exit(1);
 }
 
-console.log(`Storyboard assets OK: ${expectedCount} PNG files, unique DB URLs, sequential names, 16:9 ratio.`);
+console.log(
+  `Storyboard assets OK: ${expectedCount} PNG files, unique DB URLs, sequential names, ` +
+    `16:9 ratio, curated shots ${curatedRangeStart}-${curatedRangeEnd} >= ${Math.round(minCuratedBytes / 1024)}KB.`,
+);
