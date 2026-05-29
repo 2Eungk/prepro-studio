@@ -3737,8 +3737,6 @@ export default function Home() {
               </div>
             </section>
           )}
-        </div>
-
         {showOperationalDashboard && (
           <>
             {isMusicTimelineTemplate && activeTab === 'schedule' && (
@@ -4333,7 +4331,8 @@ export default function Home() {
           onSetCategory={setSbCategory}
           onSetSearch={setSbSearch}
         />
-    </main>
-  </div>
+        </main>
+      </div>
+    </div>
   );
 }
