@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 
 type MainWorkspaceTab = 'planning' | 'schedule' | 'cueSheet' | 'locations' | 'people' | 'budget' | 'storyboard' | 'report';
-type MainWorkspaceGroup = '준비' | '촬영' | '정산';
+type MainWorkspaceGroup = '준비' | '촬영' | '마무리';
 
 type IconComponent = ComponentType<{ className?: string }>;
 
@@ -293,8 +293,8 @@ export default function AppHeader({
       </header>
 
       <nav className="sticky top-0 z-30 -mx-2 border-y border-neutral-900 bg-black/90 px-2 py-1.5 backdrop-blur md:py-2">
-        <div className="space-y-1.5 overflow-x-auto custom-scrollbar md:space-y-2">
-          <div className="hidden min-w-max rounded-2xl border border-neutral-900 bg-neutral-950/60 p-1 md:inline-flex">
+        <div className="flex items-center gap-1.5 overflow-x-auto custom-scrollbar md:gap-2">
+          <div className="hidden min-w-max shrink-0 rounded-2xl border border-neutral-900 bg-neutral-950/60 p-1 md:flex">
             {mainWorkspaceGroups.map((group, index) => {
               const groupTabs = mainWorkspaceTabs.filter((tab) => tab.group === group);
               const groupIsActive = groupTabs.some((tab) => tab.id === activeTab);
@@ -327,7 +327,7 @@ export default function AppHeader({
             })}
           </div>
 
-          <div className="inline-flex min-w-max items-stretch gap-1 rounded-2xl border border-neutral-900 bg-neutral-950/45 p-1">
+          <div className="flex min-w-max items-stretch gap-1 rounded-2xl border border-neutral-900 bg-neutral-950/45 p-1">
             {mainWorkspaceGroups.map((group, index) => {
               const groupTabs = mainWorkspaceTabs.filter((tab) => tab.group === group);
               const groupIsActive = group === activeWorkspaceGroup;

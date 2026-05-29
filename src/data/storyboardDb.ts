@@ -232,7 +232,7 @@ export const storyboardDb: StoryboardShot[] = [
   { id: 'sb_204', name: '프로그램 보드 인서트 (Program Board Insert)', category: 'CLOSEUP', description: '행사 일정, 세션명, 안내 정보를 명확히 남기는 정보 샷', url: '/shot_204.png', keywords: ['행사', '프로그램', '일정', '보드', '안내', '정보'] },
   { id: 'sb_205', name: '패널 토크 와이드 (Panel Talk Wide)', category: 'WIDE', description: '여러 패널과 사회자, 스크린을 한 프레임에 담는 토크 세션 샷', url: '/shot_205.png', keywords: ['행사', '패널', '토크', '사회자', '세션', '와이드'] },
   { id: 'sb_206', name: '수상자 포즈 (Award Winner Pose)', category: 'SUBJECT', description: '수상자, 상패, 박수 순간을 공식 기록처럼 담는 샷', url: '/shot_206.png', keywords: ['행사', '수상자', '상패', '시상', '포즈', '기록'] },
-  { id: 'sb_207', name: '스폰서 로고 컷 (Sponsor Logo Cut)', category: 'COMPOSITION', description: '후원사 로고와 현장 맥락을 함께 남기는 정산/보고용 샷', url: '/shot_207.png', keywords: ['행사', '스폰서', '로고', '후원사', '보고', '정산'] },
+  { id: 'sb_207', name: '스폰서 로고 컷 (Sponsor Logo Cut)', category: 'COMPOSITION', description: '후원사 로고와 현장 맥락을 함께 남기는 보고/납품용 샷', url: '/shot_207.png', keywords: ['행사', '스폰서', '로고', '후원사', '보고', '납품'] },
   { id: 'sb_208', name: '케이터링 스케치 (Catering Sketch)', category: 'SUBJECT', description: '음식, 음료, 휴식 구역을 통해 행사 운영 디테일을 보여주는 샷', url: '/shot_208.png', keywords: ['행사', '케이터링', '음식', '음료', '휴식', '운영'] },
   { id: 'sb_209', name: '행사 하이라이트 그리드 (Event Highlight Grid)', category: 'COMPOSITION', description: '여러 순간을 한눈에 조합할 수 있는 행사 요약형 컷 구성', url: '/shot_209.png', keywords: ['행사', '하이라이트', '그리드', '요약', '몽타주', '스케치'] },
   { id: 'sb_210', name: '클로징 무대 와이드 (Closing Stage Wide)', category: 'WIDE', description: '마지막 인사, 무대 조명, 관객 반응을 함께 담는 마무리 샷', url: '/shot_210.png', keywords: ['행사', '클로징', '무대', '마무리', '관객', '와이드'] },

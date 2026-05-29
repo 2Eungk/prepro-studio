@@ -24,7 +24,7 @@ const postFirstSceneActions = [
 const readinessGroups = [
   { label: '지금 할 일', itemIds: ['schedule', 'metadata', 'duration'] },
   { label: '촬영 전 확인', itemIds: ['permit', 'people', 'storyboard', 'equipmentPlan', 'sceneBreakdown', 'locationScout', 'weather'] },
-  { label: '제출/정산', itemIds: ['shortFilmPackage'] },
+  { label: '제출/정리', itemIds: ['shortFilmPackage'] },
 ] as const;
 
 export default function ReadinessChecklist({

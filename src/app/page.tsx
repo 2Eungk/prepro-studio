@@ -172,7 +172,7 @@ type PlanningSectionDefinition = {
 };
 
 type MainWorkspaceTab = 'planning' | 'schedule' | 'cueSheet' | 'locations' | 'people' | 'budget' | 'storyboard' | 'report';
-type MainWorkspaceGroup = '준비' | '촬영' | '정산';
+type MainWorkspaceGroup = '준비' | '촬영' | '마무리';
 type PlanningWorkspaceTab = 'brief' | 'details' | 'ai';
 
 const mainWorkspaceTabIds = ['planning', 'schedule', 'cueSheet', 'locations', 'people', 'budget', 'storyboard', 'report'] as const;
@@ -227,7 +227,7 @@ const workspaceLanguageByTemplate: Record<TemplateType, WorkspaceLanguage> = {
     storyboardLabel: '콘티/샷',
     storyboardCaption: '앵글과 레퍼런스',
     reportLabel: '결과 리포트',
-    reportCaption: 'Done/NG와 정산',
+    reportCaption: 'OK/NG와 후반 정리',
     setupLabel: '단편 제작 기준',
     setupFallback: '촬영지',
     flowHint: '로그라인을 씬으로 쪼개고, 장소/인원/콘티를 붙인 뒤 촬영표로 확정합니다.',
@@ -1818,9 +1818,9 @@ export default function Home() {
     { id: 'schedule', group: '촬영', label: workspaceLanguage.scheduleLabel, caption: workspaceLanguage.scheduleCaption, metric: isMusicTimelineTemplate ? `${danceCoverageStats.cueCount}큐` : `${timelineStats.totalMinutes || 0}분`, Icon: isMusicTimelineTemplate ? Music2 : Clock },
     { id: 'cueSheet', group: '촬영', label: workspaceLanguage.cueSheetLabel, caption: workspaceLanguage.cueSheetCaption, metric: `${cueSheetRows.length}큐`, Icon: ClipboardList },
     { id: 'storyboard', group: '촬영', label: workspaceLanguage.storyboardLabel, caption: workspaceLanguage.storyboardCaption, metric: `${storyboardDb.length}개`, Icon: ImageIcon },
-    { id: 'report', group: '정산', label: workspaceLanguage.reportLabel, caption: workspaceLanguage.reportCaption, metric: scenes.length > 0 ? `${reportStats.done}/${scenes.length}` : '준비 전', Icon: FileText },
+    { id: 'report', group: '마무리', label: workspaceLanguage.reportLabel, caption: workspaceLanguage.reportCaption, metric: scenes.length > 0 ? `${reportStats.done}/${scenes.length}` : '준비 전', Icon: FileText },
   ];
-  const mainWorkspaceGroups: MainWorkspaceGroup[] = ['준비', '촬영', '정산'];
+  const mainWorkspaceGroups: MainWorkspaceGroup[] = ['준비', '촬영', '마무리'];
 
   const copy = useMemo(() => {
     if (template === 'ad') {

@@ -136,7 +136,8 @@ const checks = [
   {
     name: 'mobile workspace nav hides long captions while preserving scrollable touch targets',
     ok: appHeader.includes('py-1.5 backdrop-blur md:py-2')
-      && appHeader.includes('space-y-1.5 overflow-x-auto custom-scrollbar md:space-y-2')
+      && appHeader.includes('flex items-center gap-1.5 overflow-x-auto custom-scrollbar md:gap-2')
+      && appHeader.includes('hidden min-w-max shrink-0 rounded-2xl')
       && appHeader.includes('min-h-11 min-w-[72px]')
       && appHeader.includes('md:min-w-[112px]')
       && appHeader.includes('mt-1 hidden text-[10px] font-bold text-neutral-600 md:block')
@@ -210,10 +211,10 @@ const checks = [
       && readinessChecklist.includes("itemIds: ['schedule', 'metadata', 'duration']")
       && readinessChecklist.includes("label: '촬영 전 확인'")
       && readinessChecklist.includes("itemIds: ['permit', 'people', 'storyboard', 'equipmentPlan', 'sceneBreakdown', 'locationScout', 'weather']")
-      && readinessChecklist.includes("label: '제출/정산'")
+      && readinessChecklist.includes("label: '제출/정리'")
       && readinessChecklist.includes("itemIds: ['shortFilmPackage']")
       && readinessChecklist.indexOf("label: '지금 할 일'") < readinessChecklist.indexOf("label: '촬영 전 확인'")
-      && readinessChecklist.indexOf("label: '촬영 전 확인'") < readinessChecklist.indexOf("label: '제출/정산'")
+      && readinessChecklist.indexOf("label: '촬영 전 확인'") < readinessChecklist.indexOf("label: '제출/정리'")
       && readinessChecklist.includes('group.items.map((item) =>')
       && readinessChecklist.includes('group.items.length > 0'),
   },
