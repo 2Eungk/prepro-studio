@@ -3897,6 +3897,13 @@ export default function Home() {
                       <div className="mt-4 text-[10px] font-black uppercase tracking-[0.16em] opacity-70">{template === 'film' ? '대본이 있어요' : '자료가 있어요'}</div>
                       <div className="mt-1 text-xl font-black">{template === 'film' ? '시나리오로 시작하기' : template === 'event' ? '식순으로 시작하기' : template === 'ad' ? '광고 구성으로 시작하기' : template === 'musicvideo' ? 'MV 콘티로 시작하기' : '타임코드 콘티로 시작하기'}</div>
                       <p className="mt-2 max-w-xl text-sm font-bold leading-relaxed text-black/65">{template === 'film' ? '대본/PDF/샷리스트를 넣으면 씬·장소·인물을 추출해 첫 촬영표를 만듭니다.' : workspaceLanguage.gettingStarted.analyzer}</p>
+                      <span
+                        aria-hidden="true"
+                        className="mt-5 inline-flex items-center gap-1.5 rounded-full border border-black/15 bg-black px-3 py-1.5 text-xs font-black text-teal-100 shadow-lg shadow-teal-950/20 transition-colors group-hover:bg-neutral-950"
+                      >
+                        바로 시작하기
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                      </span>
                     </button>
                     <button type="button" onClick={openNewSceneForm} data-first-action="manual-entry" className="rounded-2xl border border-neutral-800 bg-black/45 p-5 text-left transition-all hover:border-neutral-700 hover:bg-neutral-900/70">
                       <Plus className="h-5 w-5 text-neutral-300" />

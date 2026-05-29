@@ -319,6 +319,15 @@ export function FirstRunPanel({
                         {isRecommended ? recommendedActionLabel : item.label}
                       </div>
                       <p className={`${isRecommended ? 'max-w-2xl' : 'min-h-12'} mt-2 text-sm font-bold leading-relaxed text-neutral-600`}>{item.detail}</p>
+                      {isRecommended && (
+                        <span
+                          aria-hidden="true"
+                          className="mt-5 inline-flex items-center gap-1.5 rounded-full border border-teal-200/70 bg-teal-300 px-3 py-1.5 text-xs font-black text-black shadow-lg shadow-teal-950/20 transition-colors group-hover:bg-teal-200"
+                        >
+                          바로 시작하기
+                          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                        </span>
+                      )}
                     </button>
                   );
                 })}

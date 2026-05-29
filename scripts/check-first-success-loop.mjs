@@ -116,6 +116,12 @@ const checks = [
       && workspaceOnboarding.includes('sm:col-span-2')
       && workspaceOnboarding.includes("'시나리오로 시작하기'")
       && workspaceOnboarding.includes('{isRecommended ? recommendedActionLabel : item.label}')
+      && workspaceOnboarding.includes('aria-hidden="true"')
+      && workspaceOnboarding.includes('바로 시작하기')
+      && workspaceOnboarding.includes('border-teal-200/70 bg-teal-300')
+      && emptyScheduleGuide.includes('aria-hidden="true"')
+      && emptyScheduleGuide.includes('바로 시작하기')
+      && emptyScheduleGuide.includes('border border-black/15 bg-black')
       && page.indexOf("label: template === 'film' ? '대본이 있어요' : '자료가 있어요'") < page.indexOf("label: '직접 입력하기'"),
   },
   {
