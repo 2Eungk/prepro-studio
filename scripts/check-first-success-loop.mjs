@@ -103,6 +103,9 @@ const checks = [
       && emptyScheduleGuide.includes('직접 입력하기')
       && emptyScheduleGuide.includes('샘플로 둘러보기')
       && emptyScheduleGuide.includes('기획부터 정리하기')
+      && emptyScheduleGuide.includes('콜타임, 이동, 식사는 바로 다음 단계에서 시간 블록으로 붙이면 됩니다.')
+      && emptyScheduleGuide.includes('시간 블록 붙이기')
+      && emptyScheduleGuide.includes('콜타임, 이동, 식사, 리허설')
       && emptyScheduleGuide.indexOf('추천 빠른 시작') < emptyScheduleGuide.indexOf('직접 입력하기')
       && emptyScheduleGuide.indexOf('data-first-action="recommended-analyzer"') < emptyScheduleGuide.indexOf('data-first-action="manual-entry"'),
   },

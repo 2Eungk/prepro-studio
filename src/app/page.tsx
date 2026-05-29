@@ -3884,7 +3884,7 @@ export default function Home() {
                     지금은 하나만 고르면 돼요.
                   </h2>
                   <p className="mt-3 max-w-2xl text-sm font-bold leading-relaxed text-neutral-500 md:text-base">
-                    첫 {copy.item}만 만들면 장소, 인원, 예산, 리포트는 자연스럽게 따라옵니다. 시작 방식 하나만 선택하세요.
+                    첫 {copy.item}만 만들면 장소, 인원, 예산, 리포트는 자연스럽게 따라옵니다. 콜타임, 이동, 식사는 바로 다음 단계에서 시간 블록으로 붙이면 됩니다.
                   </p>
                   <div className="mt-6 grid gap-3 sm:grid-cols-2">
                     <button type="button" onClick={openScriptAnalyzer} data-first-action="recommended-analyzer" className="rounded-2xl border border-teal-300/45 bg-teal-300 p-5 text-left text-black shadow-xl shadow-teal-950/25 transition-all hover:bg-teal-200 sm:col-span-2">
@@ -3926,8 +3926,8 @@ export default function Home() {
                   <div className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-600">Next flow</div>
                   {[
                     ['1', `${copy.item} 만들기`, '가장 먼저 필요한 최소 입력'],
-                    ['2', '장소/인원 보강', '필요할 때만 추가로 열기'],
-                    ['3', '촬영표 확인', '시간, 콘티, PDF는 마지막에 정리'],
+                    ['2', '시간 블록 붙이기', '콜타임, 이동, 식사, 리허설'],
+                    ['3', '장소/인원/콘티 확인', '필요한 준비만 보강하고 PDF 정리'],
                   ].map(([step, title, detail]) => (
                     <div key={step} className="mt-4 flex gap-3 rounded-xl border border-neutral-900 bg-neutral-950/80 p-3">
                       <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-800 text-xs font-black text-teal-200">{step}</div>
