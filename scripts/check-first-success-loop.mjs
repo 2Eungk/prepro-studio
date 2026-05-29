@@ -205,6 +205,14 @@ const checks = [
       && readinessChecklist.indexOf('오늘 먼저 확인') < readinessChecklist.indexOf('전체 체크리스트 펼쳐보기'),
   },
   {
+    name: 'top-risk summary exposes field acknowledgement without opening the full checklist',
+    ok: readinessChecklist.includes('topRiskItems.map((item) => (')
+      && readinessChecklist.includes('onClick={() => onAcknowledge(item.id)}')
+      && readinessChecklist.includes('현장 확인 완료')
+      && readinessChecklist.indexOf('onClick={() => onAction(item.id)}', readinessChecklist.indexOf('topRiskItems.map((item) => (')) < readinessChecklist.indexOf('onClick={() => onAcknowledge(item.id)}', readinessChecklist.indexOf('topRiskItems.map((item) => ('))
+      && readinessChecklist.indexOf('onClick={() => onAcknowledge(item.id)}', readinessChecklist.indexOf('topRiskItems.map((item) => (')) < readinessChecklist.indexOf('전체 체크리스트 펼쳐보기'),
+  },
+  {
     name: 'readiness full checklist is collapsed by default and opens for departure mode',
     ok: readinessChecklist.includes('<details className="group/details')
       && readinessChecklist.includes('open={isDepartureMode}')

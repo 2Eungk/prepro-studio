@@ -206,22 +206,34 @@ export default function ReadinessChecklist({
         {topRiskItems.length > 0 ? (
           <div className="grid gap-2 md:grid-cols-3">
             {topRiskItems.map((item) => (
-              <button
+              <div
                 key={item.id}
-                type="button"
-                onClick={() => onAction(item.id)}
-                className={`group flex min-h-12 items-center justify-between gap-3 rounded-xl border bg-neutral-950/85 px-3 py-2 text-left transition-all hover:bg-neutral-900/85 ${
+                className={`rounded-xl border bg-neutral-950/85 p-2 transition-all ${
                   item.status === 'critical'
-                    ? 'border-red-500/30 hover:border-red-400/50'
-                    : 'border-amber-500/25 hover:border-amber-400/45'
+                    ? 'border-red-500/30'
+                    : 'border-amber-500/25'
                 }`}
               >
-                <span className="min-w-0">
-                  <span className="block truncate text-xs font-black text-neutral-200">{item.label}</span>
-                  <span className="mt-0.5 block truncate text-[11px] font-bold text-neutral-500">{item.detail}</span>
-                </span>
-                <ArrowRight className="h-3.5 w-3.5 shrink-0 text-neutral-600 transition-colors group-hover:text-teal-200" />
-              </button>
+                <button
+                  type="button"
+                  onClick={() => onAction(item.id)}
+                  className="group flex min-h-12 w-full items-center justify-between gap-3 rounded-lg px-1 py-1 text-left transition-colors hover:bg-neutral-900/85"
+                >
+                  <span className="min-w-0">
+                    <span className="block truncate text-xs font-black text-neutral-200">{item.label}</span>
+                    <span className="mt-0.5 block truncate text-[11px] font-bold text-neutral-500">{item.detail}</span>
+                  </span>
+                  <ArrowRight className="h-3.5 w-3.5 shrink-0 text-neutral-600 transition-colors group-hover:text-teal-200" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onAcknowledge(item.id)}
+                  className="mt-1 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-neutral-700 bg-black/35 px-3 py-2 text-xs font-black text-neutral-300 transition-colors hover:border-teal-300/50 hover:text-teal-100"
+                >
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  <span>현장 확인 완료</span>
+                </button>
+              </div>
             ))}
           </div>
         ) : remainingRiskCount === 0 && acknowledgedRiskCount > 0 ? (
