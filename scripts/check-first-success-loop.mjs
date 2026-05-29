@@ -66,6 +66,19 @@ const checks = [
       && page.includes('workspaceLanguage={workspaceLanguage}'),
   },
   {
+    name: 'first-run onboarding does not duplicate the top production-type selector',
+    ok: workspaceOnboarding.includes('현재 제작 분야 확인')
+      && workspaceOnboarding.includes('제작 분야는 상단 설정 바에서 바꿀 수 있습니다.')
+      && workspaceOnboarding.includes('자료 상태 고르기')
+      && workspaceOnboarding.includes('분야 변경은 상단 설정')
+      && workspaceOnboarding.includes('현재 분야 보기')
+      && !workspaceOnboarding.includes('어떤 제작물인가요?')
+      && !workspaceOnboarding.includes('분야 다시 선택')
+      && !workspaceOnboarding.includes('onSelectTemplate')
+      && !workspaceOnboarding.includes('cards.map((item)')
+      && !page.includes('onSelectTemplate={handleTemplateChange}'),
+  },
+  {
     name: 'manual first scene starts focused on the first required field',
     ok: sceneLocationField.includes('autoFocus')
       && sceneLocationField.includes('scene-location-first-success-hint')

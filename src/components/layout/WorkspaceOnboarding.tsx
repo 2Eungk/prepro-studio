@@ -134,16 +134,15 @@ export function FirstRunPanel({
   currentTemplate,
   gettingStartedCards,
   workspaceLanguage,
-  onSelectTemplate,
 }: {
   addItemLabel: string;
   cards: QuickStartProjectCard[];
   currentTemplate: TemplateType;
   gettingStartedCards: GettingStartedCard[];
   workspaceLanguage: WorkspaceLanguage;
-  onSelectTemplate: (template: TemplateType) => void;
 }) {
   const currentTemplateCard = cards.find((item) => item.template === currentTemplate);
+  const CurrentTemplateIcon = currentTemplateCard?.Icon;
   const [step, setStep] = useState<1 | 2>(1);
   const [isDismissed, setIsDismissed] = useState(false);
   const actionChoices: GettingStartedCard[] = gettingStartedCards;
@@ -188,7 +187,7 @@ export function FirstRunPanel({
         <div className="border-b border-neutral-900 px-5 py-3">
           <div className="grid grid-cols-2 gap-2">
             {[
-              { id: 1, label: '제작 분야' },
+              { id: 1, label: '현재 분야' },
               { id: 2, label: '자료 상태' },
             ].map((item) => {
               const isActive = step === item.id;
@@ -217,40 +216,43 @@ export function FirstRunPanel({
             <div>
               <div className="mb-4">
                 <span className="text-[10px] font-black uppercase tracking-[0.18em] text-teal-300">Step 1</span>
-                <h3 className="mt-1 text-xl font-black text-white">어떤 제작물인가요?</h3>
-                <p className="mt-1 text-sm font-bold text-neutral-600">여기서 고른 분야에 맞춰 컬럼, 예시, 콘티 흐름이 바뀝니다.</p>
+                <h3 className="mt-1 text-xl font-black text-white">현재 제작 분야 확인</h3>
+                <p className="mt-1 text-sm font-bold text-neutral-600">제작 분야는 상단 설정 바에서 바꿀 수 있습니다. 여기서는 현재 선택을 확인하고 자료 상태로 넘어갑니다.</p>
               </div>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-                {cards.map((item) => {
-                  const Icon = item.Icon;
-                  const selected = currentTemplate === item.template;
-
-                  return (
-                    <button
-                      key={item.template}
-                      type="button"
-                      onClick={() => {
-                        onSelectTemplate(item.template);
-                        setStep(2);
-                      }}
-                      className={`group min-h-32 rounded-xl border p-4 text-left transition-all ${
-                        selected
-                          ? 'border-teal-300/45 bg-teal-300/10 text-teal-50'
-                          : 'border-neutral-800 bg-black/45 text-neutral-400 hover:border-teal-400/30 hover:bg-teal-400/5 hover:text-neutral-100'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-800 bg-neutral-950 text-neutral-300">
-                          <Icon className="h-4 w-4" />
+              <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-stretch">
+                <div className="rounded-xl border border-teal-300/35 bg-teal-300/10 p-4 text-teal-50 sm:p-5">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="flex min-w-0 gap-3">
+                      {CurrentTemplateIcon && (
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-teal-300/25 bg-neutral-950/80 text-teal-100">
+                          <CurrentTemplateIcon className="h-5 w-5" />
                         </div>
-                        <span className="rounded-full border border-neutral-800 px-2 py-1 text-[9px] font-black text-neutral-500">{item.metric}</span>
+                      )}
+                      <div className="min-w-0">
+                        <div className="text-[10px] font-black uppercase tracking-[0.16em] text-teal-200">상단 설정 기준</div>
+                        <div className="mt-1 text-lg font-black text-white">{currentTemplateCard?.title || '현재 분야'}</div>
+                        <p className="mt-1 text-sm font-bold text-neutral-400">{currentTemplateCard?.subtitle || '선택된 제작 분야'} · {currentTemplateCard?.metric || '프로젝트 기준'}</p>
                       </div>
-                      <div className="mt-4 text-base font-black">{item.title}</div>
-                      <div className="mt-1 text-xs font-bold text-neutral-600">{item.subtitle}</div>
-                      <p className="mt-3 line-clamp-3 text-[11px] font-bold leading-relaxed text-neutral-500">{item.detail}</p>
-                    </button>
-                  );
-                })}
+                    </div>
+                    <span className="inline-flex w-fit shrink-0 rounded-full border border-teal-300/25 bg-black/35 px-3 py-1 text-[10px] font-black text-teal-100">
+                      분야 변경은 상단 설정
+                    </span>
+                  </div>
+                  <p className="mt-4 text-sm font-bold leading-relaxed text-neutral-400">
+                    {currentTemplateCard?.detail || '현재 선택된 제작 분야에 맞춰 컬럼, 예시, 콘티 흐름을 유지합니다.'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setStep(2)}
+                  className="group flex min-h-16 items-center justify-between gap-3 rounded-xl border border-teal-300/35 bg-teal-300 px-4 py-3 text-left text-black transition-colors hover:bg-teal-200 lg:min-w-[220px] lg:flex-col lg:items-start lg:justify-center"
+                >
+                  <span>
+                    <span className="block text-[10px] font-black uppercase tracking-[0.16em] opacity-70">다음</span>
+                    <span className="mt-1 block text-base font-black">자료 상태 고르기</span>
+                  </span>
+                  <ArrowRight className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-0.5" />
+                </button>
               </div>
             </div>
           )}
@@ -269,7 +271,7 @@ export function FirstRunPanel({
                   className="inline-flex items-center gap-2 rounded-lg border border-neutral-800 px-3 py-2 text-xs font-black text-neutral-400 hover:border-neutral-700 hover:text-neutral-100"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" />
-                  분야 다시 선택
+                  현재 분야 보기
                 </button>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">

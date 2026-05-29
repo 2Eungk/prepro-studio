@@ -3702,7 +3702,6 @@ export default function Home() {
               currentTemplate={template}
               gettingStartedCards={gettingStartedCards}
               workspaceLanguage={workspaceLanguage}
-              onSelectTemplate={handleTemplateChange}
             />
           )}
 
