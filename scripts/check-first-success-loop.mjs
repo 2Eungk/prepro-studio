@@ -79,6 +79,16 @@ const checks = [
       && !page.includes('onSelectTemplate={handleTemplateChange}'),
   },
   {
+    name: 'first-run setup drawer hides duplicate start actions',
+    ok: appHeader.includes('showProjectSetupActions: boolean;')
+      && appHeader.includes('showProjectSetupActions,')
+      && appHeader.includes('{showProjectSetupActions && (')
+      && appHeader.indexOf('{showProjectSetupActions && (') < appHeader.indexOf("onClick={() => onSetShowAnalyzer(true)}")
+      && appHeader.indexOf('{showProjectSetupActions && (') < appHeader.indexOf('onClick={onLoadSampleData}')
+      && page.includes('showProjectSetupActions={!isFirstRun}')
+      && page.indexOf('showProjectSetupActions={!isFirstRun}') < page.indexOf('productionTemplateOptions={productionTemplateOptions}'),
+  },
+  {
     name: 'manual first scene starts focused on the first required field',
     ok: sceneLocationField.includes('autoFocus')
       && sceneLocationField.includes('scene-location-first-success-hint')

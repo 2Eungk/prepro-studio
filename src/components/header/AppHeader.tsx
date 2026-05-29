@@ -71,6 +71,7 @@ type AppHeaderProps = {
   mainWorkspaceTabs: WorkspaceTabItem[];
   shareStatus: string;
   showProjectSetup: boolean;
+  showProjectSetupActions: boolean;
   template: TemplateType;
   templateLabel: string;
   weatherLabel?: string;
@@ -113,6 +114,7 @@ export default function AppHeader({
   mainWorkspaceTabs,
   shareStatus,
   showProjectSetup,
+  showProjectSetupActions,
   template,
   templateLabel,
   weatherLabel,
@@ -567,22 +569,24 @@ export default function AppHeader({
               </div>
             </div>
 
-            <div className="bg-neutral-900/50 p-4 rounded-[2rem] border border-neutral-800/50 grid grid-cols-1 gap-3 min-w-0">
-              <button
-                onClick={() => onSetShowAnalyzer(true)}
-                className="prepro-btn prepro-btn--primary min-h-14 w-full text-sm group"
-              >
-                <Brain className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                {template === 'event' ? 'AI 식순 정리 실행' : template === 'ad' ? 'AI 광고 구성 분석 실행' : template === 'musicvideo' ? 'AI MV 타임코드 콘티 실행' : template === 'dance' ? 'AI 타임코드 콘티 실행' : 'AI 시나리오 분석기 실행'}
-              </button>
-              <button
-                onClick={onLoadSampleData}
-                className="prepro-btn prepro-btn--secondary min-h-14 w-full"
-              >
-                <Database className="w-4 h-4" />
-                {template === 'event' ? '행사 샘플 로드' : template === 'ad' ? '광고 샘플 로드' : template === 'musicvideo' ? 'MV 샘플 로드' : template === 'dance' ? '댄스 샘플 로드' : '단편 샘플 로드'}
-              </button>
-            </div>
+            {showProjectSetupActions && (
+              <div className="bg-neutral-900/50 p-4 rounded-[2rem] border border-neutral-800/50 grid grid-cols-1 gap-3 min-w-0">
+                <button
+                  onClick={() => onSetShowAnalyzer(true)}
+                  className="prepro-btn prepro-btn--primary min-h-14 w-full text-sm group"
+                >
+                  <Brain className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  {template === 'event' ? 'AI 식순 정리 실행' : template === 'ad' ? 'AI 광고 구성 분석 실행' : template === 'musicvideo' ? 'AI MV 타임코드 콘티 실행' : template === 'dance' ? 'AI 타임코드 콘티 실행' : 'AI 시나리오 분석기 실행'}
+                </button>
+                <button
+                  onClick={onLoadSampleData}
+                  className="prepro-btn prepro-btn--secondary min-h-14 w-full"
+                >
+                  <Database className="w-4 h-4" />
+                  {template === 'event' ? '행사 샘플 로드' : template === 'ad' ? '광고 샘플 로드' : template === 'musicvideo' ? 'MV 샘플 로드' : template === 'dance' ? '댄스 샘플 로드' : '단편 샘플 로드'}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -3656,6 +3656,7 @@ export default function Home() {
           mainWorkspaceTabs={mainWorkspaceTabs}
           shareStatus={shareStatus}
           showProjectSetup={showProjectSetup}
+          showProjectSetupActions={!isFirstRun}
           template={template}
           templateLabel={templateLabel}
           weatherLabel={weatherLabel}
