@@ -3884,31 +3884,31 @@ export default function Home() {
                     지금은 하나만 고르면 돼요.
                   </h2>
                   <p className="mt-3 max-w-2xl text-sm font-bold leading-relaxed text-neutral-500 md:text-base">
-                    장소, 인원, 예산, 리포트는 첫 {copy.item}이 생긴 뒤 자연스럽게 따라오게 숨겨뒀습니다. 먼저 어떤 방식으로 시작할지만 선택하세요.
+                    첫 {copy.item}만 만들면 장소, 인원, 예산, 리포트는 자연스럽게 따라옵니다. 시작 방식 하나만 선택하세요.
                   </p>
-                  <div className="mt-6 grid gap-3 md:grid-cols-4">
+                  <div className="mt-6 grid gap-3 sm:grid-cols-2">
                     <button type="button" onClick={openScriptAnalyzer} data-first-action="recommended-analyzer" className="rounded-2xl border border-teal-300/35 bg-teal-300/10 p-5 text-left transition-all hover:bg-teal-300/15">
                       <div className="flex items-start justify-between gap-3">
                         <Brain className="h-5 w-5 text-teal-200" />
                         <span className="rounded-full border border-teal-300/30 bg-teal-300/10 px-2 py-1 text-[9px] font-black text-teal-100">추천 빠른 시작</span>
                       </div>
                       <div className="mt-4 text-lg font-black text-white">{template === 'event' ? '식순 정리' : template === 'ad' ? '광고 분석' : template === 'musicvideo' ? 'MV 콘티' : template === 'dance' ? '타임코드 콘티' : '시나리오 분석'}</div>
-                      <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">{workspaceLanguage.gettingStarted.analyzer}</p>
+                      <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">{template === 'film' ? '시나리오에서 씬·장소·인물을 추출합니다.' : workspaceLanguage.gettingStarted.analyzer}</p>
                     </button>
                     <button type="button" onClick={openNewSceneForm} data-first-action="manual-entry" className="rounded-2xl border border-teal-300/35 bg-teal-300/10 p-5 text-left transition-all hover:bg-teal-300/15">
                       <Plus className="h-5 w-5 text-teal-200" />
                       <div className="mt-4 text-lg font-black text-white">직접 추가</div>
-                      <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">장소와 내용을 적어서 첫 {copy.item}을 만듭니다.</p>
+                      <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">장소와 내용만 넣어 첫 {copy.item}을 만듭니다.</p>
                     </button>
                     <button type="button" onClick={() => handleLoadSampleData(false)} className="rounded-2xl border border-neutral-800 bg-black/45 p-5 text-left transition-all hover:border-neutral-700 hover:bg-neutral-900/70">
                       <Database className="h-5 w-5 text-neutral-300" />
                       <div className="mt-4 text-lg font-black text-white">샘플 보기</div>
-                      <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">완성된 예시로 전체 흐름을 빠르게 둘러봅니다.</p>
+                      <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">완성 예시로 전체 흐름을 봅니다.</p>
                     </button>
                     <button type="button" onClick={() => setActiveTab('planning')} className="rounded-2xl border border-neutral-800 bg-black/45 p-5 text-left transition-all hover:border-neutral-700 hover:bg-neutral-900/70">
                       <FileText className="h-5 w-5 text-neutral-300" />
                       <div className="mt-4 text-lg font-black text-white">기획부터</div>
-                      <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">로그라인/브리프를 정리하고 촬영표로 넘깁니다.</p>
+                      <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">로그라인/브리프를 먼저 정리합니다.</p>
                     </button>
                   </div>
                 </div>
