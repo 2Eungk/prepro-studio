@@ -141,6 +141,17 @@ const checks = [
       && page.includes('onOpenAnalyzer={openScriptAnalyzer}'),
   },
   {
+    name: 'first-run mobile header hides secondary file/share actions before content',
+    ok: appHeader.includes("${isFirstRun ? 'hidden sm:flex' : 'flex'} gap-2 overflow-x-auto"),
+  },
+  {
+    name: 'empty schedule first CTA is compact on mobile fold',
+    ok: page.includes('bg-neutral-950/80 p-3 md:p-5')
+      && page.includes('hidden max-w-2xl text-sm font-bold leading-relaxed text-neutral-500 sm:block')
+      && page.includes('bg-teal-300 p-4 text-left text-black')
+      && page.includes('sm:p-5'),
+  },
+  {
     name: 'mobile timeline labels time blocks separately from scene numbering',
     ok: mobileScheduleList.includes("rowNumber={filteredTimelineRows.slice(0, index + 1).filter((item) => item.type === 'scene').length}")
       && mobileTimelineCards.includes('타임라인 ${rowNumber}번째 시간 블록')
@@ -232,7 +243,7 @@ const checks = [
   },
   {
     name: 'mobile header keeps backup education compact before the schedule',
-    ok: appHeader.includes('flex gap-2 overflow-x-auto rounded-xl')
+    ok: appHeader.includes("${isFirstRun ? 'hidden sm:flex' : 'flex'} gap-2 overflow-x-auto rounded-xl")
       && appHeader.includes('prepro-btn prepro-btn--ghost shrink-0')
       && appHeader.includes('{!isFirstRun && (')
       && appHeader.includes('<details className="rounded-2xl border border-teal-400/25')
@@ -273,7 +284,7 @@ const checks = [
   },
   {
     name: 'first-run empty schedule brings primary start area forward with compact next flow',
-    ok: emptyScheduleGuide.includes('rounded-3xl border border-neutral-900 bg-neutral-950/80 p-4 md:p-5')
+    ok: emptyScheduleGuide.includes('rounded-3xl border border-neutral-900 bg-neutral-950/80 p-3 md:p-5')
       && emptyScheduleGuide.includes('lg:grid-cols-[minmax(0,1fr)_280px]')
       && emptyScheduleGuide.includes('data-first-action="recommended-analyzer"')
       && emptyScheduleGuide.includes('바로 시작하기')

@@ -179,7 +179,7 @@ export default function AppHeader({
             </div>
           </div>
 
-          <div className="flex gap-2 overflow-x-auto rounded-xl border border-neutral-800 bg-neutral-950 p-1.5 custom-scrollbar sm:flex-wrap sm:items-center xl:justify-end">
+          <div className={`${isFirstRun ? 'hidden sm:flex' : 'flex'} gap-2 overflow-x-auto rounded-xl border border-neutral-800 bg-neutral-950 p-1.5 custom-scrollbar sm:flex-wrap sm:items-center xl:justify-end`}>
             <button
               onClick={() => confirm('현재 프로젝트를 비우고 새로 시작할까요? 자동 저장된 데이터도 초기화됩니다.') && onResetProject()}
               className="prepro-btn prepro-btn--ghost shrink-0"
