@@ -994,10 +994,44 @@ const preparePdfCloneForHtml2Canvas = (clonedDoc: Document) => {
 
 type ProjectSnapshot = Pick<
   ScheduleState,
-  'template' | 'shootingDate' | 'location' | 'callTime' | 'shootingStartTime' | 'days' | 'locations' | 'people' | 'breaks' | 'scenes' | 'timelineOrder' | 'planning'
+  'template' | 'shootingDate' | 'location' | 'weatherLabel' | 'weatherLatitude' | 'weatherLongitude' | 'callTime' | 'shootingStartTime' | 'days' | 'locations' | 'people' | 'breaks' | 'scenes' | 'timelineOrder' | 'planning'
 >;
 
+type ProjectBackupFile = {
+  schema: 'prepro-studio-backup';
+  version: 1;
+  exportedAt: string;
+  project: ProjectSnapshot;
+  meta: {
+    isSampleProject: boolean;
+    sampleProjectNotice: string;
+  };
+};
+
 const SHARE_HASH_PREFIX = '#prepro=';
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const readImportedProject = (value: unknown): { project: Partial<ScheduleState>; sampleProjectNotice?: string } => {
+  if (!isRecord(value)) {
+    throw new Error('Invalid PrePro Studio backup');
+  }
+
+  if (value.schema === 'prepro-studio-backup' && isRecord(value.project)) {
+    const meta = isRecord(value.meta) ? value.meta : {};
+    return {
+      project: value.project as Partial<ScheduleState>,
+      sampleProjectNotice: typeof meta.sampleProjectNotice === 'string' ? meta.sampleProjectNotice : '',
+    };
+  }
+
+  if (isRecord(value.state)) {
+    return { project: value.state as Partial<ScheduleState> };
+  }
+
+  return { project: value as Partial<ScheduleState> };
+};
 
 const encodeShareSnapshot = (snapshot: ProjectSnapshot) => {
   const bytes = new TextEncoder().encode(JSON.stringify(snapshot));
@@ -2738,8 +2772,17 @@ export default function Home() {
   };
 
   const handleExportJSON = () => {
-    const data = useScheduleStore.getState();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const backup: ProjectBackupFile = {
+      schema: 'prepro-studio-backup',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      project: createProjectSnapshot(),
+      meta: {
+        isSampleProject: Boolean(sampleProjectNotice),
+        sampleProjectNotice,
+      },
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -2757,6 +2800,9 @@ export default function Home() {
       template: state.template,
       shootingDate: state.shootingDate,
       location: state.location,
+      weatherLabel: state.weatherLabel,
+      weatherLatitude: state.weatherLatitude,
+      weatherLongitude: state.weatherLongitude,
       callTime: state.callTime,
       shootingStartTime: state.shootingStartTime,
       days: state.days,
@@ -2803,14 +2849,15 @@ export default function Home() {
     reader.onload = (ev) => {
       try {
         const json = JSON.parse(ev.target?.result as string);
-        importData(json);
+        const imported = readImportedProject(json);
+        importData(imported.project);
         setOptimizationSummary(null);
-        setSampleProjectNotice('');
+        setSampleProjectNotice(imported.sampleProjectNotice || '');
         setAcknowledgedReadinessCheckIds([]);
-        setFileStatus('가져오기 완료');
+        setFileStatus(imported.sampleProjectNotice ? '샘플 백업 복원됨' : '백업 복원됨');
         window.setTimeout(() => setFileStatus(''), 2200);
       } catch {
-        setFileStatus('가져오기 실패 · JSON 파일을 확인하세요');
+        setFileStatus('복원 실패 · JSON 백업 파일을 확인하세요');
         window.setTimeout(() => setFileStatus(''), 3200);
       } finally {
         e.target.value = '';

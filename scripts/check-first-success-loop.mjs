@@ -285,7 +285,7 @@ const checks = [
   {
     name: 'top header actions stay focused and move management actions behind disclosure',
     ok: appHeader.includes('<span>새 프로젝트</span>')
-      && appHeader.includes("'파일 가져오기'")
+      && appHeader.includes("'백업 복원'")
       && appHeader.includes('<span>{shareStatus || \'공유\'}</span>')
       && appHeader.includes('관리 메뉴 열기')
       && appHeader.includes('백업하기')
@@ -296,7 +296,7 @@ const checks = [
       && appHeader.indexOf('<span>{shareStatus || \'공유\'}</span>') < appHeader.indexOf('관리 메뉴 열기')
       && !appHeader.includes('<span>새로</span>')
       && !appHeader.includes(">JSON 백업<")
-      && !appHeader.includes('백업 복원')
+      && !appHeader.includes("'파일 가져오기'")
       && !appHeader.includes('리포트 모드 OFF')
       && !appHeader.includes('리포트 모드 ON'),
   },

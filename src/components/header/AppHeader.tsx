@@ -190,10 +190,10 @@ export default function AppHeader({
             </button>
             <label
               className={`prepro-btn shrink-0 cursor-pointer ${fileStatus && fileStatus !== '백업 저장됨' ? 'prepro-btn--secondary' : 'prepro-btn--ghost'}`}
-              title="프로젝트 파일 가져오기"
+              title="PrePro Studio JSON 백업 복원"
             >
               <FolderOpen className="h-4 w-4" />
-              <span>{fileStatus && fileStatus !== '백업 저장됨' ? fileStatus : '파일 가져오기'}</span>
+              <span>{fileStatus && fileStatus !== '백업 저장됨' ? fileStatus : '백업 복원'}</span>
               <input type="file" className="hidden" accept=".json" onChange={onImportJSON} />
             </label>
             <button
