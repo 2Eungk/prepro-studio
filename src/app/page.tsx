@@ -994,7 +994,7 @@ const preparePdfCloneForHtml2Canvas = (clonedDoc: Document) => {
 
 type ProjectSnapshot = Pick<
   ScheduleState,
-  'template' | 'shootingDate' | 'location' | 'weatherLabel' | 'weatherLatitude' | 'weatherLongitude' | 'callTime' | 'shootingStartTime' | 'days' | 'locations' | 'people' | 'breaks' | 'scenes' | 'timelineOrder' | 'planning'
+  'template' | 'shootingDate' | 'location' | 'weatherLabel' | 'weatherLatitude' | 'weatherLongitude' | 'callTime' | 'shootingStartTime' | 'days' | 'locations' | 'people' | 'breaks' | 'scenes' | 'timelineOrder' | 'planning' | 'sampleProjectNotice'
 >;
 
 type ProjectBackupFile = {
@@ -1020,17 +1020,22 @@ const readImportedProject = (value: unknown): { project: Partial<ScheduleState>;
 
   if (value.schema === 'prepro-studio-backup' && isRecord(value.project)) {
     const meta = isRecord(value.meta) ? value.meta : {};
+    const project = value.project as Partial<ScheduleState>;
     return {
-      project: value.project as Partial<ScheduleState>,
-      sampleProjectNotice: typeof meta.sampleProjectNotice === 'string' ? meta.sampleProjectNotice : '',
+      project,
+      sampleProjectNotice: typeof meta.sampleProjectNotice === 'string'
+        ? meta.sampleProjectNotice
+        : project.sampleProjectNotice || '',
     };
   }
 
   if (isRecord(value.state)) {
-    return { project: value.state as Partial<ScheduleState> };
+    const project = value.state as Partial<ScheduleState>;
+    return { project, sampleProjectNotice: project.sampleProjectNotice || '' };
   }
 
-  return { project: value as Partial<ScheduleState> };
+  const project = value as Partial<ScheduleState>;
+  return { project, sampleProjectNotice: project.sampleProjectNotice || '' };
 };
 
 const encodeShareSnapshot = (snapshot: ProjectSnapshot) => {
@@ -1176,6 +1181,7 @@ export default function Home() {
     restoreTimelineOrder,
     timelineOrder,
     planning, updatePlanning, updatePlanningField, resetPlanning,
+    sampleProjectNotice, setSampleProjectNotice,
     loadSampleData, importData, resetProject
   } = useScheduleStore();
   const [isReportMode, setIsReportMode] = useState(false);
@@ -1194,7 +1200,6 @@ export default function Home() {
   const [optimizationSummary, setOptimizationSummary] = useState<OptimizationSummary | null>(null);
   const [shareStatus, setShareStatus] = useState('');
   const [fileStatus, setFileStatus] = useState('');
-  const [sampleProjectNotice, setSampleProjectNotice] = useState('');
   const [pdfStatus, setPdfStatus] = useState('');
   const [cueSheetStatus, setCueSheetStatus] = useState('');
   const [isExportingPdf, setIsExportingPdf] = useState(false);
@@ -2812,6 +2817,7 @@ export default function Home() {
       scenes: state.scenes,
       timelineOrder: state.timelineOrder,
       planning: state.planning,
+      sampleProjectNotice: state.sampleProjectNotice,
     };
   };
 
@@ -4423,7 +4429,7 @@ export default function Home() {
               onExportJSON={handleExportJSON}
               onExportPDF={handleExportPDF}
               onGoSchedule={handleGoSchedule}
-              onLoadSampleData={handleLoadSampleData}
+              onLoadSampleData={() => handleLoadSampleData(false)}
               onNewScene={openNewSceneForm}
               pdfButtonText={pdfButtonText}
               storyboardFallback={storyboardFallback}

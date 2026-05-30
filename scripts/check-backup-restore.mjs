@@ -55,6 +55,7 @@ const requiredSnapshotFields = [
   'scenes',
   'timelineOrder',
   'planning',
+  'sampleProjectNotice',
 ];
 
 const checks = [
@@ -79,16 +80,18 @@ const checks = [
       && createSnapshot.includes('breaks: state.breaks')
       && createSnapshot.includes('scenes: state.scenes')
       && createSnapshot.includes('timelineOrder: state.timelineOrder')
-      && createSnapshot.includes('planning: state.planning'),
+      && createSnapshot.includes('planning: state.planning')
+      && createSnapshot.includes('sampleProjectNotice: state.sampleProjectNotice')
+      && store.includes('sampleProjectNotice: state.sampleProjectNotice'),
   },
   {
     name: 'import understands new backup envelopes, older raw project JSON, and persisted Zustand state blobs',
     ok: readImported.includes("value.schema === 'prepro-studio-backup'")
       && readImported.includes('isRecord(value.project)')
       && readImported.includes('sampleProjectNotice')
-      && readImported.includes('isRecord(value.state)')
-      && readImported.includes('project: value.state as Partial<ScheduleState>')
-      && readImported.includes('project: value as Partial<ScheduleState>'),
+      && readImported.includes('const project = value.state as Partial<ScheduleState>')
+      && readImported.includes('return { project, sampleProjectNotice: project.sampleProjectNotice ||')
+      && readImported.includes('const project = value as Partial<ScheduleState>'),
   },
   {
     name: 'restore keeps sample-project label when present and reports backup-specific errors',

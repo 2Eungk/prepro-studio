@@ -284,6 +284,7 @@ const createEmptyProjectState = () => ({
   scenes: [],
   timelineOrder: [],
   planning: createDefaultPlanning('film'),
+  sampleProjectNotice: '',
 });
 
 const ensureLocation = (locations: ProductionLocation[], name: string): { locations: ProductionLocation[]; id?: string } => {
@@ -448,6 +449,7 @@ const persistedProjectState = (state: ScheduleState) => ({
   scenes: state.scenes,
   timelineOrder: state.timelineOrder,
   planning: state.planning,
+  sampleProjectNotice: state.sampleProjectNotice,
 });
 
 const createDeferredLocalStorage = (): StateStorage => {
@@ -913,6 +915,7 @@ export const useScheduleStore = create<ScheduleState>()(persist((set, get) => ({
   resetPlanning: (template) => {
     set((state) => ({ planning: createDefaultPlanning(template || state.template) }));
   },
+  setSampleProjectNotice: (sampleProjectNotice) => set({ sampleProjectNotice }),
 
   loadSampleData: () => {
     if (get().template === 'musicvideo') {

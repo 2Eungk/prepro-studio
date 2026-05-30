@@ -140,6 +140,7 @@ export interface ScheduleState {
   scenes: Scene[];
   timelineOrder: string[];
   planning: PlanningDocument;
+  sampleProjectNotice: string;
   
   // Actions
   setTemplate: (template: TemplateType) => void;
@@ -173,6 +174,7 @@ export interface ScheduleState {
   updatePlanning: (updates: Partial<PlanningDocument>) => void;
   updatePlanningField: (sectionId: string, fieldId: string, value: string) => void;
   resetPlanning: (template?: TemplateType) => void;
+  setSampleProjectNotice: (notice: string) => void;
   loadSampleData: () => void;
   importData: (data: Partial<ScheduleState>) => void;
   resetProject: () => void;

@@ -56,6 +56,10 @@ const checks = [
       && page.includes('peopleCount={people.length}'),
   },
   {
+    name: 'report sample load avoids native confirm so empty-report browsing does not block mobile/browser QA',
+    ok: page.includes('onLoadSampleData={() => handleLoadSampleData(false)}'),
+  },
+  {
     name: 'report follow-up section can return directly to field check mode',
     ok: reportPanel.includes('남은 항목 체크')
       && reportPanel.includes('reportActionItems.length > 0')
