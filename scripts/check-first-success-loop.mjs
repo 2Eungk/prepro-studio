@@ -178,6 +178,20 @@ const checks = [
       && cueSheetPanel.indexOf('큐시트 준비도') < cueSheetPanel.indexOf('촬영표에서 보강'),
   },
   {
+    name: 'cue sheet can apply a recommended reference to the first missing scene',
+    ok: cueSheetPanel.includes('canApplyRecommendedReference')
+      && cueSheetPanel.includes('첫 누락에 추천 샷 적용')
+      && cueSheetPanel.includes('onApplyRecommendedReference')
+      && page.includes('const cueSheetNeedsReference = (row: CueSheetRow) =>')
+      && page.includes('const handleApplyCueSheetRecommendedReference = () =>')
+      && page.includes("row.source === 'scene' && cueSheetNeedsReference(row)")
+      && page.includes('recommendShots(query)[0]')
+      && page.includes('updateScene(targetScene.id')
+      && page.includes("setScheduleIssueFilter('missingStoryboard')")
+      && page.includes('onApplyRecommendedReference={handleApplyCueSheetRecommendedReference}')
+      && cueSheetPanel.indexOf('첫 누락에 추천 샷 적용') < cueSheetPanel.indexOf('촬영표에서 보강'),
+  },
+  {
     name: 'mobile header keeps backup education compact before the schedule',
     ok: appHeader.includes('flex gap-2 overflow-x-auto rounded-xl')
       && appHeader.includes('prepro-btn prepro-btn--ghost shrink-0')

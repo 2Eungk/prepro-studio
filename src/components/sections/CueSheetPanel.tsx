@@ -42,9 +42,11 @@ type CueSheetPanelProps = {
   template: TemplateType;
   templateLabel: string;
   totalMinutes: number;
+  canApplyRecommendedReference: boolean;
   onApplyDraft: () => void;
   onExportPDF: () => void;
   onGoSchedule: () => void;
+  onApplyRecommendedReference: () => void;
   onRefreshDraft: () => void;
 };
 
@@ -91,9 +93,11 @@ export default function CueSheetPanel({
   template,
   templateLabel,
   totalMinutes,
+  canApplyRecommendedReference,
   onApplyDraft,
   onExportPDF,
   onGoSchedule,
+  onApplyRecommendedReference,
   onRefreshDraft,
 }: CueSheetPanelProps) {
   const isMusicTemplate = template === 'dance' || template === 'musicvideo';
@@ -233,10 +237,18 @@ export default function CueSheetPanel({
                 ))}
               </div>
             </div>
-            <button type="button" onClick={onGoSchedule} className="prepro-btn prepro-btn--secondary min-h-11 w-full justify-center px-5 text-sm lg:w-auto">
-              <ArrowRight className="h-3.5 w-3.5" />
-              촬영표에서 보강
-            </button>
+            <div className="grid w-full gap-2 sm:grid-cols-2 lg:w-auto">
+              {canApplyRecommendedReference && (
+                <button type="button" onClick={onApplyRecommendedReference} className="prepro-btn prepro-btn--primary min-h-11 justify-center px-5 text-sm">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  첫 누락에 추천 샷 적용
+                </button>
+              )}
+              <button type="button" onClick={onGoSchedule} className="prepro-btn prepro-btn--secondary min-h-11 justify-center px-5 text-sm">
+                <ArrowRight className="h-3.5 w-3.5" />
+                촬영표에서 보강
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -2332,6 +2332,51 @@ export default function Home() {
     setActiveTab('schedule');
   };
 
+  const cueSheetNeedsReference = (row: CueSheetRow) => {
+    if (template === 'event') return false;
+    if (template === 'dance' || template === 'musicvideo') return !row.reference || !row.shotSize || !row.focus;
+    return !row.reference;
+  };
+
+  const handleApplyCueSheetRecommendedReference = () => {
+    const targetRow = cueSheetRows.find((row) => row.source === 'scene' && cueSheetNeedsReference(row));
+    const targetScene = targetRow ? activeDayScenes.find((scene) => scene.id === targetRow.id) : undefined;
+    if (!targetRow || !targetScene) {
+      handleGoSchedule();
+      return;
+    }
+
+    const query = [
+      targetScene.description,
+      targetScene.location,
+      targetScene.cast,
+      targetScene.focusMember,
+      targetScene.shotSize,
+      targetScene.choreoNote,
+      targetScene.cameraGear,
+      targetScene.lightingNote,
+      targetScene.clientMemo,
+      targetScene.props,
+      targetScene.costume,
+      targetScene.specialInstruction,
+    ].filter(Boolean).join(' ');
+    const recommendedShot = recommendShots(query)[0];
+    const visualRef = targetScene.visualRef || recommendedShot?.url || getAutoStoryboardUrl(targetScene);
+
+    updateScene(targetScene.id, {
+      visualRef,
+      ...(template === 'dance' || template === 'musicvideo' ? {
+        shotSize: targetScene.shotSize || 'FS',
+        focusMember: targetScene.focusMember || targetScene.cast || (template === 'musicvideo' ? '아티스트' : '센터'),
+      } : {}),
+    });
+    setCueSheetStatus(`${targetRow.sequenceLabel}에 추천 ${copy.storyboardLabel}을 연결했습니다.`);
+    window.setTimeout(() => setCueSheetStatus(''), 2600);
+    setActiveTab('schedule');
+    setScheduleIssueFilter('missingStoryboard');
+    requestAnimationFrame(() => document.getElementById('schedule-timeline-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  };
+
   const handleOptimizeSchedule = () => {
     const beforeState = useScheduleStore.getState();
     const previousOrder = [...beforeState.timelineOrder];
@@ -4201,6 +4246,7 @@ export default function Home() {
             <CueSheetPanel
               activeDayLabel={`Day ${activeDayIndex + 1} · ${activeShootingDate}`}
               canApplyDraft={cueSheetCanApplyDraft}
+              canApplyRecommendedReference={cueSheetRows.some((row) => row.source === 'scene' && cueSheetNeedsReference(row))}
               isExportingPdf={isExportingPdf}
               pdfButtonText={pdfButtonText('큐시트 PDF')}
               pdfRef={cueSheetPdfRef}
@@ -4215,6 +4261,7 @@ export default function Home() {
               templateLabel={templateLabel}
               totalMinutes={cueSheetTotalMinutes}
               onApplyDraft={handleApplyCueSheetDraft}
+              onApplyRecommendedReference={handleApplyCueSheetRecommendedReference}
               onExportPDF={handleExportPDF}
               onGoSchedule={handleGoSchedule}
               onRefreshDraft={handleRefreshCueSheetDraft}
