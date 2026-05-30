@@ -13,6 +13,7 @@ const mobileScheduleList = read('src/components/sections/schedule/MobileSchedule
 const mobileTimelineCards = read('src/components/sections/schedule/MobileTimelineCards.tsx');
 const readinessChecklist = read('src/components/sections/schedule/ReadinessChecklist.tsx');
 const scheduleControlsPanel = read('src/components/sections/schedule/ScheduleControlsPanel.tsx');
+const cueSheetPanel = read('src/components/sections/CueSheetPanel.tsx');
 
 const scheduleActionsStart = page.indexOf(": activeTab === 'schedule'");
 const scheduleActionsEnd = page.indexOf(": activeTab === 'cueSheet'", scheduleActionsStart);
@@ -162,6 +163,19 @@ const checks = [
       && page.includes('restoreTimelineOrder(nextOrder);')
       && page.includes('onQuickAddBreak={addQuickBreak}')
       && scheduleControlsPanel.indexOf('운영 블록 빠른 추가') < scheduleControlsPanel.indexOf('고급 필터 · 제작 점검'),
+  },
+  {
+    name: 'cue sheet explains shoot-ready gaps and returns to schedule fixes',
+    ok: cueSheetPanel.includes('큐시트 준비도')
+      && cueSheetPanel.includes('바로 현장 공유 가능한 큐')
+      && cueSheetPanel.includes('다음 액션:')
+      && cueSheetPanel.includes('getMissingReferenceCount')
+      && cueSheetPanel.includes('샷/포커스/레퍼런스')
+      && cueSheetPanel.includes('콘티/레퍼런스')
+      && cueSheetPanel.includes('촬영표에서 보강')
+      && cueSheetPanel.includes('onGoSchedule')
+      && page.includes('onGoSchedule={handleGoSchedule}')
+      && cueSheetPanel.indexOf('큐시트 준비도') < cueSheetPanel.indexOf('촬영표에서 보강'),
   },
   {
     name: 'mobile header keeps backup education compact before the schedule',

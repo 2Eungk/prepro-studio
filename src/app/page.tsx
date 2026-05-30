@@ -4216,6 +4216,7 @@ export default function Home() {
               totalMinutes={cueSheetTotalMinutes}
               onApplyDraft={handleApplyCueSheetDraft}
               onExportPDF={handleExportPDF}
+              onGoSchedule={handleGoSchedule}
               onRefreshDraft={handleRefreshCueSheetDraft}
             />
           )}

@@ -2,7 +2,7 @@
 
 import type { RefObject } from 'react';
 import type { TemplateType } from '@/types/schedule';
-import { ArrowRight, Clock, Download, FileText, RefreshCw } from 'lucide-react';
+import { AlertTriangle, ArrowRight, CheckCircle2, Clock, Download, FileText, RefreshCw } from 'lucide-react';
 
 export type CueSheetRow = {
   id: string;
@@ -44,6 +44,7 @@ type CueSheetPanelProps = {
   totalMinutes: number;
   onApplyDraft: () => void;
   onExportPDF: () => void;
+  onGoSchedule: () => void;
   onRefreshDraft: () => void;
 };
 
@@ -53,6 +54,25 @@ const getCueSheetTitle = (template: TemplateType) => {
   if (template === 'dance') return '댄스커버 큐시트';
   if (template === 'ad') return '광고 컷 큐시트';
   return '촬영 큐시트';
+};
+
+const isMissingTime = (row: CueSheetRow) => !row.timecode && (!row.timeLabel || row.timeLabel === '--:--');
+const isMissingLocation = (row: CueSheetRow) => !row.location || row.location === '장소 미정' || row.location === '-';
+const isMissingContent = (row: CueSheetRow) => !row.content || row.content === '-';
+const isMissingDuration = (row: CueSheetRow) => !row.estimatedMinutes || row.estimatedMinutes <= 0;
+
+const getMissingReferenceCount = (rows: CueSheetRow[], template: TemplateType) => {
+  if (template === 'event') return rows.filter((row) => !row.gear && !row.focus).length;
+  if (template === 'dance' || template === 'musicvideo') {
+    return rows.filter((row) => !row.reference || !row.shotSize || !row.focus).length;
+  }
+  return rows.filter((row) => !row.reference).length;
+};
+
+const getReferenceReadinessLabel = (template: TemplateType) => {
+  if (template === 'event') return '담당/장비';
+  if (template === 'dance' || template === 'musicvideo') return '샷/포커스/레퍼런스';
+  return '콘티/레퍼런스';
 };
 
 export default function CueSheetPanel({
@@ -73,11 +93,47 @@ export default function CueSheetPanel({
   totalMinutes,
   onApplyDraft,
   onExportPDF,
+  onGoSchedule,
   onRefreshDraft,
 }: CueSheetPanelProps) {
   const isMusicTemplate = template === 'dance' || template === 'musicvideo';
   const isEventTemplate = template === 'event';
   const pendingCount = rows.filter((row) => row.status !== 'done').length;
+  const missingTimeCount = rows.filter(isMissingTime).length;
+  const missingLocationCount = rows.filter(isMissingLocation).length;
+  const missingContentCount = rows.filter(isMissingContent).length;
+  const missingDurationCount = rows.filter(isMissingDuration).length;
+  const missingReferenceCount = getMissingReferenceCount(rows, template);
+  const missingCoreCount = missingTimeCount + missingLocationCount + missingContentCount + missingDurationCount + missingReferenceCount;
+  const readyCueCount = Math.max(0, rows.length - rows.filter((row) => (
+    isMissingTime(row) ||
+    isMissingLocation(row) ||
+    isMissingContent(row) ||
+    isMissingDuration(row) ||
+    (template === 'event'
+      ? !row.gear && !row.focus
+      : isMusicTemplate
+        ? !row.reference || !row.shotSize || !row.focus
+        : !row.reference)
+  )).length);
+  const referenceReadinessLabel = getReferenceReadinessLabel(template);
+  const readinessItems = [
+    { label: '시간', missing: missingTimeCount },
+    { label: '장소', missing: missingLocationCount },
+    { label: '내용', missing: missingContentCount + missingDurationCount },
+    { label: referenceReadinessLabel, missing: missingReferenceCount },
+  ];
+  const nextFixLabel = missingReferenceCount > 0
+    ? `${referenceReadinessLabel} ${missingReferenceCount}개 보강`
+    : missingTimeCount > 0
+      ? `시간 ${missingTimeCount}개 보강`
+      : missingLocationCount > 0
+        ? `장소 ${missingLocationCount}개 보강`
+        : missingContentCount + missingDurationCount > 0
+          ? `내용/분량 ${missingContentCount + missingDurationCount}개 보강`
+          : rows.length > 0
+            ? 'PDF 내보내기 가능'
+            : '촬영표 먼저 만들기';
 
   return (
     <section className="space-y-5">
@@ -140,6 +196,46 @@ export default function CueSheetPanel({
             >
               <Download className="h-3.5 w-3.5" />
               {pdfButtonText}
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-4 rounded-2xl border border-neutral-900 bg-black/45 p-4">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <div className={`flex h-9 w-9 items-center justify-center rounded-xl border ${
+                  missingCoreCount === 0 && rows.length > 0
+                    ? 'border-teal-300/25 bg-teal-300/10 text-teal-200'
+                    : 'border-amber-300/25 bg-amber-300/10 text-amber-200'
+                }`}>
+                  {missingCoreCount === 0 && rows.length > 0 ? <CheckCircle2 className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
+                </div>
+                <div>
+                  <div className="text-sm font-black text-neutral-100">큐시트 준비도</div>
+                  <div className="mt-0.5 text-xs font-bold text-neutral-600">
+                    바로 현장 공유 가능한 큐 {readyCueCount}/{rows.length}개 · 다음 액션: {nextFixLabel}
+                  </div>
+                </div>
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
+                {readinessItems.map((item) => (
+                  <div key={item.label} className={`rounded-xl border px-3 py-2 ${
+                    item.missing === 0
+                      ? 'border-neutral-800 bg-neutral-950 text-neutral-500'
+                      : 'border-amber-300/20 bg-amber-300/10 text-amber-100'
+                  }`}>
+                    <div className="font-black text-neutral-300">{item.label}</div>
+                    <div className="mt-1 text-[11px] font-bold">
+                      {item.missing === 0 ? '준비됨' : `${item.missing}개 누락`}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <button type="button" onClick={onGoSchedule} className="prepro-btn prepro-btn--secondary min-h-11 w-full justify-center px-5 text-sm lg:w-auto">
+              <ArrowRight className="h-3.5 w-3.5" />
+              촬영표에서 보강
             </button>
           </div>
         </div>
