@@ -1,6 +1,7 @@
 'use client';
 
 import type { StoryboardCategory, StoryboardShot } from '@/types/schedule';
+import type { StoryboardQuickFilter } from '@/data/storyboardQuickFilters';
 import { Plus, Sparkles, XCircle } from 'lucide-react';
 import Image from 'next/image';
 
@@ -15,6 +16,7 @@ type StoryboardGalleryModalProps = {
   copyDescription: string;
   filteredStoryboards: StoryboardShot[];
   isOpen: boolean;
+  quickFilters: StoryboardQuickFilter[];
   recommendedStoryboards: StoryboardShot[];
   search: string;
   selectedVisualRef?: string;
@@ -23,6 +25,7 @@ type StoryboardGalleryModalProps = {
   onApplyStoryboard: (shot: StoryboardShot, shouldOpenSceneForm: boolean) => void;
   onClose: () => void;
   onFallbackImage: (name: string) => string;
+  onChooseQuickFilter: (filter: StoryboardQuickFilter) => void;
   onSetCategory: (category: StoryboardCategory | 'ALL') => void;
   onSetSearch: (value: string) => void;
 };
@@ -33,6 +36,7 @@ export default function StoryboardGalleryModal({
   copyDescription,
   filteredStoryboards,
   isOpen,
+  quickFilters,
   recommendedStoryboards,
   search,
   selectedVisualRef,
@@ -41,10 +45,13 @@ export default function StoryboardGalleryModal({
   onApplyStoryboard,
   onClose,
   onFallbackImage,
+  onChooseQuickFilter,
   onSetCategory,
   onSetSearch,
 }: StoryboardGalleryModalProps) {
   if (!isOpen) return null;
+
+  const isFilterActive = (filter: StoryboardQuickFilter) => category === filter.category && search === filter.search;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10">
@@ -63,6 +70,35 @@ export default function StoryboardGalleryModal({
         </div>
 
         <div className="p-6 space-y-6 flex-1 overflow-y-auto custom-scrollbar">
+          <div className="rounded-2xl border border-neutral-800 bg-black/30 p-4">
+            <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-indigo-300">바로 고르기</div>
+                <p className="text-xs font-bold text-neutral-500">인물, 대화, 이동, 제품, 행사처럼 현장 의도별로 먼저 좁힌 뒤 적용하세요.</p>
+              </div>
+              <p className="text-[11px] font-bold text-neutral-600">샷을 누르면 선택한 {showSceneForm ? '씬 폼' : '새 씬 폼'}에 바로 연결됩니다.</p>
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
+              {quickFilters.map((filter) => (
+                <button
+                  key={filter.id}
+                  type="button"
+                  onClick={() => onChooseQuickFilter(filter)}
+                  className={`min-w-32 rounded-xl border px-3 py-2 text-left transition-all ${
+                    isFilterActive(filter)
+                      ? 'border-indigo-400 bg-indigo-500 text-white shadow-lg shadow-indigo-500/20'
+                      : 'border-neutral-800 bg-neutral-900 text-neutral-300 hover:border-neutral-700'
+                  }`}
+                >
+                  <span className="block text-xs font-black">{filter.label}</span>
+                  <span className={`mt-1 block text-[9px] font-bold leading-snug ${isFilterActive(filter) ? 'text-indigo-100' : 'text-neutral-600'}`}>
+                    {filter.helper}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between sticky top-0 bg-neutral-900 py-2 z-10">
             <div className="flex gap-2 overflow-x-auto pb-2 w-full md:w-auto custom-scrollbar">
               {categoryOptions.map((item) => (

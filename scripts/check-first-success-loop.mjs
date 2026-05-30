@@ -14,6 +14,9 @@ const mobileTimelineCards = read('src/components/sections/schedule/MobileTimelin
 const readinessChecklist = read('src/components/sections/schedule/ReadinessChecklist.tsx');
 const scheduleControlsPanel = read('src/components/sections/schedule/ScheduleControlsPanel.tsx');
 const cueSheetPanel = read('src/components/sections/CueSheetPanel.tsx');
+const storyboardPanel = read('src/components/sections/StoryboardPanel.tsx');
+const storyboardGalleryModal = read('src/components/modals/StoryboardGalleryModal.tsx');
+const storyboardQuickFilters = read('src/data/storyboardQuickFilters.ts');
 
 const scheduleActionsStart = page.indexOf(": activeTab === 'schedule'");
 const scheduleActionsEnd = page.indexOf(": activeTab === 'cueSheet'", scheduleActionsStart);
@@ -190,6 +193,42 @@ const checks = [
       && page.includes("setScheduleIssueFilter('missingStoryboard')")
       && page.includes('onApplyRecommendedReference={handleApplyCueSheetRecommendedReference}')
       && cueSheetPanel.indexOf('첫 누락에 추천 샷 적용') < cueSheetPanel.indexOf('촬영표에서 보강'),
+  },
+  {
+    name: 'storyboard library starts with director-oriented quick filter buckets',
+    ok: storyboardQuickFilters.includes("label: '인물'")
+      && storyboardQuickFilters.includes("label: '대화'")
+      && storyboardQuickFilters.includes("label: '이동'")
+      && storyboardQuickFilters.includes("label: '제품'")
+      && storyboardQuickFilters.includes("label: '행사'")
+      && storyboardQuickFilters.includes("label: '와이드'")
+      && storyboardQuickFilters.includes("label: '클로즈업'")
+      && storyboardQuickFilters.includes("label: '무드'")
+      && storyboardQuickFilters.includes("category: 'SUBJECT'")
+      && storyboardQuickFilters.includes("category: 'WIDE'")
+      && storyboardQuickFilters.includes("category: 'CLOSEUP'")
+      && storyboardQuickFilters.includes("category: 'LIGHTING'")
+      && page.includes('storyboardQuickFilters')
+      && page.includes('applyStoryboardQuickFilter')
+      && page.includes('setSbCategory(filter.category);')
+      && page.includes('setSbSearch(filter.search);'),
+  },
+  {
+    name: 'storyboard top area tells the user how to narrow, apply, search, or open the gallery',
+    ok: storyboardPanel.includes('추천 필터')
+      && storyboardPanel.includes('210개를 훑기 전에')
+      && storyboardPanel.includes('추천 샷으로 시작')
+      && storyboardPanel.includes('검색/전체 갤러리')
+      && storyboardPanel.includes('quickFilters.map')
+      && storyboardPanel.includes('onChooseQuickFilter(filter)')
+      && storyboardPanel.includes('전체 {filteredCount}개 보기')
+      && storyboardPanel.indexOf('추천 필터') < storyboardPanel.indexOf('featuredStoryboards.map')
+      && storyboardGalleryModal.includes('바로 고르기')
+      && storyboardGalleryModal.includes('인물, 대화, 이동, 제품, 행사')
+      && storyboardGalleryModal.includes('샷을 누르면 선택한')
+      && storyboardGalleryModal.includes('quickFilters.map')
+      && storyboardGalleryModal.includes('onChooseQuickFilter(filter)')
+      && storyboardGalleryModal.indexOf('바로 고르기') < storyboardGalleryModal.indexOf('categoryOptions.map'),
   },
   {
     name: 'mobile header keeps backup education compact before the schedule',

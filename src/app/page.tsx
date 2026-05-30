@@ -8,6 +8,7 @@ import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { storyboardDb, recommendShots } from '@/data/storyboardDb';
+import { storyboardQuickFilters, type StoryboardQuickFilter } from '@/data/storyboardQuickFilters';
 import AdBanner from '@/components/AdBanner';
 import AppHeader from '@/components/header/AppHeader';
 import CurrentWorkBar from '@/components/layout/CurrentWorkBar';
@@ -2177,6 +2178,10 @@ export default function Home() {
     () => storyboardDb.find((shot) => shot.url === newSceneParams.visualRef),
     [newSceneParams.visualRef],
   );
+  const applyStoryboardQuickFilter = useCallback((filter: StoryboardQuickFilter) => {
+    setSbCategory(filter.category);
+    setSbSearch(filter.search);
+  }, []);
   const sceneFormMissingFields = [
     !newSceneParams.location.trim() ? '장소' : '',
     !newSceneParams.description.trim() ? copy.descriptionLabel : '',
@@ -4338,7 +4343,12 @@ export default function Home() {
               <StoryboardPanel
                 copy={{ storyboardLabel: copy.storyboardLabel, storyboardDescription: copy.storyboardDescription }}
                 featuredStoryboards={featuredStoryboards}
+                filteredCount={filteredStoryboards.length}
+                quickFilters={storyboardQuickFilters}
+                search={sbSearch}
+                selectedCategory={sbCategory}
                 onApplyStoryboard={applyStoryboardToSceneForm}
+                onChooseQuickFilter={applyStoryboardQuickFilter}
                 onFallbackImage={storyboardFallback}
                 onOpenGallery={() => setShowGallery(true)}
               />
@@ -4422,6 +4432,7 @@ export default function Home() {
           copyDescription={copy.storyboardDescription}
           filteredStoryboards={filteredStoryboards}
           isOpen={showGallery}
+          quickFilters={storyboardQuickFilters}
           recommendedStoryboards={recommendations}
           search={sbSearch}
           selectedVisualRef={newSceneParams.visualRef}
@@ -4430,6 +4441,7 @@ export default function Home() {
           onApplyStoryboard={applyStoryboardToSceneForm}
           onClose={() => setShowGallery(false)}
           onFallbackImage={storyboardFallback}
+          onChooseQuickFilter={applyStoryboardQuickFilter}
           onSetCategory={setSbCategory}
           onSetSearch={setSbSearch}
         />
