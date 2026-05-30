@@ -4357,10 +4357,12 @@ export default function Home() {
 
           {activeTab === 'report' && (
             <ReportPanel
+              callSheetStats={callSheetStats}
               copy={{ item: copy.item, itemPlural: copy.itemPlural }}
               isExportingPdf={isExportingPdf}
               isMusicTimelineTemplate={isMusicTimelineTemplate}
               location={location}
+              peopleCount={people.length}
               reportActionItems={reportActionItems}
               reportLocationStats={reportLocationStats}
               reportPdfRef={reportPdfRef}
@@ -4371,6 +4373,7 @@ export default function Home() {
               template={template}
               templateLabel={templateLabel}
               onEnableReportMode={handleEnableReportMode}
+              onExportJSON={handleExportJSON}
               onExportPDF={handleExportPDF}
               onGoSchedule={handleGoSchedule}
               onLoadSampleData={handleLoadSampleData}

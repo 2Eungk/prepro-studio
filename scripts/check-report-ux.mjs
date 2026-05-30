@@ -35,6 +35,27 @@ const checks = [
     ok: reportPanel.includes('현장 체크 요약') && reportPanel.includes('남은 확인') && reportPanel.includes('재확인'),
   },
   {
+    name: 'report panel exposes final delivery readiness guidance',
+    ok: reportPanel.includes('마무리 / 납품 준비')
+      && reportPanel.includes('지금 보낼 것과 남은 확인')
+      && reportPanel.includes('촬영표 상태')
+      && reportPanel.includes('큐시트 / 콘티 근거')
+      && reportPanel.includes('콜시트 연락망')
+      && reportPanel.includes('납품 / 백업')
+      && reportPanel.includes('sendNowGuidance'),
+  },
+  {
+    name: 'report panel gives practical PDF JSON and remaining-item actions',
+    ok: reportPanel.includes('onExportJSON')
+      && reportPanel.includes('JSON 백업')
+      && reportPanel.includes('결과 PDF')
+      && reportPanel.includes('남은 항목')
+      && reportPanel.includes('data-html2canvas-ignore="true"')
+      && page.includes('onExportJSON={handleExportJSON}')
+      && page.includes('callSheetStats={callSheetStats}')
+      && page.includes('peopleCount={people.length}'),
+  },
+  {
     name: 'report follow-up section can return directly to field check mode',
     ok: reportPanel.includes('남은 항목 체크')
       && reportPanel.includes('reportActionItems.length > 0')

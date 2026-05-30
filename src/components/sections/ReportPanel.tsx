@@ -3,7 +3,7 @@
 import type { RefObject } from 'react';
 import Image from 'next/image';
 import type { Scene, TemplateType } from '@/types/schedule';
-import { Clock, Database, Download, FileText, Image as ImageIcon, Plus } from 'lucide-react';
+import { CheckCircle2, Clock, Database, Download, FileText, Image as ImageIcon, Plus, ShieldCheck, Users } from 'lucide-react';
 
 type ReportStats = {
   done: number;
@@ -38,6 +38,11 @@ type ReportSceneGroups = {
   pending: Scene[];
 };
 
+type ReportCallSheetStats = {
+  missingCallTime: number;
+  missingContact: number;
+};
+
 type ReportPanelCopy = {
   item: string;
   itemPlural: string;
@@ -48,6 +53,8 @@ type ReportPanelProps = {
   isExportingPdf: boolean;
   isMusicTimelineTemplate: boolean;
   location: string;
+  peopleCount: number;
+  callSheetStats: ReportCallSheetStats;
   reportActionItems: ReportActionItem[];
   reportLocationStats: ReportLocationStat[];
   reportPdfRef: RefObject<HTMLDivElement | null>;
@@ -58,6 +65,7 @@ type ReportPanelProps = {
   template: TemplateType;
   templateLabel: string;
   onEnableReportMode: () => void;
+  onExportJSON: () => void;
   onExportPDF: () => void;
   onGoSchedule: () => void;
   onLoadSampleData: () => void;
@@ -76,9 +84,11 @@ const reportTitleByTemplate: Record<TemplateType, string> = {
 
 export default function ReportPanel({
   copy,
+  callSheetStats,
   isExportingPdf,
   isMusicTimelineTemplate,
   location,
+  peopleCount,
   reportActionItems,
   reportLocationStats,
   reportPdfRef,
@@ -89,6 +99,7 @@ export default function ReportPanel({
   template,
   templateLabel,
   onEnableReportMode,
+  onExportJSON,
   onExportPDF,
   onGoSchedule,
   onLoadSampleData,
@@ -96,6 +107,65 @@ export default function ReportPanel({
   pdfButtonText,
   storyboardFallback,
 }: ReportPanelProps) {
+  const sceneCount = scenes.length;
+  const storyboardRefCount = scenes.filter((scene) => scene.visualRef?.trim()).length;
+  const describedSceneCount = scenes.filter((scene) => scene.description?.trim()).length;
+  const callSheetGapCount = callSheetStats.missingCallTime + callSheetStats.missingContact;
+  const reportReady = sceneCount > 0 && reportActionItems.length === 0;
+  const cueSheetReady = sceneCount > 0 && describedSceneCount === sceneCount && storyboardRefCount > 0;
+  const callSheetReady = peopleCount > 0 && callSheetGapCount === 0;
+
+  const deliveryChecks = [
+    {
+      label: '촬영표 상태',
+      detail: sceneCount === 0
+        ? `${copy.item}를 먼저 등록해야 리포트를 만들 수 있습니다.`
+        : reportActionItems.length === 0
+          ? `${sceneCount}개 ${copy.itemPlural} 모두 완료 체크됨`
+          : `NG/대기 ${reportActionItems.length}개를 촬영표에서 확인`,
+      ok: reportReady,
+      Icon: CheckCircle2,
+    },
+    {
+      label: '큐시트 / 콘티 근거',
+      detail: sceneCount === 0
+        ? '큐시트에 보낼 장면 정보가 아직 없습니다.'
+        : cueSheetReady
+          ? `설명 ${describedSceneCount}개 · 콘티 ${storyboardRefCount}개 연결`
+          : `설명 ${describedSceneCount}/${sceneCount} · 콘티 ${storyboardRefCount}/${sceneCount}개`,
+      ok: cueSheetReady,
+      Icon: ImageIcon,
+    },
+    {
+      label: '콜시트 연락망',
+      detail: peopleCount === 0
+        ? '콜시트에 보낼 인원이 아직 없습니다.'
+        : callSheetReady
+          ? `${peopleCount}명 콜타임/연락처 확인 완료`
+          : `콜 미정 ${callSheetStats.missingCallTime}명 · 연락처 누락 ${callSheetStats.missingContact}명`,
+      ok: callSheetReady,
+      Icon: Users,
+    },
+    {
+      label: '납품 / 백업',
+      detail: sceneCount === 0
+        ? 'PDF와 JSON 백업은 촬영표가 생긴 뒤 의미가 있습니다.'
+        : reportReady
+          ? '결과 PDF 공유, JSON 백업 보관 권장'
+          : 'PDF 공유 전 후속조치 확인, JSON 백업은 지금 저장',
+      ok: sceneCount > 0,
+      Icon: ShieldCheck,
+    },
+  ];
+
+  const sendNowGuidance = sceneCount === 0
+    ? '지금은 샘플을 보거나 첫 항목을 추가해 결과 리포트 흐름을 확인하세요.'
+    : reportReady && callSheetReady
+      ? '클라이언트에는 결과 PDF, 팀에는 콜시트/촬영표, 본인 보관용으로 JSON 백업을 함께 남기세요.'
+      : reportReady
+        ? '결과 PDF는 납품본으로 보낼 수 있습니다. 콜시트 누락은 팀 공유 전에 한 번 더 확인하세요.'
+        : '후속조치가 남아 있습니다. 결과 PDF는 내부 보고용으로 쓰고, 촬영표에서 남은 항목을 먼저 정리하세요.';
+
   return (
     <div ref={reportPdfRef} className="pdf-export-root rounded-3xl border border-neutral-800 bg-neutral-950 p-4 md:p-6">
       <div className="mb-4 flex flex-col gap-2 md:mb-6 md:flex-row md:items-center md:justify-between md:gap-3">
@@ -148,6 +218,40 @@ export default function ReportPanel({
           </div>
         </div>
       )}
+      <div className="mb-4 rounded-2xl border border-teal-400/20 bg-[linear-gradient(135deg,rgba(20,184,166,0.12),rgba(38,38,38,0.55)_48%,rgba(0,0,0,0.28))] p-3 md:mb-6 md:p-4">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-[0.22em] text-teal-200/80">마무리 / 납품 준비</div>
+            <h3 className="mt-1 text-base font-black text-neutral-100">지금 보낼 것과 남은 확인</h3>
+            <p className="mt-1 max-w-3xl text-xs font-bold leading-relaxed text-neutral-400">{sendNowGuidance}</p>
+          </div>
+          <div data-html2canvas-ignore="true" className="grid w-full grid-cols-1 gap-2 sm:grid-cols-3 lg:w-auto lg:min-w-[430px]">
+            <button type="button" onClick={onExportPDF} disabled={isExportingPdf || sceneCount === 0} className="prepro-btn prepro-btn--primary min-h-11 w-full justify-center px-4 text-sm disabled:cursor-not-allowed disabled:opacity-50">
+              <Download className={`h-4 w-4 ${isExportingPdf ? 'animate-pulse' : ''}`} /> 결과 PDF
+            </button>
+            <button type="button" onClick={onExportJSON} disabled={sceneCount === 0} className="prepro-btn prepro-btn--secondary min-h-11 w-full justify-center px-4 text-sm disabled:cursor-not-allowed disabled:opacity-50">
+              <Database className="h-4 w-4" /> JSON 백업
+            </button>
+            <button type="button" onClick={onEnableReportMode} disabled={sceneCount === 0} className="prepro-btn prepro-btn--quiet min-h-11 w-full justify-center px-4 text-sm disabled:cursor-not-allowed disabled:opacity-50">
+              <CheckCircle2 className="h-4 w-4" /> 남은 항목
+            </button>
+          </div>
+        </div>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+          {deliveryChecks.map(({ label, detail, ok, Icon }) => (
+            <div key={label} className={`rounded-xl border px-3 py-3 ${ok ? 'border-green-400/20 bg-green-500/10' : 'border-amber-400/20 bg-amber-500/10'}`}>
+              <div className="flex items-center gap-2">
+                <Icon className={`h-4 w-4 ${ok ? 'text-green-200' : 'text-amber-200'}`} />
+                <span className={`text-[10px] font-black uppercase tracking-widest ${ok ? 'text-green-200/80' : 'text-amber-200/80'}`}>
+                  {ok ? 'READY' : 'CHECK'}
+                </span>
+              </div>
+              <div className="mt-2 text-sm font-black text-neutral-100">{label}</div>
+              <p className="mt-1 text-xs font-bold leading-relaxed text-neutral-500">{detail}</p>
+            </div>
+          ))}
+        </div>
+      </div>
       <div className="grid grid-cols-2 gap-2 md:grid-cols-5 md:gap-3">
         {[
           { label: '완료', value: `${reportStats.done}개`, tone: 'text-green-400' },
