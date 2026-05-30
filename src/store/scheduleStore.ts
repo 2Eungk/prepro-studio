@@ -632,6 +632,7 @@ export const useScheduleStore = create<ScheduleState>()(persist((set, get) => ({
     };
     set((state) => ({ breaks: [...state.breaks, newBreak], timelineOrder: [...state.timelineOrder, newBreak.id] }));
     get().calculateTimes();
+    return newBreak.id;
   },
 
   updateBreak: (id, updates) => {

@@ -157,7 +157,7 @@ export interface ScheduleState {
   addPerson: (person: Omit<Person, 'id'>) => string;
   updatePerson: (id: string, updates: Partial<Person>) => void;
   deletePerson: (id: string) => void;
-  addBreak: (item: Omit<BreakItem, 'id' | 'startTime' | 'endTime'>) => void;
+  addBreak: (item: Omit<BreakItem, 'id' | 'startTime' | 'endTime'>) => string;
   updateBreak: (id: string, updates: Partial<BreakItem>) => void;
   deleteBreak: (id: string) => void;
   addScene: (scene: Omit<Scene, 'id' | 'startTime' | 'endTime'>) => void;

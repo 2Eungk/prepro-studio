@@ -31,7 +31,7 @@ import MobileScheduleList from '@/components/sections/schedule/MobileScheduleLis
 import { MobileFieldControlBar, MobileTimelineBreakCard, MobileTimelineSceneCard } from '@/components/sections/schedule/MobileTimelineCards';
 import DesktopScheduleTable from '@/components/sections/schedule/DesktopScheduleTable';
 import { SortableBreakRow, SortableRow } from '@/components/sections/schedule/DesktopTimelineRows';
-import ScheduleControlsPanel from '@/components/sections/schedule/ScheduleControlsPanel';
+import ScheduleControlsPanel, { type QuickBreakPreset } from '@/components/sections/schedule/ScheduleControlsPanel';
 import ScheduleDashboardSummary from '@/components/sections/schedule/ScheduleDashboardSummary';
 import SceneFormPanel from '@/components/sections/schedule/SceneFormPanel';
 import {
@@ -3204,6 +3204,47 @@ export default function Home() {
     setShowBreakModal(true);
   };
 
+  const addQuickBreak = (preset: QuickBreakPreset) => {
+    const fallbackLocationId = activeDayScenes[0]?.locationId || locations[0]?.id;
+    const newBreakId = addBreak({
+      dayId: activeDay.id,
+      type: preset.type,
+      label: preset.label,
+      estimatedMinutes: preset.estimatedMinutes,
+      locationId: fallbackLocationId,
+    });
+
+    if (preset.placement === 'before-first-scene') {
+      const currentDayIds = timelineRows.map((row) => row.id);
+      const firstSceneIndex = timelineRows.findIndex((row) => row.type === 'scene');
+      const insertIndex = firstSceneIndex >= 0 ? firstSceneIndex : 0;
+      const currentDayIdSet = new Set(currentDayIds);
+      const nextDayIds = [
+        ...currentDayIds.slice(0, insertIndex),
+        newBreakId,
+        ...currentDayIds.slice(insertIndex),
+      ];
+      const nextOrder: string[] = [];
+      let insertedCurrentDay = false;
+
+      timelineOrder.forEach((id) => {
+        if (currentDayIdSet.has(id)) {
+          if (!insertedCurrentDay) {
+            nextOrder.push(...nextDayIds);
+            insertedCurrentDay = true;
+          }
+          return;
+        }
+        nextOrder.push(id);
+      });
+
+      if (!insertedCurrentDay) nextOrder.push(...nextDayIds);
+      restoreTimelineOrder(nextOrder);
+    }
+
+    setOptimizationSummary(null);
+  };
+
   const saveBreak = () => {
     const payload = {
       dayId: editingBreak?.dayId || activeDay.id,
@@ -4068,6 +4109,7 @@ export default function Home() {
           onChangeLocationFilter={setScheduleLocationFilter}
           onChangeSearch={setScheduleSearch}
           onChangeStatusFilter={setScheduleStatusFilter}
+          onQuickAddBreak={addQuickBreak}
           onResetFilters={resetScheduleFilters}
           onUndoOptimization={handleUndoOptimization}
         />

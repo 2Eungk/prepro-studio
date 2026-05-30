@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import type { ProductionLocation, TemplateType } from '@/types/schedule';
-import { Search } from 'lucide-react';
+import type { BreakItem, ProductionLocation, TemplateType } from '@/types/schedule';
+import { Clock, Search } from 'lucide-react';
 
 type ScheduleStatusFilter = 'all' | 'pending' | 'done' | 'ng';
 type ScheduleIssueFilter = 'all' | 'missingLocation' | 'missingStoryboard' | 'missingPeople' | 'missingDuration';
@@ -23,6 +23,13 @@ type ScheduleIssueOption = {
   id: ScheduleIssueFilter;
   label: string;
   count: number;
+};
+
+export type QuickBreakPreset = {
+  type: BreakItem['type'];
+  label: string;
+  estimatedMinutes: number;
+  placement: 'before-first-scene' | 'after-current-order';
 };
 
 type ScheduleControlsPanelProps = {
@@ -48,6 +55,7 @@ type ScheduleControlsPanelProps = {
   onChangeLocationFilter: (value: string) => void;
   onChangeSearch: (value: string) => void;
   onChangeStatusFilter: (value: ScheduleStatusFilter) => void;
+  onQuickAddBreak: (preset: QuickBreakPreset) => void;
   onResetFilters: () => void;
   onUndoOptimization: () => void;
 };
@@ -66,6 +74,14 @@ const getCastChangeLabel = (template: TemplateType) => {
   if (template === 'dance') return '포커스 전환';
   return '출연진 전환';
 };
+
+const quickBreakPresets: QuickBreakPreset[] = [
+  { type: 'setup', label: '콜타임 / 장비 하차', estimatedMinutes: 30, placement: 'before-first-scene' },
+  { type: 'setup', label: '세팅 / 리허설', estimatedMinutes: 30, placement: 'before-first-scene' },
+  { type: 'move', label: '이동 / 주차 확인', estimatedMinutes: 30, placement: 'after-current-order' },
+  { type: 'meal', label: '식사 / 휴식', estimatedMinutes: 60, placement: 'after-current-order' },
+  { type: 'custom', label: '철수 / 백업', estimatedMinutes: 30, placement: 'after-current-order' },
+];
 
 export default function ScheduleControlsPanel({
   activeDayIndex,
@@ -90,6 +106,7 @@ export default function ScheduleControlsPanel({
   onChangeLocationFilter,
   onChangeSearch,
   onChangeStatusFilter,
+  onQuickAddBreak,
   onResetFilters,
   onUndoOptimization,
 }: ScheduleControlsPanelProps) {
@@ -120,6 +137,35 @@ export default function ScheduleControlsPanel({
           </div>
         </div>
       </div>
+
+      {activeDaySceneCount > 0 && (
+        <section className="rounded-2xl border border-amber-500/25 bg-amber-500/[0.055] p-3" data-html2canvas-ignore="true">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-amber-200">
+                <Clock className="h-3.5 w-3.5" />
+                운영 블록 빠른 추가
+              </div>
+              <p className="mt-1 text-xs font-bold leading-relaxed text-amber-100/65">
+                콜타임, 이동, 식사, 세팅/리허설, 철수/백업을 씬과 구분되는 시간 블록으로 바로 붙입니다.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:flex lg:flex-wrap lg:justify-end">
+              {quickBreakPresets.map((preset) => (
+                <button
+                  key={preset.label}
+                  type="button"
+                  onClick={() => onQuickAddBreak(preset)}
+                  className="min-h-11 rounded-xl border border-amber-500/30 bg-black/45 px-3 py-2 text-left transition-colors hover:border-amber-300/50 hover:bg-amber-500/10"
+                >
+                  <span className="block text-xs font-black text-amber-100">{preset.label}</span>
+                  <span className="mt-0.5 block text-[10px] font-bold text-amber-100/50">{preset.estimatedMinutes}분 · 시간 블록</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <div className="rounded-2xl border border-neutral-900 bg-black/35 p-3" data-html2canvas-ignore="true">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">

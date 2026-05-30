@@ -12,6 +12,7 @@ const sceneLocationField = read('src/components/sections/schedule/SceneLocationF
 const mobileScheduleList = read('src/components/sections/schedule/MobileScheduleList.tsx');
 const mobileTimelineCards = read('src/components/sections/schedule/MobileTimelineCards.tsx');
 const readinessChecklist = read('src/components/sections/schedule/ReadinessChecklist.tsx');
+const scheduleControlsPanel = read('src/components/sections/schedule/ScheduleControlsPanel.tsx');
 
 const scheduleActionsStart = page.indexOf(": activeTab === 'schedule'");
 const scheduleActionsEnd = page.indexOf(": activeTab === 'cueSheet'", scheduleActionsStart);
@@ -143,6 +144,24 @@ const checks = [
       && page.includes("rowNumber: focusRowIndex >= 0 ? timelineRows.slice(0, focusRowIndex + 1).filter((row) => row.type === 'scene').length : undefined")
       && mobileScheduleList.indexOf("rowNumber={filteredTimelineRows.slice(0, index + 1).filter((item) => item.type === 'scene').length}") < mobileScheduleList.indexOf('onEdit={() => onEditScene(row.scene)}')
       && mobileTimelineCards.indexOf('title={`타임라인 ${rowNumber}번째 시간 블록`}') < mobileTimelineCards.indexOf('>\n          시간\n        </span>'),
+  },
+  {
+    name: 'post-first-scene timeline exposes one-click operational time blocks',
+    ok: scheduleControlsPanel.includes('운영 블록 빠른 추가')
+      && scheduleControlsPanel.includes('activeDaySceneCount > 0')
+      && scheduleControlsPanel.includes('콜타임 / 장비 하차')
+      && scheduleControlsPanel.includes('세팅 / 리허설')
+      && scheduleControlsPanel.includes('이동 / 주차 확인')
+      && scheduleControlsPanel.includes('식사 / 휴식')
+      && scheduleControlsPanel.includes('철수 / 백업')
+      && scheduleControlsPanel.includes("placement: 'before-first-scene'")
+      && scheduleControlsPanel.includes("placement: 'after-current-order'")
+      && scheduleControlsPanel.includes('onQuickAddBreak(preset)')
+      && page.includes('const addQuickBreak = (preset: QuickBreakPreset) => {')
+      && page.includes('const firstSceneIndex = timelineRows.findIndex((row) => row.type === \'scene\');')
+      && page.includes('restoreTimelineOrder(nextOrder);')
+      && page.includes('onQuickAddBreak={addQuickBreak}')
+      && scheduleControlsPanel.indexOf('운영 블록 빠른 추가') < scheduleControlsPanel.indexOf('고급 필터 · 제작 점검'),
   },
   {
     name: 'mobile header keeps backup education compact before the schedule',
