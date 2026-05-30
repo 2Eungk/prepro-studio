@@ -3650,6 +3650,7 @@ export default function Home() {
           globalWeatherError={globalWeatherError}
           globalWeatherResults={globalWeatherResults}
           isReportMode={isReportMode}
+          isFirstRun={isFirstRun}
           isSearchingGlobalWeather={isSearchingGlobalWeather}
           location={location}
           mainWorkspaceGroups={mainWorkspaceGroups}
@@ -3874,20 +3875,20 @@ export default function Home() {
           )}
 
           {activeTab === 'schedule' && showEmptyScheduleGuide && (
-            <section className="scroll-mt-24 rounded-[2rem] border border-neutral-900 bg-neutral-950/80 p-6 md:p-8">
-              <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center">
+            <section className="scroll-mt-24 rounded-3xl border border-neutral-900 bg-neutral-950/80 p-4 md:p-5">
+              <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-center">
                 <div>
                   <div className="inline-flex rounded-full border border-teal-300/20 bg-teal-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-teal-200">
                     Start here
                   </div>
-                  <h2 className="mt-4 max-w-2xl text-3xl font-black leading-tight text-white md:text-4xl">
+                  <h2 className="mt-3 max-w-2xl text-2xl font-black leading-tight text-white md:text-3xl">
                     지금은 하나만 고르면 돼요.
                   </h2>
-                  <p className="mt-3 max-w-2xl text-sm font-bold leading-relaxed text-neutral-500 md:text-base">
+                  <p className="mt-2 max-w-2xl text-sm font-bold leading-relaxed text-neutral-500">
                     첫 {copy.item}만 만들면 장소, 인원, 예산, 리포트는 자연스럽게 따라옵니다. 콜타임, 이동, 식사는 바로 다음 단계에서 시간 블록으로 붙이면 됩니다.
                   </p>
-                  <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                    <button type="button" onClick={openScriptAnalyzer} data-first-action="recommended-analyzer" className="rounded-2xl border border-teal-300/45 bg-teal-300 p-5 text-left text-black shadow-xl shadow-teal-950/25 transition-all hover:bg-teal-200 sm:col-span-2">
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    <button type="button" onClick={openScriptAnalyzer} data-first-action="recommended-analyzer" className="group rounded-2xl border border-teal-300/45 bg-teal-300 p-5 text-left text-black shadow-xl shadow-teal-950/25 transition-all hover:bg-teal-200 sm:col-span-2">
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-black/10">
                           <Brain className="h-5 w-5" />
@@ -3922,22 +3923,23 @@ export default function Home() {
                     </button>
                   </div>
                 </div>
-                <div className="rounded-2xl border border-neutral-900 bg-black/45 p-5">
+                <aside className="rounded-2xl border border-neutral-900 bg-black/45 p-4">
                   <div className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-600">Next flow</div>
+                  <div className="mt-1 text-sm font-black text-neutral-200">현장 입력 순서</div>
                   {[
                     ['1', `${copy.item} 만들기`, '가장 먼저 필요한 최소 입력'],
                     ['2', '시간 블록 붙이기', '콜타임, 이동, 식사, 리허설'],
                     ['3', '장소/인원/콘티 확인', '필요한 준비만 보강하고 PDF 정리'],
                   ].map(([step, title, detail]) => (
-                    <div key={step} className="mt-4 flex gap-3 rounded-xl border border-neutral-900 bg-neutral-950/80 p-3">
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-800 text-xs font-black text-teal-200">{step}</div>
+                    <div key={step} className="mt-3 flex gap-3">
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-neutral-800 bg-neutral-950 text-[11px] font-black text-teal-200">{step}</div>
                       <div>
                         <div className="text-sm font-black text-neutral-100">{title}</div>
                         <div className="mt-0.5 text-xs font-bold text-neutral-600">{detail}</div>
                       </div>
                     </div>
                   ))}
-                </div>
+                </aside>
               </div>
             </section>
           )}

@@ -148,16 +148,53 @@ const checks = [
     name: 'mobile header keeps backup education compact before the schedule',
     ok: appHeader.includes('flex gap-2 overflow-x-auto rounded-xl')
       && appHeader.includes('prepro-btn prepro-btn--ghost shrink-0')
+      && appHeader.includes('{!isFirstRun && (')
       && appHeader.includes('<details className="rounded-2xl border border-teal-400/25')
       && appHeader.includes('md:hidden')
       && appHeader.includes('브라우저에만 저장 · 백업 필요')
       && appHeader.includes('자세히 / 백업하기 열기')
       && appHeader.includes('hidden rounded-2xl border border-teal-400/25')
       && appHeader.includes('md:block')
-      && appHeader.includes('hidden items-center gap-1.5 rounded-full')
+      && appHeader.includes('items-center gap-1.5 rounded-full')
       && appHeader.includes('{templateLabel} / {weatherLabel || location || \'날씨 위치 미정\'} / {activeShootingDate}')
-      && appHeader.includes('<section className="hidden rounded-2xl border border-neutral-900 bg-neutral-950/70 p-4 md:block">')
+      && appHeader.includes("isFirstRun ? 'p-3' : 'p-4'")
       && appHeader.indexOf('브라우저에만 저장 · 백업 필요') < appHeader.indexOf('서버 DB에 프로젝트를 저장하지 않습니다.'),
+  },
+  {
+    name: 'first-run header keeps backup actions behind visible management disclosure',
+    ok: appHeader.includes('isFirstRun: boolean;')
+      && appHeader.includes('isFirstRun,')
+      && page.includes('isFirstRun={isFirstRun}')
+      && appHeader.includes('관리 메뉴 열기')
+      && appHeader.includes('<span>관리</span>')
+      && appHeader.includes("{!isFirstRun && (")
+      && appHeader.includes('백업하기')
+      && appHeader.includes('백업에서 복원')
+      && appHeader.indexOf('관리 메뉴 열기') < appHeader.indexOf('백업하기')
+      && appHeader.indexOf("{!isFirstRun && (") < appHeader.indexOf('브라우저에만 저장 · 백업 필요')
+      && appHeader.includes("isFirstRun ? 'gap-3 md:gap-4' : 'gap-4 md:gap-8'")
+      && appHeader.includes("isFirstRun ? 'hidden lg:inline-flex' : 'hidden sm:inline-flex'"),
+  },
+  {
+    name: 'first-run setup controls collapse production type and date weather details',
+    ok: appHeader.includes("isFirstRun ? '현재 기준' : workspaceLanguage.setupLabel")
+      && appHeader.includes("isFirstRun ? '변경/날짜·날씨' : '날짜/날씨 설정'")
+      && appHeader.includes('{!isFirstRun && (')
+      && appHeader.includes('{isFirstRun && (')
+      && appHeader.includes('<div className="text-[9px] font-black uppercase tracking-widest text-neutral-600">제작 분야</div>')
+      && appHeader.indexOf("isFirstRun ? '현재 기준' : workspaceLanguage.setupLabel") < appHeader.indexOf("isFirstRun ? '변경/날짜·날씨' : '날짜/날씨 설정'")
+      && appHeader.indexOf('<div className="text-[9px] font-black uppercase tracking-widest text-neutral-600">제작 분야</div>') < appHeader.indexOf('id="weather-location"'),
+  },
+  {
+    name: 'first-run empty schedule brings primary start area forward with compact next flow',
+    ok: emptyScheduleGuide.includes('rounded-3xl border border-neutral-900 bg-neutral-950/80 p-4 md:p-5')
+      && emptyScheduleGuide.includes('lg:grid-cols-[minmax(0,1fr)_280px]')
+      && emptyScheduleGuide.includes('data-first-action="recommended-analyzer"')
+      && emptyScheduleGuide.includes('바로 시작하기')
+      && emptyScheduleGuide.includes('현장 입력 순서')
+      && emptyScheduleGuide.includes('<aside className="rounded-2xl border border-neutral-900 bg-black/45 p-4">')
+      && emptyScheduleGuide.indexOf('data-first-action="recommended-analyzer"') < emptyScheduleGuide.indexOf('현장 입력 순서')
+      && emptyScheduleGuide.indexOf('바로 시작하기') < emptyScheduleGuide.indexOf('현장 입력 순서'),
   },
   {
     name: 'top header actions stay focused and move management actions behind disclosure',

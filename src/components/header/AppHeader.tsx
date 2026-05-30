@@ -66,6 +66,7 @@ type AppHeaderProps = {
   globalWeatherError: string;
   globalWeatherResults: WeatherLocationCandidate[];
   isReportMode: boolean;
+  isFirstRun: boolean;
   isSearchingGlobalWeather: boolean;
   location: string;
   mainWorkspaceGroups: MainWorkspaceGroup[];
@@ -109,6 +110,7 @@ export default function AppHeader({
   globalWeatherError,
   globalWeatherResults,
   isReportMode,
+  isFirstRun,
   isSearchingGlobalWeather,
   location,
   mainWorkspaceGroups,
@@ -146,30 +148,30 @@ export default function AppHeader({
 
   return (
     <>
-      <header className="flex flex-col gap-4 md:gap-8">
-        <div className="flex flex-col gap-4 border-b border-neutral-900 pb-4 md:gap-5 md:pb-6 xl:flex-row xl:items-center xl:justify-between">
+      <header className={`flex flex-col ${isFirstRun ? 'gap-3 md:gap-4' : 'gap-4 md:gap-8'}`}>
+        <div className={`flex flex-col gap-4 border-b border-neutral-900 pb-4 xl:flex-row xl:items-center xl:justify-between ${isFirstRun ? 'md:gap-4 md:pb-4' : 'md:gap-5 md:pb-6'}`}>
           <div className="flex min-w-0 items-center gap-3 md:gap-5">
-            <div className="shrink-0 rounded-xl border border-neutral-800 bg-neutral-950 p-2.5 text-indigo-300 md:p-3">
-              <Film className="h-7 w-7 text-current md:h-8 md:w-8" />
+            <div className={`shrink-0 rounded-xl border border-neutral-800 bg-neutral-950 text-indigo-300 ${isFirstRun ? 'p-2 md:p-2.5' : 'p-2.5 md:p-3'}`}>
+              <Film className={`text-current ${isFirstRun ? 'h-6 w-6 md:h-7 md:w-7' : 'h-7 w-7 md:h-8 md:w-8'}`} />
             </div>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-[1.7rem] font-black uppercase leading-none text-neutral-100 md:text-3xl">PrePro Studio</h1>
+                <h1 className={`font-black uppercase leading-none text-neutral-100 ${isFirstRun ? 'text-2xl md:text-[1.7rem]' : 'text-[1.7rem] md:text-3xl'}`}>PrePro Studio</h1>
                 <span className="shrink-0 rounded-md border border-neutral-800 bg-neutral-950 px-2 py-0.5 text-[10px] font-black text-neutral-500 whitespace-nowrap">v1.3</span>
               </div>
-              <p className="mt-1 text-xs font-bold text-neutral-500">
+              <p className={`${isFirstRun ? 'mt-0.5' : 'mt-1'} text-xs font-bold text-neutral-500`}>
                 기획서 · 촬영표 · 큐시트 · 콜시트 · 콘티 · 리포트 <span className="text-neutral-700">•</span> <span className="text-neutral-400">무로그인 BYOK 프로덕션 툴</span>
               </p>
-              <div className="mt-3 flex flex-wrap items-center gap-1.5">
+              <div className={`${isFirstRun ? 'mt-2' : 'mt-3'} flex flex-wrap items-center gap-1.5`}>
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-teal-400/20 bg-teal-400/10 px-2.5 py-1 text-[10px] font-black text-teal-100">
                   <CheckCircle2 className="h-3 w-3" />
                   {autoSaveLabel}
                 </span>
-                <span className="hidden items-center gap-1.5 rounded-full border border-neutral-800 bg-neutral-950 px-2.5 py-1 text-[10px] font-black text-neutral-500 sm:inline-flex">
+                <span className={`${isFirstRun ? 'hidden lg:inline-flex' : 'hidden sm:inline-flex'} items-center gap-1.5 rounded-full border border-neutral-800 bg-neutral-950 px-2.5 py-1 text-[10px] font-black text-neutral-500`}>
                   <Save className="h-3 w-3" />
                   이 브라우저에만 저장
                 </span>
-                <span className="hidden items-center gap-1.5 rounded-full border border-neutral-800 bg-neutral-950 px-2.5 py-1 text-[10px] font-black text-neutral-500 sm:inline-flex">
+                <span className={`${isFirstRun ? 'hidden xl:inline-flex' : 'hidden sm:inline-flex'} items-center gap-1.5 rounded-full border border-neutral-800 bg-neutral-950 px-2.5 py-1 text-[10px] font-black text-neutral-500`}>
                   <KeyRound className="h-3 w-3" />
                   {apiStorageLabel}
                 </span>
@@ -240,6 +242,7 @@ export default function AppHeader({
           </div>
         </div>
 
+        {!isFirstRun && (
         <details className="rounded-2xl border border-teal-400/25 bg-[linear-gradient(135deg,rgba(94,215,207,0.12),rgba(242,161,75,0.055)_62%,rgba(255,255,255,0.025))] p-3 md:hidden">
           <summary className="flex cursor-pointer list-none items-center gap-3 [&::-webkit-details-marker]:hidden">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-teal-300/25 bg-black/35 text-teal-100">
@@ -275,7 +278,9 @@ export default function AppHeader({
             </div>
           </div>
         </details>
+        )}
 
+        {!isFirstRun && (
         <div className="hidden rounded-2xl border border-teal-400/25 bg-[linear-gradient(135deg,rgba(94,215,207,0.12),rgba(242,161,75,0.055)_62%,rgba(255,255,255,0.025))] p-4 md:block">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex min-w-0 gap-3">
@@ -310,6 +315,7 @@ export default function AppHeader({
             </div>
           </div>
         </div>
+        )}
       </header>
 
       <nav className="sticky top-0 z-30 -mx-2 border-y border-neutral-900 bg-black/90 px-2 py-1.5 backdrop-blur md:py-2">
@@ -453,10 +459,10 @@ export default function AppHeader({
           </div>
         </details>
 
-        <section className="hidden rounded-2xl border border-neutral-900 bg-neutral-950/70 p-4 md:block">
-          <div className="grid gap-4 xl:grid-cols-[minmax(220px,0.72fr)_minmax(420px,0.86fr)_auto] xl:items-center">
+        <section className={`hidden rounded-2xl border border-neutral-900 bg-neutral-950/70 md:block ${isFirstRun ? 'p-3' : 'p-4'}`}>
+          <div className={isFirstRun ? 'flex flex-wrap items-center justify-between gap-3' : 'grid gap-4 xl:grid-cols-[minmax(220px,0.72fr)_minmax(420px,0.86fr)_auto] xl:items-center'}>
             <div className="min-w-0">
-              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-600">{workspaceLanguage.setupLabel}</div>
+              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-600">{isFirstRun ? '현재 기준' : workspaceLanguage.setupLabel}</div>
               <div className="mt-1 flex flex-wrap items-center gap-2 text-sm font-bold text-neutral-300">
                 <span>{templateLabel}</span>
                 <span className="text-neutral-700">/</span>
@@ -465,6 +471,7 @@ export default function AppHeader({
                 <span suppressHydrationWarning>{activeShootingDate}</span>
               </div>
             </div>
+            {!isFirstRun && (
             <div className="prepro-segment grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 xl:max-w-[760px]">
               {productionTemplateOptions.map((option) => {
                 const Icon = option.icon;
@@ -484,12 +491,13 @@ export default function AppHeader({
                 );
               })}
             </div>
+            )}
             <button
               type="button"
               onClick={() => onSetShowProjectSetup((value) => !value)}
               className="prepro-btn prepro-btn--secondary h-11"
             >
-              {showProjectSetup ? '설정 접기' : '날짜/날씨 설정'}
+              {showProjectSetup ? '설정 접기' : isFirstRun ? '변경/날짜·날씨' : '날짜/날씨 설정'}
               <RefreshCw className={`h-3.5 w-3.5 transition-transform ${showProjectSetup ? 'rotate-180' : ''}`} />
             </button>
           </div>
@@ -498,6 +506,30 @@ export default function AppHeader({
         {showProjectSetup && (
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(360px,1fr)_minmax(320px,0.55fr)]">
             <div className="bg-neutral-900/50 p-4 rounded-[2rem] border border-neutral-800/50 flex flex-col gap-3 min-w-0">
+              {isFirstRun && (
+                <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-3">
+                  <div className="text-[9px] font-black uppercase tracking-widest text-neutral-600">제작 분야</div>
+                  <div className="prepro-segment mt-2 grid-cols-2 sm:grid-cols-3 xl:grid-cols-5">
+                    {productionTemplateOptions.map((option) => {
+                      const Icon = option.icon;
+                      const selected = template === option.id;
+
+                      return (
+                        <button
+                          key={option.id}
+                          type="button"
+                          onClick={() => onTemplateChange(option.id)}
+                          className={`prepro-segment__item ${selected ? 'is-active' : ''}`}
+                          title={option.name}
+                        >
+                          <Icon className="h-3.5 w-3.5 shrink-0" />
+                          <span className="truncate">{option.shortName}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
               <div className="flex items-center gap-4 bg-neutral-950 border border-neutral-800 rounded-2xl px-5 py-3 group focus-within:border-indigo-500/50 transition-all">
                 <MapPin className="w-5 h-5 shrink-0 text-neutral-600 group-focus-within:text-indigo-400" />
                 <div className="flex flex-col flex-1 min-w-0">
