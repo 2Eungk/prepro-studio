@@ -11,6 +11,7 @@
     "security:gitleaks": "gitleaks git --redact --verbose --config .gitleaks.toml",
     "check:storyboards": "node scripts/check-storyboards.mjs",
     "curate:storyboards": "node scripts/curate-storyboard-quality.mjs",
+    "generate:storyboard-angles": "node scripts/generate-storyboard-angle-pack.mjs",
     "check:report-ux": "node scripts/check-report-ux.mjs",
     "check:first-success-loop": "node scripts/check-first-success-loop.mjs",
     "check:backup-restore": "node scripts/check-backup-restore.mjs",

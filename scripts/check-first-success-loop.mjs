@@ -219,6 +219,7 @@ const checks = [
       && storyboardQuickFilters.includes("category: 'WIDE'")
       && storyboardQuickFilters.includes("category: 'CLOSEUP'")
       && storyboardQuickFilters.includes("category: 'LIGHTING'")
+      && page.includes('featuredStoryboards={sbSearch.trim() || sbCategory !== \'ALL\' ? filteredStoryboards.slice(0, 12) : featuredStoryboards}')
       && page.includes('storyboardQuickFilters')
       && page.includes('applyStoryboardQuickFilter')
       && page.includes('setSbCategory(filter.category);')
@@ -227,7 +228,7 @@ const checks = [
   {
     name: 'storyboard top area tells the user how to narrow, apply, search, or open the gallery',
     ok: storyboardPanel.includes('추천 필터')
-      && storyboardPanel.includes('210개를 훑기 전에')
+      && storyboardPanel.includes('전체 {filteredCount}개를 훑기 전에')
       && storyboardPanel.includes('추천 샷으로 시작')
       && storyboardPanel.includes('검색/전체 갤러리')
       && storyboardPanel.includes('quickFilters.map')
@@ -235,7 +236,7 @@ const checks = [
       && storyboardPanel.includes('전체 {filteredCount}개 보기')
       && storyboardPanel.indexOf('추천 필터') < storyboardPanel.indexOf('featuredStoryboards.map')
       && storyboardGalleryModal.includes('바로 고르기')
-      && storyboardGalleryModal.includes('인물, 대화, 이동, 제품, 행사')
+      && storyboardGalleryModal.includes('인물, 대화, 커버리지, 무빙, 제품, 행사')
       && storyboardGalleryModal.includes('샷을 누르면 선택한')
       && storyboardGalleryModal.includes('quickFilters.map')
       && storyboardGalleryModal.includes('onChooseQuickFilter(filter)')

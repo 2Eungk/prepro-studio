@@ -236,6 +236,20 @@ export const storyboardDb: StoryboardShot[] = [
   { id: 'sb_208', name: '케이터링 스케치 (Catering Sketch)', category: 'SUBJECT', description: '음식, 음료, 휴식 구역을 통해 행사 운영 디테일을 보여주는 샷', url: '/shot_208.png', keywords: ['행사', '케이터링', '음식', '음료', '휴식', '운영'] },
   { id: 'sb_209', name: '행사 하이라이트 그리드 (Event Highlight Grid)', category: 'COMPOSITION', description: '여러 순간을 한눈에 조합할 수 있는 행사 요약형 컷 구성', url: '/shot_209.png', keywords: ['행사', '하이라이트', '그리드', '요약', '몽타주', '스케치'] },
   { id: 'sb_210', name: '클로징 무대 와이드 (Closing Stage Wide)', category: 'WIDE', description: '마지막 인사, 무대 조명, 관객 반응을 함께 담는 마무리 샷', url: '/shot_210.png', keywords: ['행사', '클로징', '무대', '마무리', '관객', '와이드'] },
+
+  // PRACTICAL ANGLE / CAMERA MOVEMENT PACK (12)
+  { id: 'sb_211', name: '클린 싱글 (Clean Single)', category: 'SUBJECT', description: '한 인물을 방해물 없이 단독으로 잡아 대사, 인터뷰, 리액션을 안전하게 확보하는 커버리지 샷', url: '/shot_211.png', keywords: ['클린싱글', '싱글', '원샷', '인터뷰', '대화', '커버리지', '인물'] },
+  { id: 'sb_212', name: '더티 싱글 (Dirty Single)', category: 'SUBJECT', description: '전경의 어깨나 뒤통수를 살짝 걸어 상대 인물의 감정과 관계 방향을 함께 보여주는 샷', url: '/shot_212.png', keywords: ['더티싱글', '싱글', '어깨', '전경', '대화', '관계', '커버리지'] },
+  { id: 'sb_213', name: '아이매치 컷 (Eyeline Match)', category: 'SUBJECT', description: '인물이 바라보는 방향과 다음 컷의 대상을 연결해 시선 흐름을 자연스럽게 만드는 샷', url: '/shot_213.png', keywords: ['아이매치', '시선', '바라봄', '리액션', '대화', '연결', '커버리지'] },
+  { id: 'sb_214', name: '리버스 OTS (Reverse OTS)', category: 'SUBJECT', description: '어깨 너머 대화 샷을 반대 방향으로 받아 편집 리듬과 대화 방향을 이어주는 필수 커버리지', url: '/shot_214.png', keywords: ['리버스', 'OTS', '어깨너머', '대화', '반대', '커버리지', '투샷'] },
+  { id: 'sb_215', name: '오빗 리빌 (Orbit Reveal)', category: 'COMPOSITION', description: '피사체를 중심으로 카메라가 돌아가며 공간과 관계를 점진적으로 드러내는 회전 이동 샷', url: '/shot_215.png', keywords: ['오빗', '회전', '리빌', '이동', '공간', '관계', '무빙'] },
+  { id: 'sb_216', name: '짐벌 팔로우 (Gimbal Follow)', category: 'SUBJECT', description: '걷는 인물을 부드럽게 따라가며 현장 동선과 감정을 이어주는 이동 커버리지 샷', url: '/shot_216.png', keywords: ['짐벌', '팔로우', '따라감', '이동', '워킹', '동선', '무빙'] },
+  { id: 'sb_217', name: '슬라이더 리빌 (Slider Reveal)', category: 'COMPOSITION', description: '전경 뒤에서 좌우로 미끄러지며 장소, 제품, 인물을 천천히 공개하는 리빌 샷', url: '/shot_217.png', keywords: ['슬라이더', '리빌', '좌우', '이동', '공개', '제품', '공간', '무빙'] },
+  { id: 'sb_218', name: '지브 다운 (Jib Down)', category: 'ANGLE', description: '높은 시점에서 아래로 내려오며 장소 규모와 피사체 위치를 한 번에 정리하는 수직 이동 샷', url: '/shot_218.png', keywords: ['지브', '크레인', '다운', '수직', '이동', '장소', '스케일', '무빙'] },
+  { id: 'sb_219', name: '플로어 발 추적 (Floor Feet Tracking)', category: 'ANGLE', description: '바닥 가까이에서 발걸음과 이동 방향을 따라가 긴장감이나 현장감을 만드는 낮은 추적 샷', url: '/shot_219.png', keywords: ['플로어', '발', '발걸음', '바닥', '추적', '이동', '동선', '무빙'] },
+  { id: 'sb_220', name: '테이블 탑 플랫레이 (Table Top Flatlay)', category: 'ANGLE', description: '책상이나 테이블 위 소품, 자료, 제품 배치를 수직 탑샷으로 정돈해 보여주는 샷', url: '/shot_220.png', keywords: ['테이블', '탑샷', '플랫레이', '소품', '자료', '제품', '정리'] },
+  { id: 'sb_221', name: '픽업 인서트 (Pickup Insert)', category: 'CLOSEUP', description: '손이 물건을 집거나 놓는 순간을 가까이 잡아 행동의 원인과 결과를 명확히 연결하는 샷', url: '/shot_221.png', keywords: ['픽업', '인서트', '손', '물건', '집기', '행동', '디테일'] },
+  { id: 'sb_222', name: '매치컷 브릿지 (Match Cut Bridge)', category: 'COMPOSITION', description: '비슷한 형태와 방향을 가진 두 이미지를 이어 붙여 장면 전환을 부드럽게 만드는 연결 샷', url: '/shot_222.png', keywords: ['매치컷', '브릿지', '전환', '연결', '형태', '방향', '편집'] },
 ];
 
 export const recommendShots = (description: string): StoryboardShot[] => {

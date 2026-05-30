@@ -74,7 +74,7 @@ export default function StoryboardGalleryModal({
             <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <div className="text-[10px] font-black uppercase tracking-widest text-indigo-300">바로 고르기</div>
-                <p className="text-xs font-bold text-neutral-500">인물, 대화, 이동, 제품, 행사처럼 현장 의도별로 먼저 좁힌 뒤 적용하세요.</p>
+                <p className="text-xs font-bold text-neutral-500">인물, 대화, 커버리지, 무빙, 제품, 행사처럼 현장 의도별로 먼저 좁힌 뒤 적용하세요.</p>
               </div>
               <p className="text-[11px] font-bold text-neutral-600">샷을 누르면 선택한 {showSceneForm ? '씬 폼' : '새 씬 폼'}에 바로 연결됩니다.</p>
             </div>

@@ -6,13 +6,16 @@ const dbPath = path.join(rootDir, 'src/data/storyboardDb.ts');
 const publicDir = path.join(rootDir, 'public');
 const expectedRatio = 16 / 9;
 const curatedRangeStart = 111;
-const curatedRangeEnd = 210;
+const curatedRangeEnd = 222;
 const minCuratedBytes = 50 * 1024;
+const anglePackStart = 211;
+const anglePackEnd = 222;
+const minAnglePackBytes = 80 * 1024;
 const pngSignature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
 const dbSource = fs.readFileSync(dbPath, 'utf8');
 const urls = [...dbSource.matchAll(/url: '([^']+)'/g)].map((match) => match[1]);
-const expectedCount = 210;
+const expectedCount = 222;
 const duplicateUrls = urls.filter((url, index) => urls.indexOf(url) !== index);
 const missing = [];
 const badFormat = [];
@@ -50,6 +53,10 @@ urls.forEach((url, index) => {
   if (shotNumber >= curatedRangeStart && shotNumber <= curatedRangeEnd && bytes.length < minCuratedBytes) {
     lowDetail.push({ url, bytes: bytes.length, minBytes: minCuratedBytes });
   }
+
+  if (shotNumber >= anglePackStart && shotNumber <= anglePackEnd && bytes.length < minAnglePackBytes) {
+    lowDetail.push({ url, bytes: bytes.length, minBytes: minAnglePackBytes });
+  }
 });
 
 const report = {
@@ -80,5 +87,6 @@ if (hasErrors) {
 
 console.log(
   `Storyboard assets OK: ${expectedCount} PNG files, unique DB URLs, sequential names, ` +
-    `16:9 ratio, curated shots ${curatedRangeStart}-${curatedRangeEnd} >= ${Math.round(minCuratedBytes / 1024)}KB.`,
+    `16:9 ratio, curated shots ${curatedRangeStart}-${curatedRangeEnd} >= ${Math.round(minCuratedBytes / 1024)}KB, ` +
+    `angle pack ${anglePackStart}-${anglePackEnd} >= ${Math.round(minAnglePackBytes / 1024)}KB.`,
 );

@@ -61,7 +61,7 @@ export default function StoryboardPanel({
         <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="text-[10px] font-black uppercase tracking-widest text-indigo-300">추천 필터</div>
-            <p className="text-xs font-bold text-neutral-500">210개를 훑기 전에 지금 장면 목적에 가까운 묶음부터 좁혀보세요.</p>
+            <p className="text-xs font-bold text-neutral-500">전체 {filteredCount}개를 훑기 전에 지금 장면 목적에 가까운 묶음부터 좁혀보세요.</p>
           </div>
           <button type="button" onClick={onOpenGallery} className="inline-flex items-center gap-1 text-[11px] font-black text-indigo-300 hover:text-indigo-200">
             검색/전체 갤러리 <ArrowRight className="h-3 w-3" />

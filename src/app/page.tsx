@@ -4395,7 +4395,7 @@ export default function Home() {
             <div id="storyboard-workspace-panel" className="scroll-mt-24">
               <StoryboardPanel
                 copy={{ storyboardLabel: copy.storyboardLabel, storyboardDescription: copy.storyboardDescription }}
-                featuredStoryboards={featuredStoryboards}
+                featuredStoryboards={sbSearch.trim() || sbCategory !== 'ALL' ? filteredStoryboards.slice(0, 12) : featuredStoryboards}
                 filteredCount={filteredStoryboards.length}
                 quickFilters={storyboardQuickFilters}
                 search={sbSearch}
