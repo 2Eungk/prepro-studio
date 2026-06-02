@@ -16,6 +16,8 @@ import CurrentWorkBar from '@/components/layout/CurrentWorkBar';
 import ProductionGuideFooter from '@/components/layout/ProductionGuideFooter';
 import WorkspaceShellNav from '@/components/layout/WorkspaceShellNav';
 import { FirstRunPanel, WorkspaceFlowBar } from '@/components/layout/WorkspaceOnboarding';
+import HubWorkspace from '@/components/workspaces/HubWorkspace';
+import ShootFieldCommandStrip from '@/components/workspaces/ShootFieldCommandStrip';
 import BudgetPanel from '@/components/sections/BudgetPanel';
 import CueSheetPanel, { type CueSheetRow } from '@/components/sections/CueSheetPanel';
 import LocationsPanel from '@/components/sections/LocationsPanel';
@@ -3780,6 +3782,31 @@ export default function Home() {
   const currentWorkspaceTab = mainWorkspaceTabs.find((tab) => tab.id === activeTab);
   const primaryQuickAction = workspaceQuickActions.find((action) => !action.disabled) || workspaceQuickActions[0];
   const secondaryQuickActions = workspaceQuickActions.filter((action) => action.id !== primaryQuickAction?.id);
+  const hubMetrics = [
+    { label: '제작 유형', value: templateLabel, detail: planning.productionScale === 'lean' ? '저예산 운용' : planning.productionScale === 'premium' ? '하이엔드 운용' : '스탠다드 운용' },
+    { label: '촬영표', value: `${scenes.length}개`, detail: `${timelineStats.totalMinutes || 0}분 · Day ${activeDayIndex + 1}` },
+    { label: '현장 데이터', value: `장소 ${locations.length} · 인원 ${people.length}`, detail: weatherLabel || location || '날씨 위치 미정' },
+    { label: '콘티/마무리', value: `${storyboardDb.length}샷`, detail: scenes.length > 0 ? `완료 ${reportStats.done}/${scenes.length}` : '촬영 항목 준비 전' },
+  ];
+  const hubNextRecommendation = scenes.length === 0
+    ? planning.oneLiner.trim() || planning.coreMessage.trim()
+      ? { label: '촬영표 초안 만들기', detail: '기획이 시작됐으니 씬/큐를 촬영표로 옮길 차례입니다.', workspace: 'shoot' as PreProWorkspaceId }
+      : { label: '기획부터 정리하기', detail: '로그라인/브리프를 먼저 잡으면 촬영표와 콘티가 덜 흔들립니다.', workspace: 'plan' as PreProWorkspaceId }
+    : reportStats.completionRate >= 80
+      ? { label: '마무리 리포트 확인', detail: '촬영 체크가 많이 진행됐습니다. 납품/정리 항목을 확인하세요.', workspace: 'report' as PreProWorkspaceId }
+      : { label: '현장 촬영표 확인', detail: '다음 촬영 항목, 장소, 인원, 날씨를 한 화면에서 확인하세요.', workspace: 'shoot' as PreProWorkspaceId };
+  const hubActions = [
+    { workspace: 'plan' as PreProWorkspaceId, title: 'Plan', detail: '브리프, 대본 분석, 루틴 프리셋', badge: planning.oneLiner.trim() ? '작성중' : '시작' },
+    { workspace: 'shoot' as PreProWorkspaceId, title: 'Shoot', detail: '촬영표, 큐시트, 장소, 인원', badge: `${scenes.length}개` },
+    { workspace: 'storyboard' as PreProWorkspaceId, title: 'Storyboard', detail: '콘티, 앵글, 레퍼런스', badge: `${storyboardDb.length}` },
+    { workspace: 'diagram' as PreProWorkspaceId, title: 'Diagram', detail: '조명도, 카메라, 평면도', badge: '준비중' },
+    { workspace: 'report' as PreProWorkspaceId, title: 'Report', detail: '마무리, 납품, 결과 정리', badge: scenes.length > 0 ? `${reportStats.completionRate}%` : '대기' },
+  ];
+  const shootCommandActions = [
+    { label: scenes.length > 0 ? `${copy.item} 추가` : '첫 항목 만들기', detail: `Day ${activeDayIndex + 1}`, onClick: openNewSceneForm, tone: 'primary' as const },
+    { label: '시간 추가', detail: '식사/이동/세팅', onClick: openBreakModal, tone: 'amber' as const },
+    { label: '장소 확인', detail: locations.length > 0 ? `${locations.length}곳` : '주소/날씨', onClick: () => setActiveTab('locations'), tone: 'neutral' as const },
+  ];
   const nextFlowTarget = activeTab === 'schedule' && scenes.length === 0
     ? `${copy.item} 추가`
     : workspaceLanguage.nextTargets[activeTab];
@@ -3963,6 +3990,18 @@ export default function Home() {
           onWorkspaceChange={handleWorkspaceChange}
         />
 
+        {activeWorkspace === 'shoot' && (
+          <ShootFieldCommandStrip
+            actions={shootCommandActions}
+            activeDayLabel={`Day ${activeDayIndex + 1} · ${activeShootingDate}`}
+            isFirstRun={isFirstRun}
+            locationLabel={weatherLabel || location || '촬영지/날씨 위치 미정'}
+            totalItemsLabel={`${scenes.length}개 ${copy.itemPlural}`}
+            totalMinutesLabel={`${timelineStats.totalMinutes || 0}분`}
+            wrapTimeLabel={timelineStats.wrapTime ? format(timelineStats.wrapTime, 'HH:mm') : '-'}
+          />
+        )}
+
           {!isFirstRun && !isWorkspacePlaceholder && (
             <WorkspaceFlowBar
               activeTab={activeTab}
@@ -4107,54 +4146,14 @@ export default function Home() {
           </div>
 
           {activeWorkspace === 'hub' && (
-            <section className="scroll-mt-24 rounded-3xl border border-neutral-800 bg-neutral-950/80 p-4 md:p-6">
-              <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-stretch">
-                <div className="rounded-3xl border border-neutral-800 bg-black/45 p-5 md:p-6">
-                  <div className="inline-flex rounded-full border border-indigo-300/20 bg-indigo-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-indigo-100">
-                    Project hub
-                  </div>
-                  <h2 className="mt-4 text-2xl font-black text-white md:text-4xl">프로젝트 홈은 가볍게 준비 중입니다.</h2>
-                  <p className="mt-3 max-w-2xl text-sm font-bold leading-relaxed text-neutral-500">
-                    지금은 전체 홈 대시보드 대신 프로젝트 요약과 빠른 작업공간 이동만 제공합니다. 기존 백업/복원, 샘플, 공유 기능은 상단 관리 영역에 그대로 있습니다.
-                  </p>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
-                      <div className="text-[10px] font-black uppercase tracking-[0.16em] text-neutral-600">현재 유형</div>
-                      <div className="mt-2 text-xl font-black text-neutral-100">{templateLabel}</div>
-                    </div>
-                    <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
-                      <div className="text-[10px] font-black uppercase tracking-[0.16em] text-neutral-600">촬영 항목</div>
-                      <div className="mt-2 text-xl font-black text-neutral-100">{scenes.length}개</div>
-                    </div>
-                    <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
-                      <div className="text-[10px] font-black uppercase tracking-[0.16em] text-neutral-600">준비 데이터</div>
-                      <div className="mt-2 text-xl font-black text-neutral-100">장소 {locations.length} · 인원 {people.length}</div>
-                    </div>
-                  </div>
-                </div>
-                <aside className="rounded-3xl border border-neutral-800 bg-black/45 p-4 md:p-5">
-                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-600">Next action</div>
-                  <div className="mt-3 grid gap-2">
-                    {[
-                      ['plan', '기획부터 정리하기', '브리프와 대본 분석'],
-                      ['shoot', '촬영표 만들기', '일정, 큐시트, 장소, 인원'],
-                      ['storyboard', '콘티/샷 보기', '앵글과 레퍼런스'],
-                      ['diagram', '조명도 만들기', '준비 중 템플릿 확인'],
-                    ].map(([id, title, detail]) => (
-                      <button
-                        key={id}
-                        type="button"
-                        onClick={() => handleWorkspaceChange(id as PreProWorkspaceId)}
-                        className="rounded-2xl border border-neutral-800 bg-neutral-950 p-3 text-left transition-colors hover:border-teal-300/40 hover:bg-neutral-900"
-                      >
-                        <div className="text-sm font-black text-neutral-100">{title}</div>
-                        <div className="mt-1 text-xs font-bold text-neutral-600">{detail}</div>
-                      </button>
-                    ))}
-                  </div>
-                </aside>
-              </div>
-            </section>
+            <HubWorkspace
+              actions={hubActions}
+              metrics={hubMetrics}
+              nextRecommendation={hubNextRecommendation}
+              sampleNotice={sampleProjectNotice}
+              templateLabel={templateLabel}
+              onWorkspaceChange={handleWorkspaceChange}
+            />
           )}
 
           {activeWorkspace === 'diagram' && (
