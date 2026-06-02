@@ -55,6 +55,9 @@ type WeatherLocationCandidate = {
   latitude: number;
   longitude: number;
   query: string;
+  provider?: 'kakao' | 'open-meteo' | 'osm' | 'local';
+  address?: string;
+  category?: string;
 };
 
 type AppHeaderProps = {
@@ -578,7 +581,13 @@ export default function AppHeader({
                         >
                           <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-indigo-300" />
                           <span className="min-w-0">
-                            <span className="block truncate text-[11px] font-black text-neutral-200">{candidate.label}</span>
+                            <span className="block truncate text-[11px] font-black text-neutral-200">
+                              {candidate.label}
+                              {candidate.provider === 'kakao' && <span className="ml-1.5 rounded-full bg-yellow-300/10 px-1 py-0.5 text-[8px] text-yellow-200">Kakao</span>}
+                            </span>
+                            {(candidate.address || candidate.category) && (
+                              <span className="mt-0.5 block truncate text-[9px] font-bold text-neutral-500">{[candidate.address, candidate.category].filter(Boolean).join(' · ')}</span>
+                            )}
                             <span className="mt-0.5 block font-mono text-[9px] text-neutral-600">{candidate.latitude.toFixed(4)}, {candidate.longitude.toFixed(4)}</span>
                           </span>
                         </button>

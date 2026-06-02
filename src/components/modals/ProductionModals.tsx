@@ -8,6 +8,12 @@ export type WeatherLocationCandidate = {
   longitude: number;
   label: string;
   query: string;
+  provider?: 'kakao' | 'open-meteo' | 'osm' | 'local';
+  address?: string;
+  roadAddress?: string;
+  category?: string;
+  kakaoMapUrl?: string;
+  naverMapUrl?: string;
 };
 
 type LocationForm = Omit<ProductionLocation, 'id'>;
@@ -166,9 +172,22 @@ export function LocationModal({
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-indigo-300" />
                   <div className="min-w-0">
                     <div className="truncate">{form.weatherLabel || form.weatherQuery}</div>
+                    {(form.address || form.kakaoMapUrl || form.naverMapUrl) && (
+                      <div className="mt-1 truncate text-[10px] text-neutral-500">{form.address}</div>
+                    )}
                     <div className="mt-1 font-mono text-[10px] text-neutral-600">
                       {form.weatherLatitude.toFixed(4)}, {form.weatherLongitude.toFixed(4)}
                     </div>
+                    {(form.kakaoMapUrl || form.naverMapUrl) && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {form.kakaoMapUrl && (
+                          <a className="text-[10px] font-black text-yellow-300 hover:text-yellow-200" href={form.kakaoMapUrl} target="_blank" rel="noreferrer">카카오맵</a>
+                        )}
+                        {form.naverMapUrl && (
+                          <a className="text-[10px] font-black text-emerald-300 hover:text-emerald-200" href={form.naverMapUrl} target="_blank" rel="noreferrer">네이버지도</a>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               ) : (
@@ -186,7 +205,13 @@ export function LocationModal({
                     >
                       <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-neutral-500" />
                       <span className="min-w-0">
-                        <span className="block truncate text-xs font-black text-neutral-200">{candidate.label}</span>
+                        <span className="block truncate text-xs font-black text-neutral-200">
+                          {candidate.label}
+                          {candidate.provider === 'kakao' && <span className="ml-2 rounded-full bg-yellow-300/10 px-1.5 py-0.5 text-[9px] text-yellow-200">Kakao</span>}
+                        </span>
+                        {(candidate.address || candidate.category) && (
+                          <span className="mt-1 block truncate text-[10px] font-bold text-neutral-500">{[candidate.address, candidate.category].filter(Boolean).join(' · ')}</span>
+                        )}
                         <span className="mt-1 block font-mono text-[10px] text-neutral-600">{candidate.latitude.toFixed(4)}, {candidate.longitude.toFixed(4)}</span>
                       </span>
                     </button>

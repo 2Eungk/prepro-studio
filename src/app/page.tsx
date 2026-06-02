@@ -3493,10 +3493,15 @@ export default function Home() {
   const selectWeatherLocation = (candidate: WeatherLocationCandidate) => {
     setLocationForm({
       ...locationForm,
+      name: locationForm.name.trim() || candidate.label,
+      address: candidate.address || candidate.roadAddress || locationForm.address,
       weatherQuery: candidate.query,
       weatherLabel: candidate.label,
       weatherLatitude: candidate.latitude,
       weatherLongitude: candidate.longitude,
+      mapProvider: candidate.provider,
+      kakaoMapUrl: candidate.kakaoMapUrl,
+      naverMapUrl: candidate.naverMapUrl,
     });
     setWeatherLocationResults([]);
     setWeatherLocationError('');

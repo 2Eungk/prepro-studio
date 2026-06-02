@@ -29,6 +29,12 @@ export type WeatherTarget = {
 
 export type WeatherLocationCandidate = WeatherTarget & {
   query: string;
+  provider?: 'kakao' | 'open-meteo' | 'osm' | 'local';
+  address?: string;
+  roadAddress?: string;
+  category?: string;
+  kakaoMapUrl?: string;
+  naverMapUrl?: string;
 };
 
 const getWindSpeed = (daily: WeatherDaily) =>
@@ -92,7 +98,15 @@ export const searchWeatherLocationCandidates = async (query: string): Promise<We
   if (!trimmed) return [];
 
   const local = resolveLocalWeatherTarget(trimmed);
-  const localCandidates: WeatherLocationCandidate[] = local ? [{ ...local, query: trimmed }] : [];
+  const localCandidates: WeatherLocationCandidate[] = local ? [{ ...local, query: trimmed, provider: 'local' }] : [];
+
+  const kakaoSearch = fetch(`/api/places/kakao?query=${encodeURIComponent(trimmed)}`)
+    .then(async (response) => {
+      if (!response.ok) return [];
+      const data = await response.json();
+      return (data.candidates || []) as WeatherLocationCandidate[];
+    })
+    .catch(() => [] as WeatherLocationCandidate[]);
 
   const openMeteoSearch = fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(trimmed)}&count=5&language=ko&format=json`)
     .then(async (response) => {
@@ -103,6 +117,7 @@ export const searchWeatherLocationCandidates = async (query: string): Promise<We
         longitude: geo.longitude,
         label: [geo.name, geo.admin1, geo.country_code].filter(Boolean).join(', '),
         query: trimmed,
+        provider: 'open-meteo' as const,
       }));
     })
     .catch(() => [] as WeatherLocationCandidate[]);
@@ -116,14 +131,15 @@ export const searchWeatherLocationCandidates = async (query: string): Promise<We
         longitude: Number(place.lon),
         label: place.display_name || place.name || trimmed,
         query: trimmed,
+        provider: 'osm' as const,
       })).filter((candidate: WeatherLocationCandidate) => Number.isFinite(candidate.latitude) && Number.isFinite(candidate.longitude));
     })
     .catch(() => [] as WeatherLocationCandidate[]);
 
-  const [openMeteoCandidates, nominatimCandidates] = await Promise.all([openMeteoSearch, nominatimSearch]);
+  const [kakaoCandidates, openMeteoCandidates, nominatimCandidates] = await Promise.all([kakaoSearch, openMeteoSearch, nominatimSearch]);
 
   const seen = new Set<string>();
-  return [...localCandidates, ...openMeteoCandidates, ...nominatimCandidates].filter((candidate) => {
+  return [...kakaoCandidates, ...localCandidates, ...openMeteoCandidates, ...nominatimCandidates].filter((candidate) => {
     const key = `${candidate.latitude.toFixed(3)}:${candidate.longitude.toFixed(3)}`;
     if (seen.has(key)) return false;
     seen.add(key);

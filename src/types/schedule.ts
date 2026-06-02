@@ -81,6 +81,9 @@ export interface ProductionLocation {
   weatherLabel?: string;
   weatherLatitude?: number;
   weatherLongitude?: number;
+  mapProvider?: 'kakao' | 'open-meteo' | 'osm' | 'local';
+  kakaoMapUrl?: string;
+  naverMapUrl?: string;
   storyFit?: string;
   visualCheck?: string;
   soundCheck?: string;
