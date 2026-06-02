@@ -9,6 +9,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { storyboardDb, recommendShots } from '@/data/storyboardDb';
 import { storyboardQuickFilters, type StoryboardQuickFilter } from '@/data/storyboardQuickFilters';
+import { builtInRoutinePresets, routinePresetStorageKey, type RoutinePreset } from '@/data/routinePresets';
 import AdBanner from '@/components/AdBanner';
 import AppHeader from '@/components/header/AppHeader';
 import CurrentWorkBar from '@/components/layout/CurrentWorkBar';
@@ -1271,6 +1272,9 @@ export default function Home() {
   const [showProjectSetup, setShowProjectSetup] = useState(false);
   const [customImageStatus, setCustomImageStatus] = useState('');
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+  const [savedRoutinePresets, setSavedRoutinePresets] = useState<RoutinePreset[]>([]);
+  const [routineName, setRoutineName] = useState('');
+  const [routineStatus, setRoutineStatus] = useState('');
 
   const emptySceneForm: SceneFormState = {
     location: '', locationId: '', description: '', estimatedMinutes: 30,
@@ -2873,6 +2877,88 @@ export default function Home() {
   };
 
   useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(routinePresetStorageKey);
+      if (!saved) return;
+      const parsed = JSON.parse(saved) as RoutinePreset[];
+      const localRoutines = parsed.filter((preset) => preset.source === 'local' && Boolean(preset.project));
+      window.setTimeout(() => setSavedRoutinePresets(localRoutines), 0);
+    } catch {
+      window.localStorage.removeItem(routinePresetStorageKey);
+    }
+  }, []);
+
+  const persistSavedRoutines = (routines: RoutinePreset[]) => {
+    setSavedRoutinePresets(routines);
+    window.localStorage.setItem(routinePresetStorageKey, JSON.stringify(routines));
+  };
+
+  const allRoutinePresets = useMemo(() => [
+    ...builtInRoutinePresets,
+    ...savedRoutinePresets,
+  ], [savedRoutinePresets]);
+
+  const handleApplyRoutinePreset = (preset: RoutinePreset) => {
+    const project = preset.project || preset.buildProject?.(shootingDate);
+    if (!project) return;
+    const currentItemCount = scenes.length + breaks.length + locations.length + people.length;
+    if (currentItemCount > 0 && !confirm(`현재 프로젝트를 “${preset.title}” 루틴으로 바꿀까요? 기존 입력은 로컬 자동저장 기준으로 덮어씁니다.`)) return;
+
+    importData(project);
+    setSampleProjectNotice('');
+    setAcknowledgedReadinessCheckIds([]);
+    setOptimizationSummary(null);
+    setActiveDayId(project.days[0]?.id || '');
+    resetScheduleFilters();
+    setActiveTab('schedule');
+    resetSceneForm();
+    setRoutineStatus(`“${preset.title}” 루틴 적용됨`);
+    window.setTimeout(() => setRoutineStatus(''), 2600);
+    requestAnimationFrame(() => document.getElementById('schedule-timeline-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  };
+
+  const handleSaveRoutinePreset = () => {
+    const trimmedName = routineName.trim() || planning.projectTitle.trim() || `${templateLabel} 내 루틴`;
+    const snapshot = createProjectSnapshot();
+    const nextPreset: RoutinePreset = {
+      id: `local-${Date.now()}`,
+      title: trimmedName,
+      subtitle: '내 프로젝트에서 저장',
+      detail: `${scenes.length}개 ${copy.itemPlural}, 장소 ${locations.length}곳, 인원 ${people.length}명, 시간 블록 ${breaks.length}개를 저장했습니다.`,
+      badge: `${scenes.length}개 · ${timelineStats.totalMinutes || 0}분`,
+      source: 'local',
+      template,
+      project: { ...snapshot, sampleProjectNotice: '' },
+      createdAt: new Date().toISOString(),
+    };
+    const nextRoutines = [nextPreset, ...savedRoutinePresets].slice(0, 12);
+
+    try {
+      persistSavedRoutines(nextRoutines);
+      setRoutineName('');
+      setRoutineStatus('현재 프로젝트를 내 루틴으로 저장했습니다.');
+      window.setTimeout(() => setRoutineStatus(''), 2600);
+    } catch {
+      setRoutineStatus('저장 실패 · 브라우저 저장공간을 확인하세요.');
+      window.setTimeout(() => setRoutineStatus(''), 3200);
+    }
+  };
+
+  const handleDeleteRoutinePreset = (presetId: string) => {
+    const preset = savedRoutinePresets.find((item) => item.id === presetId);
+    if (!preset || !confirm(`“${preset.title}” 저장 루틴을 삭제할까요?`)) return;
+
+    try {
+      persistSavedRoutines(savedRoutinePresets.filter((item) => item.id !== presetId));
+      setRoutineStatus('저장 루틴을 삭제했습니다.');
+      window.setTimeout(() => setRoutineStatus(''), 2200);
+    } catch {
+      setRoutineStatus('삭제 실패 · 브라우저 저장공간을 확인하세요.');
+      window.setTimeout(() => setRoutineStatus(''), 3200);
+    }
+  };
+
+  useEffect(() => {
     let restoreTimer: number | null = null;
 
     try {
@@ -3970,6 +4056,69 @@ export default function Home() {
               }}
             />
           </div>
+
+          {activeTab === 'schedule' && (
+            <section className="scroll-mt-24 rounded-3xl border border-emerald-400/20 bg-emerald-400/5 p-3 md:p-5" data-html2canvas-ignore="true">
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                <div className="min-w-0">
+                  <div className="inline-flex rounded-full border border-emerald-300/25 bg-emerald-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-200">
+                    AI-free routine presets
+                  </div>
+                  <h2 className="mt-2 text-xl font-black text-white md:text-2xl">촬영 루틴 / 프로젝트 프리셋</h2>
+                  <p className="mt-1 max-w-2xl text-xs font-bold leading-relaxed text-neutral-500 md:text-sm">
+                    API나 AI 없이 내장 템플릿과 브라우저 저장만 사용합니다. 적용하면 기획서, 촬영일, 장소, 인원, 시간 블록, {copy.itemPlural}이 한 번에 들어가고 기존 시간 계산 흐름으로 바로 재계산됩니다.
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-neutral-800 bg-black/35 p-3 md:w-80">
+                  <label className="text-[10px] font-black uppercase tracking-[0.16em] text-neutral-500">현재 프로젝트 저장</label>
+                  <div className="mt-2 flex gap-2">
+                    <input
+                      value={routineName}
+                      onChange={(event) => setRoutineName(event.target.value)}
+                      className="min-h-11 min-w-0 flex-1 rounded-xl border border-neutral-800 bg-neutral-950 px-3 text-sm font-bold text-white outline-none focus:border-emerald-300/60"
+                      placeholder={planning.projectTitle || `${templateLabel} 내 루틴`}
+                    />
+                    <button type="button" onClick={handleSaveRoutinePreset} className="rounded-xl bg-emerald-300 px-3 text-xs font-black text-black transition-colors hover:bg-emerald-200">
+                      저장
+                    </button>
+                  </div>
+                  <p className="mt-2 text-[11px] font-bold leading-relaxed text-neutral-600">저장 루틴은 이 브라우저 localStorage에만 남습니다.</p>
+                  {routineStatus && <p className="mt-2 text-xs font-black text-emerald-200">{routineStatus}</p>}
+                </div>
+              </div>
+
+              <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                {allRoutinePresets.map((preset) => (
+                  <article key={preset.id} className="flex min-h-[220px] flex-col rounded-2xl border border-neutral-800 bg-black/45 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-200">{preset.source === 'built-in' ? '내장 루틴' : '내 저장 루틴'}</div>
+                        <h3 className="mt-1 text-lg font-black text-white">{preset.title}</h3>
+                        <p className="mt-1 text-xs font-bold text-neutral-500">{preset.subtitle}</p>
+                      </div>
+                      <span className="shrink-0 rounded-full border border-neutral-700 bg-neutral-950 px-2.5 py-1 text-[10px] font-black text-neutral-300">{preset.badge}</span>
+                    </div>
+                    <p className="mt-3 flex-1 text-xs font-bold leading-relaxed text-neutral-400">{preset.detail}</p>
+                    <div className="mt-4 flex items-center justify-between gap-2">
+                      <span className="rounded-full border border-neutral-800 px-2.5 py-1 text-[10px] font-black text-neutral-500">
+                        {productionTemplateOptions.find((option) => option.id === preset.template)?.shortName || preset.template}
+                      </span>
+                      <div className="flex gap-2">
+                        {preset.source === 'local' && (
+                          <button type="button" onClick={() => handleDeleteRoutinePreset(preset.id)} className="rounded-xl border border-neutral-800 px-3 py-2 text-xs font-black text-neutral-500 transition-colors hover:border-red-400/40 hover:text-red-200">
+                            삭제
+                          </button>
+                        )}
+                        <button type="button" onClick={() => handleApplyRoutinePreset(preset)} className="rounded-xl bg-white px-3 py-2 text-xs font-black text-black transition-colors hover:bg-emerald-200">
+                          적용
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
 
           {activeTab === 'planning' && (
             <div id="planning-workspace-panel" className="scroll-mt-24">
