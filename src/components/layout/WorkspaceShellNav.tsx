@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { preproWorkspaces, type PreProWorkspace, type PreProWorkspaceId } from '@/lib/workspaces';
 
 type WorkspaceShellNavProps = {
@@ -42,9 +43,9 @@ export default function WorkspaceShellNav({
           const isActive = workspace.id === activeWorkspace;
 
           return (
-            <button
+            <Link
               key={workspace.id}
-              type="button"
+              href={workspace.path}
               aria-current={isActive ? 'page' : undefined}
               data-workspace-path={workspace.path}
               onClick={() => onWorkspaceChange(workspace.id)}
@@ -58,7 +59,7 @@ export default function WorkspaceShellNav({
               <span className={`mt-1 block text-[10px] font-black ${isActive ? 'text-black/55' : 'text-neutral-600'}`}>
                 {workspace.label}
               </span>
-            </button>
+            </Link>
           );
         })}
       </div>
@@ -68,9 +69,9 @@ export default function WorkspaceShellNav({
           const isActive = workspace.id === activeWorkspace;
 
           return (
-            <button
+            <Link
               key={workspace.id}
-              type="button"
+              href={workspace.path}
               aria-current={isActive ? 'page' : undefined}
               data-workspace-path={workspace.path}
               onClick={() => onWorkspaceChange(workspace.id)}
@@ -92,7 +93,7 @@ export default function WorkspaceShellNav({
               <div className={`mt-2 text-[11px] font-bold leading-relaxed ${isActive ? 'text-black/60' : 'text-neutral-500'}`}>
                 {workspace.description}
               </div>
-            </button>
+            </Link>
           );
         })}
       </div>

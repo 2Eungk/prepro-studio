@@ -1,6 +1,7 @@
 'use client';
 
-import type { PreProWorkspaceId } from '@/lib/workspaces';
+import Link from 'next/link';
+import { getWorkspaceById, type PreProWorkspaceId } from '@/lib/workspaces';
 
 type HubMetric = {
   label: string;
@@ -68,20 +69,20 @@ export default function HubWorkspace({
             <div className="text-[10px] font-black uppercase tracking-[0.18em] text-teal-100">Recommended next</div>
             <h3 className="mt-2 text-lg font-black text-white">{nextRecommendation.label}</h3>
             <p className="mt-1 text-xs font-bold leading-relaxed text-neutral-400">{nextRecommendation.detail}</p>
-            <button
-              type="button"
+            <Link
+              href={getWorkspaceById(nextRecommendation.workspace)?.path || '/'}
               onClick={() => onWorkspaceChange(nextRecommendation.workspace)}
-              className="mt-4 min-h-11 w-full rounded-xl bg-teal-300 px-4 py-2 text-sm font-black text-black transition-transform hover:-translate-y-0.5"
+              className="mt-4 flex min-h-11 w-full items-center justify-center rounded-xl bg-teal-300 px-4 py-2 text-sm font-black text-black transition-transform hover:-translate-y-0.5"
             >
               바로 이동
-            </button>
+            </Link>
           </div>
 
           <div className="mt-4 grid gap-2">
             {actions.map((action) => (
-              <button
+              <Link
                 key={action.workspace}
-                type="button"
+                href={getWorkspaceById(action.workspace)?.path || '/'}
                 onClick={() => onWorkspaceChange(action.workspace)}
                 className="rounded-2xl border border-neutral-800 bg-neutral-950 p-3 text-left transition-colors hover:border-teal-300/40 hover:bg-neutral-900"
               >
@@ -90,7 +91,7 @@ export default function HubWorkspace({
                   {action.badge && <span className="shrink-0 rounded-full border border-neutral-800 px-2 py-0.5 text-[9px] font-black text-neutral-500">{action.badge}</span>}
                 </div>
                 <div className="mt-1 text-xs font-bold text-neutral-600">{action.detail}</div>
-              </button>
+              </Link>
             ))}
           </div>
         </aside>
