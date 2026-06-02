@@ -14,6 +14,7 @@ import AdBanner from '@/components/AdBanner';
 import AppHeader from '@/components/header/AppHeader';
 import CurrentWorkBar from '@/components/layout/CurrentWorkBar';
 import ProductionGuideFooter from '@/components/layout/ProductionGuideFooter';
+import WorkspaceShellNav from '@/components/layout/WorkspaceShellNav';
 import { FirstRunPanel, WorkspaceFlowBar } from '@/components/layout/WorkspaceOnboarding';
 import BudgetPanel from '@/components/sections/BudgetPanel';
 import CueSheetPanel, { type CueSheetRow } from '@/components/sections/CueSheetPanel';
@@ -47,6 +48,7 @@ import {
   type WeatherLocationCandidate,
   WeatherWidget,
 } from '@/components/sections/weather/WeatherIntel';
+import type { PreProWorkspaceId } from '@/lib/workspaces';
 import StoryboardGalleryModal from '@/components/modals/StoryboardGalleryModal';
 import { BreakModal, LocationModal, PersonModal } from '@/components/modals/ProductionModals';
 import ScriptAnalyzer, { type AnalyzedScene } from '@/components/modals/ScriptAnalyzer';
@@ -181,6 +183,24 @@ const mainWorkspaceTabIds = ['planning', 'schedule', 'cueSheet', 'locations', 'p
 const activeTabStorageKey = 'prepro-active-tab';
 const isMainWorkspaceTab = (value: string | null): value is MainWorkspaceTab =>
   Boolean(value && mainWorkspaceTabIds.includes(value as MainWorkspaceTab));
+
+const workspaceByTab: Record<MainWorkspaceTab, PreProWorkspaceId> = {
+  planning: 'plan',
+  schedule: 'shoot',
+  cueSheet: 'shoot',
+  locations: 'shoot',
+  people: 'shoot',
+  budget: 'shoot',
+  storyboard: 'storyboard',
+  report: 'report',
+};
+
+const defaultTabByWorkspace: Partial<Record<PreProWorkspaceId, MainWorkspaceTab>> = {
+  plan: 'planning',
+  shoot: 'schedule',
+  storyboard: 'storyboard',
+  report: 'report',
+};
 
 type WorkspaceLanguage = {
   planningCaption: string;
@@ -1186,7 +1206,8 @@ export default function Home() {
     loadSampleData, importData, resetProject
   } = useScheduleStore();
   const [isReportMode, setIsReportMode] = useState(false);
-  const [activeTab, setActiveTab] = useState<MainWorkspaceTab>('schedule');
+  const [activeTab, setActiveTabState] = useState<MainWorkspaceTab>('schedule');
+  const [activeWorkspace, setActiveWorkspace] = useState<PreProWorkspaceId>('shoot');
   const [showAnalyzer, setShowAnalyzer] = useState(false);
   const [extractedScenes, setExtractedScenes] = useState<AnalyzedScene[]>([]);
   const [showSceneForm, setShowSceneForm] = useState(false);
@@ -1218,6 +1239,11 @@ export default function Home() {
   const shareImportCheckedRef = useRef(false);
   const activeTabRestoredRef = useRef(false);
   const planningAiSettingsLoadedRef = useRef(false);
+
+  const setActiveTab = useCallback((tab: MainWorkspaceTab) => {
+    setActiveTabState(tab);
+    setActiveWorkspace(workspaceByTab[tab]);
+  }, []);
 
   const emptyLocationForm: Omit<ProductionLocation, 'id'> = {
     name: '',
@@ -2982,7 +3008,7 @@ export default function Home() {
     return () => {
       if (restoreTimer) window.clearTimeout(restoreTimer);
     };
-  }, []);
+  }, [setActiveTab]);
 
   useEffect(() => {
     if (!activeTabRestoredRef.current) return;
@@ -3047,7 +3073,7 @@ export default function Home() {
         window.setTimeout(() => setShareStatus(''), 2200);
       }, 0);
     }
-  }, [importData]);
+  }, [importData, setActiveTab]);
 
 
 
@@ -3691,8 +3717,9 @@ export default function Home() {
     },
   ];
   const isFirstRun = scenes.length === 0;
-  const showOperationalDashboard = (activeTab === 'schedule' || activeTab === 'report') && !isFirstRun;
-  const showEmptyScheduleGuide = activeTab === 'schedule' && isFirstRun && !showSceneForm && !showAnalyzer && extractedScenes.length === 0;
+  const isWorkspacePlaceholder = activeWorkspace === 'hub' || activeWorkspace === 'diagram';
+  const showOperationalDashboard = !isWorkspacePlaceholder && (activeTab === 'schedule' || activeTab === 'report') && !isFirstRun;
+  const showEmptyScheduleGuide = !isWorkspacePlaceholder && activeTab === 'schedule' && isFirstRun && !showSceneForm && !showAnalyzer && extractedScenes.length === 0;
   const workspaceQuickActions: Array<{
     id: string;
     label: string;
@@ -3823,6 +3850,17 @@ export default function Home() {
     }
   };
 
+  const handleWorkspaceChange = (workspace: PreProWorkspaceId) => {
+    setActiveWorkspace(workspace);
+
+    const nextTab = defaultTabByWorkspace[workspace];
+    if (nextTab) {
+      setActiveTabState(nextTab);
+      if (workspace === 'shoot') resetScheduleFilters();
+      if (workspace !== 'report') setIsReportMode(false);
+    }
+  };
+
   const handleReadinessAction = (checkId: string) => {
     switch (checkId) {
       case 'schedule':
@@ -3920,7 +3958,12 @@ export default function Home() {
           sameText={sameText}
         />
 
-          {!isFirstRun && (
+        <WorkspaceShellNav
+          activeWorkspace={activeWorkspace}
+          onWorkspaceChange={handleWorkspaceChange}
+        />
+
+          {!isFirstRun && !isWorkspacePlaceholder && (
             <WorkspaceFlowBar
               activeTab={activeTab}
               currentLabel={currentWorkspaceTab?.label}
@@ -3932,7 +3975,7 @@ export default function Home() {
             />
           )}
 
-          {isFirstRun && activeTab !== 'schedule' && (
+          {isFirstRun && activeTab !== 'schedule' && !isWorkspacePlaceholder && (
             <FirstRunPanel
               addItemLabel={copy.item}
               cards={quickStartProjectCards}
@@ -4017,7 +4060,7 @@ export default function Home() {
 
         {/* === MAIN CONTENT === */}
         <main className="space-y-8">
-          {!isFirstRun && (
+          {!isFirstRun && !isWorkspacePlaceholder && (
             <CurrentWorkBar
               actions={secondaryQuickActions}
               currentWorkspace={currentWorkspaceTab}
@@ -4055,12 +4098,95 @@ export default function Home() {
                 setOptimizationSummary(null);
                 resetScheduleFilters();
                 setActiveTab('schedule');
+                setActiveWorkspace('shoot');
                 setExtractedScenes([]);
                 setShowAnalyzer(false);
                 requestAnimationFrame(() => document.getElementById('schedule-timeline-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
               }}
             />
           </div>
+
+          {activeWorkspace === 'hub' && (
+            <section className="scroll-mt-24 rounded-3xl border border-neutral-800 bg-neutral-950/80 p-4 md:p-6">
+              <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-stretch">
+                <div className="rounded-3xl border border-neutral-800 bg-black/45 p-5 md:p-6">
+                  <div className="inline-flex rounded-full border border-indigo-300/20 bg-indigo-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-indigo-100">
+                    Project hub
+                  </div>
+                  <h2 className="mt-4 text-2xl font-black text-white md:text-4xl">프로젝트 홈은 가볍게 준비 중입니다.</h2>
+                  <p className="mt-3 max-w-2xl text-sm font-bold leading-relaxed text-neutral-500">
+                    지금은 전체 홈 대시보드 대신 프로젝트 요약과 빠른 작업공간 이동만 제공합니다. 기존 백업/복원, 샘플, 공유 기능은 상단 관리 영역에 그대로 있습니다.
+                  </p>
+                  <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                    <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
+                      <div className="text-[10px] font-black uppercase tracking-[0.16em] text-neutral-600">현재 유형</div>
+                      <div className="mt-2 text-xl font-black text-neutral-100">{templateLabel}</div>
+                    </div>
+                    <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
+                      <div className="text-[10px] font-black uppercase tracking-[0.16em] text-neutral-600">촬영 항목</div>
+                      <div className="mt-2 text-xl font-black text-neutral-100">{scenes.length}개</div>
+                    </div>
+                    <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
+                      <div className="text-[10px] font-black uppercase tracking-[0.16em] text-neutral-600">준비 데이터</div>
+                      <div className="mt-2 text-xl font-black text-neutral-100">장소 {locations.length} · 인원 {people.length}</div>
+                    </div>
+                  </div>
+                </div>
+                <aside className="rounded-3xl border border-neutral-800 bg-black/45 p-4 md:p-5">
+                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-600">Next action</div>
+                  <div className="mt-3 grid gap-2">
+                    {[
+                      ['plan', '기획부터 정리하기', '브리프와 대본 분석'],
+                      ['shoot', '촬영표 만들기', '일정, 큐시트, 장소, 인원'],
+                      ['storyboard', '콘티/샷 보기', '앵글과 레퍼런스'],
+                      ['diagram', '조명도 만들기', '준비 중 템플릿 확인'],
+                    ].map(([id, title, detail]) => (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => handleWorkspaceChange(id as PreProWorkspaceId)}
+                        className="rounded-2xl border border-neutral-800 bg-neutral-950 p-3 text-left transition-colors hover:border-teal-300/40 hover:bg-neutral-900"
+                      >
+                        <div className="text-sm font-black text-neutral-100">{title}</div>
+                        <div className="mt-1 text-xs font-bold text-neutral-600">{detail}</div>
+                      </button>
+                    ))}
+                  </div>
+                </aside>
+              </div>
+            </section>
+          )}
+
+          {activeWorkspace === 'diagram' && (
+            <section className="scroll-mt-24 rounded-3xl border border-violet-300/20 bg-violet-300/5 p-4 md:p-6">
+              <div className="rounded-3xl border border-neutral-800 bg-black/45 p-5 md:p-6">
+                <div className="inline-flex rounded-full border border-violet-300/25 bg-violet-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-violet-100">
+                  Diagram workspace
+                </div>
+                <h2 className="mt-4 text-2xl font-black text-white md:text-4xl">조명도 / 카메라 배치 준비중</h2>
+                <p className="mt-3 max-w-3xl text-sm font-bold leading-relaxed text-neutral-500">
+                  실제 캔버스와 내보내기는 다음 단계에서 추가합니다. 이번 단계에서는 별도 작업공간으로 분리될 위치와 대표 템플릿만 먼저 보여줍니다.
+                </p>
+                <div className="mt-6 grid gap-3 md:grid-cols-3">
+                  {[
+                    ['1인 인터뷰', '키라이트, 필라이트, 백라이트와 카메라 한 대 기준'],
+                    ['카페/식당 테이블', '인물 2명, 창가/실내등, 테이블 동선 기준'],
+                    ['제품 테이블탑', '소형 제품, 탑라이트, 반사판, 매크로 카메라 기준'],
+                  ].map(([title, detail]) => (
+                    <article key={title} className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-violet-300/20 bg-violet-300/10 text-lg font-black text-violet-100">⌁</div>
+                      <h3 className="mt-4 text-lg font-black text-neutral-100">{title}</h3>
+                      <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">{detail}</p>
+                      <span className="mt-4 inline-flex rounded-full border border-neutral-800 px-2.5 py-1 text-[10px] font-black text-neutral-600">템플릿 준비중</span>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {!isWorkspacePlaceholder && (
+          <>
 
           {activeTab === 'schedule' && (
             <section className="scroll-mt-24 rounded-3xl border border-emerald-400/20 bg-emerald-400/5 p-3 md:p-5" data-html2canvas-ignore="true">
@@ -4588,6 +4714,8 @@ export default function Home() {
               pdfButtonText={pdfButtonText}
               storyboardFallback={storyboardFallback}
             />
+          )}
+          </>
           )}
 
         <ProductionGuideFooter />
