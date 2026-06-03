@@ -2,6 +2,7 @@
 
 import type { Scene, ProductionLocation, TemplateType } from '@/types/schedule';
 import { Camera, Download, Lightbulb, MapPin, RefreshCw, Sun, Video } from 'lucide-react';
+import type { PointerEvent } from 'react';
 import { useState } from 'react';
 
 type DiagramTemplateId = 'interview' | 'restaurant' | 'product' | 'dance' | 'event';
@@ -13,6 +14,12 @@ type DiagramItem = {
   y: number;
   tone: 'camera' | 'light' | 'subject' | 'practical' | 'negative';
   note: string;
+};
+
+type DiagramItemPosition = Pick<DiagramItem, 'x' | 'y'>;
+
+type DragState = {
+  itemId: string;
 };
 
 type DiagramTemplate = {
@@ -138,6 +145,8 @@ const escapeSvgText = (value: string) => value
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&apos;');
 
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
 type DiagramWorkspaceProps = {
   activeScene?: Scene;
   locations: ProductionLocation[];
@@ -149,7 +158,13 @@ type DiagramWorkspaceProps = {
 export default function DiagramWorkspace({ activeScene, locations, scenes, template, templateLabel }: DiagramWorkspaceProps) {
   const [selectedTemplateId, setSelectedTemplateId] = useState<DiagramTemplateId>(templateDefaults[template]);
   const [selectedSceneId, setSelectedSceneId] = useState(activeScene?.id || scenes[0]?.id || '');
+  const [dragState, setDragState] = useState<DragState | null>(null);
+  const [itemPositionsByTemplate, setItemPositionsByTemplate] = useState<Partial<Record<DiagramTemplateId, Record<string, DiagramItemPosition>>>>({});
   const selectedTemplate = diagramTemplates.find((item) => item.id === selectedTemplateId) || diagramTemplates[0];
+  const layoutItems = selectedTemplate.items.map((item) => ({
+    ...item,
+    ...(itemPositionsByTemplate[selectedTemplate.id]?.[item.id] || {}),
+  }));
   const selectedScene = scenes.find((scene) => scene.id === selectedSceneId) || activeScene || scenes[0];
   const linkedLocation = selectedScene?.locationId ? locations.find((location) => location.id === selectedScene.locationId) : undefined;
   const sceneLightingNote = selectedScene?.lightingNote?.trim();
@@ -179,7 +194,7 @@ export default function DiagramWorkspace({ activeScene, locations, scenes, templ
   <text x="64" y="94" fill="#a3a3a3" font-size="15" font-family="Arial">${escapeSvgText(`${selectedTemplate.roomLabel} · ${templateLabel}${svgSceneLabel}`)}</text>
   <rect x="94" y="138" width="772" height="360" rx="18" fill="#171717" stroke="#404040" stroke-dasharray="8 8"/>
   <text x="112" y="170" fill="#737373" font-size="13" font-family="Arial" font-weight="700">FLOOR / SET</text>
-  ${selectedTemplate.items.map((item) => {
+  ${layoutItems.map((item) => {
     const tone = toneClasses[item.tone];
     const cx = 94 + (item.x / 100) * 772;
     const cy = 138 + (item.y / 100) * 360;
@@ -194,16 +209,51 @@ export default function DiagramWorkspace({ activeScene, locations, scenes, templ
   <text x="130" y="590" fill="#d4d4d4" font-size="14" font-family="Arial">${svgLightingPlan}</text>
 </svg>`;
 
+  const updateDraggedItemPosition = (event: PointerEvent<SVGSVGElement>) => {
+    if (!dragState) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const viewBoxX = ((event.clientX - rect.left) / rect.width) * 960;
+    const viewBoxY = ((event.clientY - rect.top) / rect.height) * 640;
+    const nextPosition = {
+      x: clamp(((viewBoxX - 94) / 772) * 100, 2, 98),
+      y: clamp(((viewBoxY - 138) / 360) * 100, 2, 98),
+    };
+
+    setItemPositionsByTemplate((current) => ({
+      ...current,
+      [selectedTemplate.id]: {
+        ...(current[selectedTemplate.id] || {}),
+        [dragState.itemId]: nextPosition,
+      },
+    }));
+  };
+
+  const resetCurrentTemplateLayout = () => {
+    setItemPositionsByTemplate((current) => {
+      const next = { ...current };
+      delete next[selectedTemplate.id];
+      return next;
+    });
+    setDragState(null);
+  };
+
   const exportSvg = () => {
     if (typeof window === 'undefined') return;
-    const normalized = svgMarkup.trim();
-    const blob = new Blob([normalized], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `prepro-${filenameSafeTitle}-diagram.svg`;
-    link.click();
-    URL.revokeObjectURL(url);
+    try {
+      const normalized = svgMarkup.trim();
+      const blob = new Blob([normalized], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `prepro-${filenameSafeTitle}-diagram.svg`;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    } catch (error) {
+      console.error('Diagram SVG export failed', error);
+    }
   };
 
   return (
@@ -274,8 +324,79 @@ export default function DiagramWorkspace({ activeScene, locations, scenes, templ
               </label>
             </div>
 
+            <div className="border-t border-neutral-800 px-4 py-3">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-xs font-bold text-neutral-500">원을 잡아 끌면 현장 구조에 맞게 카메라/조명 위치를 바로 조정할 수 있습니다.</p>
+                <button
+                  type="button"
+                  onClick={resetCurrentTemplateLayout}
+                  className="inline-flex min-h-10 items-center justify-center rounded-xl border border-neutral-800 px-3 text-xs font-black text-neutral-300 transition-colors hover:border-violet-300/40 hover:text-violet-100"
+                >
+                  배치 리셋
+                </button>
+              </div>
+            </div>
+
             <div className="overflow-x-auto p-3 custom-scrollbar">
-              <div className="mx-auto min-w-[720px] max-w-[960px]" dangerouslySetInnerHTML={{ __html: svgMarkup }} />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="960"
+                height="640"
+                viewBox="0 0 960 640"
+                className="mx-auto min-w-[720px] max-w-[960px] touch-none select-none"
+                onPointerMove={updateDraggedItemPosition}
+                onPointerUp={() => setDragState(null)}
+                onPointerLeave={() => setDragState(null)}
+              >
+                <defs>
+                  <linearGradient id="diagram-bg" x1="0" x2="1" y1="0" y2="1">
+                    <stop offset="0" stopColor="#111827" />
+                    <stop offset="1" stopColor="#050505" />
+                  </linearGradient>
+                  <pattern id="diagram-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#262626" strokeWidth="1" opacity="0.8" />
+                  </pattern>
+                </defs>
+                <rect width="960" height="640" fill="url(#diagram-bg)" />
+                <rect x="32" y="32" width="896" height="576" rx="28" fill="#0a0a0a" stroke="#404040" strokeWidth="2" />
+                <rect x="64" y="108" width="832" height="420" rx="20" fill="url(#diagram-grid)" stroke="#525252" strokeWidth="2" />
+                <text x="64" y="72" fill="#ffffff" fontSize="28" fontFamily="Arial" fontWeight="800">PrePro Diagram · {selectedTemplate.title}</text>
+                <text x="64" y="94" fill="#a3a3a3" fontSize="15" fontFamily="Arial">{selectedTemplate.roomLabel} · {templateLabel}{svgSceneLabel}</text>
+                <rect x="94" y="138" width="772" height="360" rx="18" fill="#171717" stroke="#404040" strokeDasharray="8 8" />
+                <text x="112" y="170" fill="#737373" fontSize="13" fontFamily="Arial" fontWeight="700">FLOOR / SET</text>
+                {layoutItems.map((item) => {
+                  const tone = toneClasses[item.tone];
+                  const cx = 94 + (item.x / 100) * 772;
+                  const cy = 138 + (item.y / 100) * 360;
+                  const isDragging = dragState?.itemId === item.id;
+
+                  return (
+                    <g
+                      key={item.id}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`${item.label} 위치 이동`}
+                      className="cursor-grab outline-none active:cursor-grabbing"
+                      onPointerDown={(event) => {
+                        try {
+                          event.currentTarget.setPointerCapture(event.pointerId);
+                        } catch {
+                          // Some synthetic/browser events do not allow pointer capture; dragging still works via SVG-level move handlers.
+                        }
+                        setDragState({ itemId: item.id });
+                      }}
+                    >
+                      <circle cx={cx} cy={cy} r={isDragging ? 39 : 34} fill={tone.fill} stroke={tone.stroke} strokeWidth={isDragging ? 5 : 3} />
+                      <text x={cx} y={cy + 4} textAnchor="middle" fill={tone.text} fontSize="13" fontFamily="Arial" fontWeight="900" pointerEvents="none">{item.label}</text>
+                      <text x={cx} y={cy + 58} textAnchor="middle" fill="#d4d4d4" fontSize="11" fontFamily="Arial" fontWeight="700" pointerEvents="none">{item.note}</text>
+                    </g>
+                  );
+                })}
+                <text x="64" y="540" fill="#99f6e4" fontSize="15" fontFamily="Arial" fontWeight="800">CAMERA</text>
+                <text x="64" y="565" fill="#d4d4d4" fontSize="14" fontFamily="Arial">{sceneCameraNote || selectedTemplate.cameraPlan}</text>
+                <text x="64" y="590" fill="#fde68a" fontSize="15" fontFamily="Arial" fontWeight="800">LIGHT</text>
+                <text x="130" y="590" fill="#d4d4d4" fontSize="14" fontFamily="Arial">{sceneLightingNote || selectedTemplate.lightingPlan}</text>
+              </svg>
             </div>
           </div>
         </div>
@@ -325,7 +446,7 @@ export default function DiagramWorkspace({ activeScene, locations, scenes, templ
 
           <div className="rounded-3xl border border-violet-300/20 bg-violet-300/10 p-4 text-xs font-bold leading-relaxed text-violet-100">
             <Video className="mb-2 h-4 w-4" />
-            다음 단계에서는 이 배치를 드래그 가능한 캔버스로 바꾸고, 씬별로 저장되게 확장하면 됩니다.
+            지금은 드래그로 배치를 현장 구조에 맞게 조정하고 SVG로 공유할 수 있습니다. 다음 단계에서는 씬별 저장과 장비 직접 추가를 붙이면 됩니다.
           </div>
         </aside>
       </div>
