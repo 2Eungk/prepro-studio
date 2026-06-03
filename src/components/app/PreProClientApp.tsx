@@ -16,6 +16,7 @@ import CurrentWorkBar from '@/components/layout/CurrentWorkBar';
 import ProductionGuideFooter from '@/components/layout/ProductionGuideFooter';
 import WorkspaceShellNav from '@/components/layout/WorkspaceShellNav';
 import { FirstRunPanel, WorkspaceFlowBar } from '@/components/layout/WorkspaceOnboarding';
+import DiagramWorkspace from '@/components/workspaces/DiagramWorkspace';
 import HubWorkspace from '@/components/workspaces/HubWorkspace';
 import ShootFieldCommandStrip from '@/components/workspaces/ShootFieldCommandStrip';
 import ShootWorkspaceSubnav, { type ShootWorkspaceTabId } from '@/components/workspaces/ShootWorkspaceSubnav';
@@ -4181,31 +4182,13 @@ export default function PreProClientApp({ initialWorkspace = 'shoot' }: PreProCl
           )}
 
           {activeWorkspace === 'diagram' && (
-            <section className="scroll-mt-24 rounded-3xl border border-violet-300/20 bg-violet-300/5 p-4 md:p-6">
-              <div className="rounded-3xl border border-neutral-800 bg-black/45 p-5 md:p-6">
-                <div className="inline-flex rounded-full border border-violet-300/25 bg-violet-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-violet-100">
-                  Diagram workspace
-                </div>
-                <h2 className="mt-4 text-2xl font-black text-white md:text-4xl">조명도 / 카메라 배치 준비중</h2>
-                <p className="mt-3 max-w-3xl text-sm font-bold leading-relaxed text-neutral-500">
-                  실제 캔버스와 내보내기는 다음 단계에서 추가합니다. 이번 단계에서는 별도 작업공간으로 분리될 위치와 대표 템플릿만 먼저 보여줍니다.
-                </p>
-                <div className="mt-6 grid gap-3 md:grid-cols-3">
-                  {[
-                    ['1인 인터뷰', '키라이트, 필라이트, 백라이트와 카메라 한 대 기준'],
-                    ['카페/식당 테이블', '인물 2명, 창가/실내등, 테이블 동선 기준'],
-                    ['제품 테이블탑', '소형 제품, 탑라이트, 반사판, 매크로 카메라 기준'],
-                  ].map(([title, detail]) => (
-                    <article key={title} className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-violet-300/20 bg-violet-300/10 text-lg font-black text-violet-100">⌁</div>
-                      <h3 className="mt-4 text-lg font-black text-neutral-100">{title}</h3>
-                      <p className="mt-2 text-xs font-bold leading-relaxed text-neutral-500">{detail}</p>
-                      <span className="mt-4 inline-flex rounded-full border border-neutral-800 px-2.5 py-1 text-[10px] font-black text-neutral-600">템플릿 준비중</span>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            </section>
+            <DiagramWorkspace
+              activeScene={activeDayScenes[0]}
+              locations={locations}
+              scenes={activeDayScenes.length > 0 ? activeDayScenes : scenes}
+              template={template}
+              templateLabel={templateLabel}
+            />
           )}
 
           {!isWorkspacePlaceholder && (
