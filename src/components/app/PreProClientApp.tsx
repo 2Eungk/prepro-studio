@@ -18,6 +18,7 @@ import WorkspaceShellNav from '@/components/layout/WorkspaceShellNav';
 import { FirstRunPanel, WorkspaceFlowBar } from '@/components/layout/WorkspaceOnboarding';
 import HubWorkspace from '@/components/workspaces/HubWorkspace';
 import ShootFieldCommandStrip from '@/components/workspaces/ShootFieldCommandStrip';
+import ShootWorkspaceSubnav, { type ShootWorkspaceTabId } from '@/components/workspaces/ShootWorkspaceSubnav';
 import BudgetPanel from '@/components/sections/BudgetPanel';
 import CueSheetPanel, { type CueSheetRow } from '@/components/sections/CueSheetPanel';
 import LocationsPanel from '@/components/sections/LocationsPanel';
@@ -185,6 +186,10 @@ const mainWorkspaceTabIds = ['planning', 'schedule', 'cueSheet', 'locations', 'p
 const activeTabStorageKey = 'prepro-active-tab';
 const isMainWorkspaceTab = (value: string | null): value is MainWorkspaceTab =>
   Boolean(value && mainWorkspaceTabIds.includes(value as MainWorkspaceTab));
+const shootWorkspaceTabIds: ShootWorkspaceTabId[] = ['schedule', 'cueSheet', 'locations', 'people', 'budget'];
+
+const isShootWorkspaceTab = (tab: MainWorkspaceTab): tab is ShootWorkspaceTabId =>
+  shootWorkspaceTabIds.includes(tab as ShootWorkspaceTabId);
 
 const workspaceByTab: Record<MainWorkspaceTab, PreProWorkspaceId> = {
   planning: 'plan',
@@ -1898,6 +1903,9 @@ export default function PreProClientApp({ initialWorkspace = 'shoot' }: PreProCl
     { id: 'report', group: '마무리', label: workspaceLanguage.reportLabel, caption: workspaceLanguage.reportCaption, metric: scenes.length > 0 ? `${reportStats.done}/${scenes.length}` : '준비 전', Icon: FileText },
   ];
   const mainWorkspaceGroups: MainWorkspaceGroup[] = ['준비', '촬영', '마무리'];
+  const shootWorkspaceTabs = shootWorkspaceTabIds
+    .map((tabId) => mainWorkspaceTabs.find((tab) => tab.id === tabId))
+    .filter((tab): tab is NonNullable<typeof tab> & { id: ShootWorkspaceTabId } => Boolean(tab && isShootWorkspaceTab(tab.id)));
 
   const copy = useMemo(() => {
     if (template === 'ad') {
@@ -3995,15 +4003,27 @@ export default function PreProClientApp({ initialWorkspace = 'shoot' }: PreProCl
         />
 
         {activeWorkspace === 'shoot' && (
-          <ShootFieldCommandStrip
-            actions={shootCommandActions}
-            activeDayLabel={`Day ${activeDayIndex + 1} · ${activeShootingDate}`}
-            isFirstRun={isFirstRun}
-            locationLabel={weatherLabel || location || '촬영지/날씨 위치 미정'}
-            totalItemsLabel={`${scenes.length}개 ${copy.itemPlural}`}
-            totalMinutesLabel={`${timelineStats.totalMinutes || 0}분`}
-            wrapTimeLabel={timelineStats.wrapTime ? format(timelineStats.wrapTime, 'HH:mm') : '-'}
-          />
+          <>
+            <ShootFieldCommandStrip
+              actions={shootCommandActions}
+              activeDayLabel={`Day ${activeDayIndex + 1} · ${activeShootingDate}`}
+              isFirstRun={isFirstRun}
+              locationLabel={weatherLabel || location || '촬영지/날씨 위치 미정'}
+              totalItemsLabel={`${scenes.length}개 ${copy.itemPlural}`}
+              totalMinutesLabel={`${timelineStats.totalMinutes || 0}분`}
+              wrapTimeLabel={timelineStats.wrapTime ? format(timelineStats.wrapTime, 'HH:mm') : '-'}
+            />
+            <ShootWorkspaceSubnav
+              activeTab={isShootWorkspaceTab(activeTab) ? activeTab : 'schedule'}
+              dayLabel={`Day ${activeDayIndex + 1} · ${activeShootingDate}`}
+              progressLabel={`${scenes.length}개 ${copy.itemPlural} · ${timelineStats.totalMinutes || 0}분 · 예상 종료 ${timelineStats.wrapTime ? format(timelineStats.wrapTime, 'HH:mm') : '-'}`}
+              tabs={shootWorkspaceTabs}
+              onTabChange={(tab) => {
+                setActiveTab(tab);
+                if (tab === 'schedule') resetScheduleFilters();
+              }}
+            />
+          </>
         )}
 
           {!isFirstRun && !isWorkspacePlaceholder && (
