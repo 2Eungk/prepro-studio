@@ -13,9 +13,10 @@
     "curate:storyboards": "node scripts/curate-storyboard-quality.mjs",
     "generate:storyboard-angles": "node scripts/generate-storyboard-angle-pack.mjs",
     "check:report-ux": "node scripts/check-report-ux.mjs",
+    "check:diagram-workspace": "node scripts/check-diagram-workspace.mjs",
     "check:first-success-loop": "node scripts/check-first-success-loop.mjs",
     "check:backup-restore": "node scripts/check-backup-restore.mjs",
-    "release:check": "npm run lint && npm run check:storyboards && npm run check:report-ux && npm run check:first-success-loop && npm run check:backup-restore && npm run build"
+    "release:check": "npm run lint && npm run check:storyboards && npm run check:report-ux && npm run check:diagram-workspace && npm run check:first-success-loop && npm run check:backup-restore && npm run build"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

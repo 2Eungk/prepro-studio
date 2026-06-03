@@ -22,6 +22,13 @@ type DragState = {
   itemId: string;
 };
 
+type DiagramSceneLayout = {
+  templateId: DiagramTemplateId;
+  positions: Record<string, DiagramItemPosition>;
+  savedAt: string;
+  sceneLabel: string;
+};
+
 type DiagramTemplate = {
   id: DiagramTemplateId;
   title: string;
@@ -160,12 +167,22 @@ export default function DiagramWorkspace({ activeScene, locations, scenes, templ
   const [selectedSceneId, setSelectedSceneId] = useState(activeScene?.id || scenes[0]?.id || '');
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [itemPositionsByTemplate, setItemPositionsByTemplate] = useState<Partial<Record<DiagramTemplateId, Record<string, DiagramItemPosition>>>>({});
+  const [savedLayoutsByScene, setSavedLayoutsByScene] = useState<Record<string, DiagramSceneLayout>>({});
   const selectedTemplate = diagramTemplates.find((item) => item.id === selectedTemplateId) || diagramTemplates[0];
+  const selectedScene = scenes.find((scene) => scene.id === selectedSceneId) || activeScene || scenes[0];
+  const sceneLayoutKey = selectedScene?.id || 'template-only';
+  const currentSceneSavedLayout = selectedScene?.id ? savedLayoutsByScene[selectedScene.id] : undefined;
+  const currentTemplatePositions = itemPositionsByTemplate[selectedTemplate.id] || {};
   const layoutItems = selectedTemplate.items.map((item) => ({
     ...item,
-    ...(itemPositionsByTemplate[selectedTemplate.id]?.[item.id] || {}),
+    ...(currentTemplatePositions[item.id] || {}),
   }));
-  const selectedScene = scenes.find((scene) => scene.id === selectedSceneId) || activeScene || scenes[0];
+  const selectedSceneLabel = selectedScene
+    ? selectedScene.sceneNumber || selectedScene.eventSection || selectedScene.description || selectedScene.location || '무제 씬'
+    : '템플릿 기준';
+  const sceneLayoutStatus = currentSceneSavedLayout
+    ? `저장됨 · ${currentSceneSavedLayout.sceneLabel} · ${currentSceneSavedLayout.savedAt}`
+    : '아직 저장 안 됨 · 현재 배치를 씬에 묶어둘 수 있습니다.';
   const linkedLocation = selectedScene?.locationId ? locations.find((location) => location.id === selectedScene.locationId) : undefined;
   const sceneLightingNote = selectedScene?.lightingNote?.trim();
   const sceneCameraNote = selectedScene?.cameraGear?.trim() || selectedScene?.lensNote?.trim() || selectedScene?.shotSize?.trim();
@@ -234,6 +251,43 @@ export default function DiagramWorkspace({ activeScene, locations, scenes, templ
       delete next[selectedTemplate.id];
       return next;
     });
+    setDragState(null);
+  };
+
+  const createLayoutSnapshot = () => layoutItems.reduce<Record<string, DiagramItemPosition>>((positions, item) => {
+    positions[item.id] = { x: item.x, y: item.y };
+    return positions;
+  }, {});
+
+  const saveCurrentLayoutToScene = () => {
+    if (!selectedScene?.id) return;
+
+    const savedAt = new Intl.DateTimeFormat('ko-KR', {
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date());
+
+    setSavedLayoutsByScene((current) => ({
+      ...current,
+      [selectedScene.id]: {
+        templateId: selectedTemplate.id,
+        positions: createLayoutSnapshot(),
+        savedAt,
+        sceneLabel: selectedSceneLabel,
+      },
+    }));
+  };
+
+  const loadSavedSceneLayout = () => {
+    if (!currentSceneSavedLayout) return;
+
+    setSelectedTemplateId(currentSceneSavedLayout.templateId);
+    setItemPositionsByTemplate((current) => ({
+      ...current,
+      [currentSceneSavedLayout.templateId]: currentSceneSavedLayout.positions,
+    }));
     setDragState(null);
   };
 
@@ -324,16 +378,37 @@ export default function DiagramWorkspace({ activeScene, locations, scenes, templ
               </label>
             </div>
 
-            <div className="border-t border-neutral-800 px-4 py-3">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-xs font-bold text-neutral-500">원을 잡아 끌면 현장 구조에 맞게 카메라/조명 위치를 바로 조정할 수 있습니다.</p>
-                <button
-                  type="button"
-                  onClick={resetCurrentTemplateLayout}
-                  className="inline-flex min-h-10 items-center justify-center rounded-xl border border-neutral-800 px-3 text-xs font-black text-neutral-300 transition-colors hover:border-violet-300/40 hover:text-violet-100"
-                >
-                  배치 리셋
-                </button>
+            <div className="border-t border-neutral-800 px-4 py-3" data-scene-layout-key={sceneLayoutKey}>
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-neutral-500">원을 잡아 끌면 현장 구조에 맞게 카메라/조명 위치를 바로 조정할 수 있습니다.</p>
+                  <p className="mt-1 text-[11px] font-black text-violet-100">저장한 배치: {sceneLayoutStatus}</p>
+                </div>
+                <div className="grid gap-2 sm:grid-cols-3 lg:flex lg:justify-end">
+                  <button
+                    type="button"
+                    onClick={saveCurrentLayoutToScene}
+                    disabled={!selectedScene?.id}
+                    className="inline-flex min-h-10 items-center justify-center rounded-xl bg-violet-200 px-3 text-xs font-black text-black transition-colors hover:bg-white disabled:cursor-not-allowed disabled:bg-neutral-800 disabled:text-neutral-500"
+                  >
+                    현재 배치 씬에 저장
+                  </button>
+                  <button
+                    type="button"
+                    onClick={loadSavedSceneLayout}
+                    disabled={!currentSceneSavedLayout}
+                    className="inline-flex min-h-10 items-center justify-center rounded-xl border border-violet-300/30 px-3 text-xs font-black text-violet-100 transition-colors hover:border-violet-200 hover:bg-violet-200 hover:text-black disabled:cursor-not-allowed disabled:border-neutral-800 disabled:text-neutral-600 disabled:hover:bg-transparent"
+                  >
+                    저장 배치 불러오기
+                  </button>
+                  <button
+                    type="button"
+                    onClick={resetCurrentTemplateLayout}
+                    className="inline-flex min-h-10 items-center justify-center rounded-xl border border-neutral-800 px-3 text-xs font-black text-neutral-300 transition-colors hover:border-violet-300/40 hover:text-violet-100"
+                  >
+                    배치 리셋
+                  </button>
+                </div>
               </div>
             </div>
 
