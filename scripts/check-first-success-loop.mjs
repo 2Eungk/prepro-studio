@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const read = (path) => readFileSync(join(root, path), 'utf8');
 
-const page = read('src/app/page.tsx');
+const page = `${read('src/app/page.tsx')}\n${read('src/components/app/PreProClientApp.tsx')}`;
 const appHeader = read('src/components/header/AppHeader.tsx');
 const workspaceOnboarding = read('src/components/layout/WorkspaceOnboarding.tsx');
 const sceneLocationField = read('src/components/sections/schedule/SceneLocationField.tsx');

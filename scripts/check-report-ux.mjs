@@ -8,7 +8,7 @@ const read = (path) => readFileSync(join(root, path), 'utf8');
 const desktopTimeline = read('src/components/sections/schedule/DesktopTimelineRows.tsx');
 const mobileTimeline = read('src/components/sections/schedule/MobileTimelineCards.tsx');
 const mobileScheduleList = read('src/components/sections/schedule/MobileScheduleList.tsx');
-const page = read('src/app/page.tsx');
+const page = `${read('src/app/page.tsx')}\n${read('src/components/app/PreProClientApp.tsx')}`;
 const scheduleControls = read('src/components/sections/schedule/ScheduleControlsPanel.tsx');
 const reportPanel = read('src/components/sections/ReportPanel.tsx');
 const peoplePanel = read('src/components/sections/PeoplePanel.tsx');
@@ -119,9 +119,10 @@ const checks = [
     name: 'first-run schedule guide exposes analyzer import shortcut',
     ok: page.includes('showEmptyScheduleGuide')
       && page.includes('openScriptAnalyzer')
-      && page.includes("workspaceLanguage.gettingStarted.analyzer")
+      && page.includes('data-first-action="recommended-analyzer"')
+      && page.includes('workspaceLanguage.gettingStarted.analyzer')
       && page.indexOf('openScriptAnalyzer', page.indexOf('showEmptyScheduleGuide')) > page.indexOf('showEmptyScheduleGuide')
-      && page.indexOf('openScriptAnalyzer', page.indexOf('showEmptyScheduleGuide')) < page.indexOf("handleLoadSampleData(false)", page.indexOf('showEmptyScheduleGuide')),
+      && page.indexOf('openScriptAnalyzer', page.indexOf('showEmptyScheduleGuide')) < page.indexOf('data-first-action="manual-entry"', page.indexOf('showEmptyScheduleGuide')),
   },
   {
     name: 'readiness schedule actions clear stale filters before opening schedule',
