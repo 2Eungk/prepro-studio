@@ -64,7 +64,7 @@ export default function WorkspaceShellNav({
         })}
       </div>
 
-      <div className="mt-2 hidden grid-cols-6 gap-2 md:grid">
+      <div className="mt-2 hidden grid-cols-7 gap-2 md:grid">
         {preproWorkspaces.map((workspace) => {
           const isActive = workspace.id === activeWorkspace;
 

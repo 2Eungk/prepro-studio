@@ -18,6 +18,7 @@ import WorkspaceShellNav from '@/components/layout/WorkspaceShellNav';
 import { FirstRunPanel, WorkspaceFlowBar } from '@/components/layout/WorkspaceOnboarding';
 import DiagramWorkspace from '@/components/workspaces/DiagramWorkspace';
 import HubWorkspace from '@/components/workspaces/HubWorkspace';
+import PaperWorkspace from '@/components/workspaces/PaperWorkspace';
 import ShootFieldCommandStrip from '@/components/workspaces/ShootFieldCommandStrip';
 import ShootWorkspaceSubnav, { type ShootWorkspaceTabId } from '@/components/workspaces/ShootWorkspaceSubnav';
 import BudgetPanel from '@/components/sections/BudgetPanel';
@@ -205,6 +206,7 @@ const workspaceByTab: Record<MainWorkspaceTab, PreProWorkspaceId> = {
 
 const defaultTabByWorkspace: Partial<Record<PreProWorkspaceId, MainWorkspaceTab>> = {
   plan: 'planning',
+  paper: 'schedule',
   shoot: 'schedule',
   storyboard: 'storyboard',
   report: 'report',
@@ -3732,7 +3734,7 @@ export default function PreProClientApp({ initialWorkspace = 'shoot' }: PreProCl
     },
   ];
   const isFirstRun = scenes.length === 0;
-  const isWorkspacePlaceholder = activeWorkspace === 'hub' || activeWorkspace === 'diagram';
+  const isWorkspacePlaceholder = activeWorkspace === 'hub' || activeWorkspace === 'diagram' || activeWorkspace === 'paper';
   const showOperationalDashboard = !isWorkspacePlaceholder && (activeTab === 'schedule' || activeTab === 'report') && !isFirstRun;
   const showEmptyScheduleGuide = !isWorkspacePlaceholder && activeTab === 'schedule' && isFirstRun && !showSceneForm && !showAnalyzer && extractedScenes.length === 0;
   const workspaceQuickActions: Array<{
@@ -3809,6 +3811,7 @@ export default function PreProClientApp({ initialWorkspace = 'shoot' }: PreProCl
       ? { label: '마무리 리포트 확인', detail: '촬영 체크가 많이 진행됐습니다. 납품/정리 항목을 확인하세요.', workspace: 'report' as PreProWorkspaceId }
       : { label: '현장 촬영표 확인', detail: '다음 촬영 항목, 장소, 인원, 날씨를 한 화면에서 확인하세요.', workspace: 'shoot' as PreProWorkspaceId };
   const hubActions = [
+    { workspace: 'paper' as PreProWorkspaceId, title: 'Paper', detail: '촬영 순서표, 진행 체크, PDF', badge: scenes.length > 0 ? `${reportStats.completionRate}%` : 'OD' },
     { workspace: 'plan' as PreProWorkspaceId, title: 'Plan', detail: '브리프, 대본 분석, 루틴 프리셋', badge: planning.oneLiner.trim() ? '작성중' : '시작' },
     { workspace: 'shoot' as PreProWorkspaceId, title: 'Shoot', detail: '촬영표, 큐시트, 장소, 인원', badge: `${scenes.length}개` },
     { workspace: 'storyboard' as PreProWorkspaceId, title: 'Storyboard', detail: '콘티, 앵글, 레퍼런스', badge: `${storyboardDb.length}` },
@@ -4188,6 +4191,50 @@ export default function PreProClientApp({ initialWorkspace = 'shoot' }: PreProCl
               scenes={activeDayScenes.length > 0 ? activeDayScenes : scenes}
               template={template}
               templateLabel={templateLabel}
+            />
+          )}
+
+          {activeWorkspace === 'paper' && (
+            <PaperWorkspace
+              activeDay={activeDay}
+              activeDayIndex={activeDayIndex}
+              activeShootingDate={activeShootingDate}
+              activeCallTime={activeCallTime}
+              activeShootingStartTime={activeShootingStartTime}
+              isExportingPdf={isExportingPdf}
+              locations={locations}
+              people={people}
+              rows={timelineRows}
+              template={template}
+              templateLabel={templateLabel}
+              totalMinutes={timelineStats.totalMinutes}
+              wrapTimeLabel={timelineStats.wrapTime ? format(timelineStats.wrapTime, 'HH:mm') : '-'}
+              weatherLabel={weatherLabel}
+              projectLocation={location}
+              pdfButtonText={pdfButtonText(pdfKindLabel)}
+              onAddBreak={() => openBreakModal()}
+              onAddScene={openNewSceneForm}
+              onCreateScene={(scene) => {
+                addScene({
+                  dayId: activeDay.id,
+                  location: scene.location,
+                  description: scene.description,
+                  estimatedMinutes: scene.estimatedMinutes,
+                  sceneNumber: `${activeDayScenes.length + 1}`,
+                  status: 'pending',
+                });
+                setOptimizationSummary(null);
+              }}
+              onEditScene={openSceneEditor}
+              onExportPDF={() => void handleExportPDF()}
+              onLoadSampleData={() => {
+                handleLoadSampleData(false);
+                setActiveTabState('schedule');
+                setActiveWorkspace('paper');
+              }}
+              onOptimize={handleOptimizeSchedule}
+              onOpenPeople={() => setActiveTab('people')}
+              onToggleSceneStatus={(scene) => updateScene(scene.id, { status: scene.status === 'done' ? 'pending' : 'done' })}
             />
           )}
 
