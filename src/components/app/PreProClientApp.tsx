@@ -1248,6 +1248,7 @@ export default function PreProClientApp({ initialWorkspace = 'shoot' }: PreProCl
   const [acknowledgedReadinessCheckIds, setAcknowledgedReadinessCheckIds] = useState<string[]>([]);
   const [isDepartureMode, setIsDepartureMode] = useState(false);
   const pdfRef = useRef<HTMLDivElement>(null);
+  const paperPdfRef = useRef<HTMLDivElement>(null);
   const cueSheetPdfRef = useRef<HTMLDivElement>(null);
   const reportPdfRef = useRef<HTMLDivElement>(null);
   const callSheetPdfRef = useRef<HTMLDivElement>(null);
@@ -2743,7 +2744,9 @@ export default function PreProClientApp({ initialWorkspace = 'shoot' }: PreProCl
   const handleExportPDF = async () => {
     if (isExportingPdf) return;
 
-    const target = activeTab === 'report'
+    const target = activeWorkspace === 'paper'
+      ? paperPdfRef.current
+      : activeTab === 'report'
       ? reportPdfRef.current
       : activeTab === 'people'
         ? callSheetPdfRef.current
@@ -2811,7 +2814,7 @@ export default function PreProClientApp({ initialWorkspace = 'shoot' }: PreProCl
         );
       }
 
-      const mode = activeTab === 'report' || isReportMode ? 'report' : activeTab === 'people' ? 'callsheet' : activeTab === 'cueSheet' ? 'cue-sheet' : 'schedule';
+      const mode = activeWorkspace === 'paper' ? 'paper-od' : activeTab === 'report' || isReportMode ? 'report' : activeTab === 'people' ? 'callsheet' : activeTab === 'cueSheet' ? 'cue-sheet' : 'schedule';
       pdf.save(`PrePro_Studio_${template}_${mode}_${format(new Date(), 'yyyyMMdd')}.pdf`);
       setPdfStatus('PDF 저장됨');
     } catch (error) {
@@ -4211,9 +4214,18 @@ export default function PreProClientApp({ initialWorkspace = 'shoot' }: PreProCl
               wrapTimeLabel={timelineStats.wrapTime ? format(timelineStats.wrapTime, 'HH:mm') : '-'}
               weatherLabel={weatherLabel}
               projectLocation={location}
-              pdfButtonText={pdfButtonText(pdfKindLabel)}
-              onAddBreak={() => openBreakModal()}
-              onAddScene={openNewSceneForm}
+              pdfButtonText={pdfButtonText('OD PDF 저장')}
+              pdfRef={paperPdfRef}
+              onAddBreak={() => {
+                setActiveWorkspace('shoot');
+                setActiveTabState('schedule');
+                openBreakModal();
+              }}
+              onAddScene={() => {
+                setActiveWorkspace('shoot');
+                setActiveTabState('schedule');
+                openNewSceneForm();
+              }}
               onCreateScene={(scene) => {
                 addScene({
                   dayId: activeDay.id,
@@ -4225,7 +4237,11 @@ export default function PreProClientApp({ initialWorkspace = 'shoot' }: PreProCl
                 });
                 setOptimizationSummary(null);
               }}
-              onEditScene={openSceneEditor}
+              onEditScene={(scene) => {
+                setActiveWorkspace('shoot');
+                setActiveTabState('schedule');
+                openSceneEditor(scene);
+              }}
               onExportPDF={() => void handleExportPDF()}
               onLoadSampleData={() => {
                 handleLoadSampleData(false);
@@ -4233,7 +4249,9 @@ export default function PreProClientApp({ initialWorkspace = 'shoot' }: PreProCl
                 setActiveWorkspace('paper');
               }}
               onOptimize={handleOptimizeSchedule}
-              onOpenPeople={() => setActiveTab('people')}
+              onOpenPeople={() => {
+                setActiveTab('people');
+              }}
               onToggleSceneStatus={(scene) => updateScene(scene.id, { status: scene.status === 'done' ? 'pending' : 'done' })}
             />
           )}

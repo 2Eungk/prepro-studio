@@ -2,7 +2,7 @@
 
 import { format } from 'date-fns';
 import { ArrowRight, CheckCircle2, Clock, Download, FileText, Plus, RefreshCw, Users } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type RefObject } from 'react';
 import type { BreakItem, Person, ProductionLocation, Scene, ShootDay, TemplateType } from '@/types/schedule';
 
 type PaperTimelineRow =
@@ -26,6 +26,7 @@ type PaperWorkspaceProps = {
   weatherLabel?: string;
   projectLocation: string;
   pdfButtonText: string;
+  pdfRef: RefObject<HTMLDivElement | null>;
   onAddBreak: () => void;
   onAddScene: () => void;
   onCreateScene: (scene: { description: string; location: string; estimatedMinutes: number }) => void;
@@ -103,6 +104,7 @@ export default function PaperWorkspace({
   weatherLabel,
   projectLocation,
   pdfButtonText,
+  pdfRef,
   onAddBreak,
   onAddScene,
   onCreateScene,
@@ -138,7 +140,7 @@ export default function PaperWorkspace({
   };
 
   return (
-    <section className="space-y-5" data-workspace="paper-od">
+    <section ref={pdfRef} className="space-y-5" data-workspace="paper-od">
       <div className="overflow-hidden rounded-[2rem] border border-sky-300/20 bg-gradient-to-br from-neutral-950 via-black to-sky-950/20">
         <div className="grid gap-4 p-4 md:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)] md:p-6">
           <div className="min-w-0">
@@ -332,8 +334,8 @@ export default function PaperWorkspace({
               return (
                 <article key={row.id} className={`grid gap-3 p-4 transition-colors md:grid-cols-[96px_minmax(0,1fr)_160px] md:items-center ${done ? 'bg-emerald-300/[0.04]' : 'bg-black'}`}>
                   <div>
-                    <div className="text-lg font-black text-white">{formatTime(scene.startTime)}</div>
-                    <div className="mt-1 text-xs font-black text-neutral-600">{formatTime(scene.endTime)} 종료</div>
+                    <div className="text-lg font-black text-white">{scene.startTime ? formatTime(scene.startTime) : '시간 미정'}</div>
+                    <div className="mt-1 text-xs font-black text-neutral-600">{scene.endTime ? `${formatTime(scene.endTime)} 종료` : done ? '완료 · 시간 미입력' : '종료 미정'}</div>
                   </div>
                   <button type="button" onClick={() => onEditScene(scene)} className="min-w-0 text-left">
                     <div className="flex flex-wrap items-center gap-2">

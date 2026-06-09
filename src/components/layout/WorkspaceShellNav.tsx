@@ -89,8 +89,8 @@ export default function WorkspaceShellNav({
                   isActive ? 'border-black/10 bg-black/10 text-black/70' : 'border-neutral-800 bg-neutral-950 text-neutral-600 group-hover:text-neutral-400'
                 }`}>{workspace.shortLabel}</span>
               </div>
-              <div className="mt-3 text-base font-black leading-none">{workspace.label}</div>
-              <div className={`mt-2 text-[11px] font-bold leading-relaxed ${isActive ? 'text-black/60' : 'text-neutral-500'}`}>
+              <div className="mt-3 text-base font-black leading-none [word-break:keep-all]">{workspace.label}</div>
+              <div className={`mt-2 text-[11px] font-bold leading-relaxed [word-break:keep-all] ${isActive ? 'text-black/60' : 'text-neutral-500'}`}>
                 {workspace.description}
               </div>
             </Link>
