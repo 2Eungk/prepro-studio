@@ -30,7 +30,9 @@ npm run release:check
 Required pass conditions:
 
 - ESLint passes.
-- Storyboard DB reports 130 sequential 16:9 PNG files.
+- Storyboard DB reports sequential 16:9 PNG files and unique DB URLs.
+- Generic storyboard pack reports sequential PNG originals, WebP thumbnails, 16:9 ratio, monochrome storyboard style, and minimum detail thresholds.
+- Report UX, diagram workspace, first-success-loop, and backup/restore guard scripts pass.
 - Next.js production build completes.
 - GitHub Actions `Release Check` passes on the target branch.
 
@@ -67,6 +69,7 @@ npm run security:gitleaks
 - Confirm no horizontal overflow in the header and schedule table.
 - Confirm weather loads for Seoul and at least one edited Korean location.
 - Confirm storyboard thumbnails load from `/shot_*.png`.
+- Confirm generic storyboard gallery/sample thumbnails load from `public/storyboard-generic-hq/` when reviewing the generic pack.
 - Confirm PDF export shows `PDF 저장됨`.
 - Confirm no placeholder ad slot appears when AdSense env values are blank.
 

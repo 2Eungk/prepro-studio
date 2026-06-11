@@ -32,6 +32,11 @@ This runs:
 
 - `npm run lint`
 - `npm run check:storyboards`
+- `npm run check:generic-storyboards`
+- `npm run check:report-ux`
+- `npm run check:diagram-workspace`
+- `npm run check:first-success-loop`
+- `npm run check:backup-restore`
 - `npm run build`
 
 GitHub Actions also runs this check on every push and pull request through `.github/workflows/release-check.yml`.
@@ -50,13 +55,14 @@ Do not commit `.env.local`, API keys, OAuth secrets, AdSense IDs, deployment tok
 
 ## Storyboard Assets
 
-Storyboard references are stored in `src/data/storyboardDb.ts` and mapped to `public/shot_01.png` through the current `public/shot_*.png` asset set.
+Storyboard references are stored in `src/data/storyboardDb.ts` and mapped to `public/shot_01.png` through the current `public/shot_*.png` asset set. The generic pencil storyboard pack lives under `public/storyboard-generic-hq/` with metadata in `index.json` and a visual QA gallery at `docs/generic-storyboard-gallery.html`.
 
 ```bash
 npm run check:storyboards
+npm run check:generic-storyboards
 ```
 
-The audit verifies unique DB URLs, sequential filenames, existing PNG files, and 16:9 image ratios.
+The audits verify unique DB URLs, sequential filenames, existing PNG files, 16:9 image ratios, generic-pack thumbnails, monochrome storyboard style, and minimum detail thresholds.
 
 ## Optional AdSense
 

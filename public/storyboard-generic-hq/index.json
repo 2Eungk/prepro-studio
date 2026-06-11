@@ -1,0 +1,1036 @@
+[
+  {
+    "file": "generic_hq_001.png",
+    "thumbnail": "thumbs/generic_hq_001.webp",
+    "title": "Extreme Wide Establishing Shot",
+    "gender": "neutral",
+    "tags": [
+      "establishing",
+      "urban",
+      "wide",
+      "morning"
+    ]
+  },
+  {
+    "file": "generic_hq_002.png",
+    "thumbnail": "thumbs/generic_hq_002.webp",
+    "title": "Medium Two Shot",
+    "gender": "mixed",
+    "tags": [
+      "dialogue",
+      "two-shot",
+      "interior",
+      "table"
+    ]
+  },
+  {
+    "file": "generic_hq_003.png",
+    "thumbnail": "thumbs/generic_hq_003.webp",
+    "title": "Over-the-Shoulder Dialogue Shot",
+    "gender": "neutral",
+    "tags": [
+      "dialogue",
+      "ots",
+      "interior",
+      "coverage"
+    ]
+  },
+  {
+    "file": "generic_hq_004.png",
+    "thumbnail": "thumbs/generic_hq_004.webp",
+    "title": "Close-Up Insert",
+    "gender": "neutral",
+    "tags": [
+      "insert",
+      "hands",
+      "prop",
+      "suspense"
+    ]
+  },
+  {
+    "file": "generic_hq_005.png",
+    "thumbnail": "thumbs/generic_hq_005.webp",
+    "title": "Low Angle Hero Shot",
+    "gender": "neutral",
+    "tags": [
+      "low-angle",
+      "reveal",
+      "doorway",
+      "hero"
+    ]
+  },
+  {
+    "file": "generic_hq_006.png",
+    "thumbnail": "thumbs/generic_hq_006.webp",
+    "title": "High Angle Isolation Shot",
+    "gender": "neutral",
+    "tags": [
+      "high-angle",
+      "isolation",
+      "negative-space",
+      "drama"
+    ]
+  },
+  {
+    "file": "generic_hq_007.png",
+    "thumbnail": "thumbs/generic_hq_007.webp",
+    "title": "Dutch Angle Tension Shot",
+    "gender": "neutral",
+    "tags": [
+      "dutch-angle",
+      "corridor",
+      "tension",
+      "thriller"
+    ]
+  },
+  {
+    "file": "generic_hq_008.png",
+    "thumbnail": "thumbs/generic_hq_008.webp",
+    "title": "POV Walking Shot",
+    "gender": "neutral",
+    "tags": [
+      "pov",
+      "door",
+      "movement",
+      "interior"
+    ]
+  },
+  {
+    "file": "generic_hq_009.png",
+    "thumbnail": "thumbs/generic_hq_009.webp",
+    "title": "Bird's-Eye Top Shot",
+    "gender": "neutral",
+    "tags": [
+      "top-shot",
+      "tabletop",
+      "hands",
+      "graphic"
+    ]
+  },
+  {
+    "file": "generic_hq_010.png",
+    "thumbnail": "thumbs/generic_hq_010.webp",
+    "title": "Product Macro Insert",
+    "gender": "neutral",
+    "tags": [
+      "product",
+      "macro",
+      "insert",
+      "commercial"
+    ]
+  },
+  {
+    "file": "generic_hq_011.png",
+    "thumbnail": "thumbs/generic_hq_011.webp",
+    "title": "Event Wide Coverage Shot",
+    "gender": "neutral",
+    "tags": [
+      "event",
+      "wide",
+      "audience",
+      "stage"
+    ]
+  },
+  {
+    "file": "generic_hq_012.png",
+    "thumbnail": "thumbs/generic_hq_012.webp",
+    "title": "Male Medium Close-Up",
+    "gender": "male",
+    "tags": [
+      "mcu",
+      "male",
+      "window-light",
+      "portrait"
+    ]
+  },
+  {
+    "file": "generic_hq_013.png",
+    "thumbnail": "thumbs/generic_hq_013.webp",
+    "title": "Female Medium Close-Up",
+    "gender": "female",
+    "tags": [
+      "mcu",
+      "female",
+      "window-light",
+      "portrait"
+    ]
+  },
+  {
+    "file": "generic_hq_014.png",
+    "thumbnail": "thumbs/generic_hq_014.webp",
+    "title": "Male Full-Body Tracking Shot",
+    "gender": "male",
+    "tags": [
+      "tracking",
+      "male",
+      "hallway",
+      "full-body"
+    ]
+  },
+  {
+    "file": "generic_hq_015.png",
+    "thumbnail": "thumbs/generic_hq_015.webp",
+    "title": "Female Full-Body Tracking Shot",
+    "gender": "female",
+    "tags": [
+      "tracking",
+      "female",
+      "hallway",
+      "full-body"
+    ]
+  },
+  {
+    "file": "generic_hq_016.png",
+    "thumbnail": "thumbs/generic_hq_016.webp",
+    "title": "Male Over-the-Shoulder Dialogue Shot",
+    "gender": "male",
+    "tags": [
+      "ots",
+      "male",
+      "dialogue",
+      "interior"
+    ]
+  },
+  {
+    "file": "generic_hq_017.png",
+    "thumbnail": "thumbs/generic_hq_017.webp",
+    "title": "Female Over-the-Shoulder Dialogue Shot",
+    "gender": "female",
+    "tags": [
+      "ots",
+      "female",
+      "dialogue",
+      "interior"
+    ]
+  },
+  {
+    "file": "generic_hq_018.png",
+    "thumbnail": "thumbs/generic_hq_018.webp",
+    "title": "Male Dance Full Shot",
+    "gender": "male",
+    "tags": [
+      "dance",
+      "male",
+      "full-shot",
+      "rehearsal"
+    ]
+  },
+  {
+    "file": "generic_hq_019.png",
+    "thumbnail": "thumbs/generic_hq_019.webp",
+    "title": "Female Dance Full Shot",
+    "gender": "female",
+    "tags": [
+      "dance",
+      "female",
+      "full-shot",
+      "rehearsal"
+    ]
+  },
+  {
+    "file": "generic_hq_020.png",
+    "thumbnail": "thumbs/generic_hq_020.webp",
+    "title": "Male Event Presenter Medium Wide",
+    "gender": "male",
+    "tags": [
+      "event",
+      "male",
+      "presenter",
+      "stage"
+    ]
+  },
+  {
+    "file": "generic_hq_021.png",
+    "thumbnail": "thumbs/generic_hq_021.webp",
+    "title": "Female Event Presenter Medium Wide",
+    "gender": "female",
+    "tags": [
+      "event",
+      "female",
+      "presenter",
+      "stage"
+    ]
+  },
+  {
+    "file": "generic_hq_022.png",
+    "thumbnail": "thumbs/generic_hq_022.webp",
+    "title": "Male Outdoor Running Action Shot",
+    "gender": "male",
+    "tags": [
+      "action",
+      "male",
+      "running",
+      "street"
+    ]
+  },
+  {
+    "file": "generic_hq_023.png",
+    "thumbnail": "thumbs/generic_hq_023.webp",
+    "title": "Female Outdoor Running Action Shot",
+    "gender": "female",
+    "tags": [
+      "action",
+      "female",
+      "running",
+      "street"
+    ]
+  },
+  {
+    "file": "generic_hq_024.png",
+    "thumbnail": "thumbs/generic_hq_024.webp",
+    "title": "Male Product Reaction Medium Shot",
+    "gender": "male",
+    "tags": [
+      "commercial",
+      "male",
+      "product",
+      "reaction"
+    ]
+  },
+  {
+    "file": "generic_hq_025.png",
+    "thumbnail": "thumbs/generic_hq_025.webp",
+    "title": "Female Product Reaction Medium Shot",
+    "gender": "female",
+    "tags": [
+      "commercial",
+      "female",
+      "product",
+      "reaction"
+    ]
+  },
+  {
+    "file": "generic_hq_026.png",
+    "thumbnail": "thumbs/generic_hq_026.webp",
+    "title": "Male Low Angle Hero Reveal",
+    "gender": "male",
+    "tags": [
+      "low-angle",
+      "male",
+      "hero",
+      "reveal"
+    ]
+  },
+  {
+    "file": "generic_hq_027.png",
+    "thumbnail": "thumbs/generic_hq_027.webp",
+    "title": "Female Low Angle Hero Reveal",
+    "gender": "female",
+    "tags": [
+      "low-angle",
+      "female",
+      "hero",
+      "reveal"
+    ]
+  },
+  {
+    "file": "generic_hq_028.png",
+    "thumbnail": "thumbs/generic_hq_028.webp",
+    "title": "Male High Angle Vulnerability Shot",
+    "gender": "male",
+    "tags": [
+      "high-angle",
+      "male",
+      "isolation",
+      "vulnerability"
+    ]
+  },
+  {
+    "file": "generic_hq_029.png",
+    "thumbnail": "thumbs/generic_hq_029.webp",
+    "title": "Female High Angle Vulnerability Shot",
+    "gender": "female",
+    "tags": [
+      "high-angle",
+      "female",
+      "isolation",
+      "vulnerability"
+    ]
+  },
+  {
+    "file": "generic_hq_030.png",
+    "thumbnail": "thumbs/generic_hq_030.webp",
+    "title": "Male POV Reach Shot",
+    "gender": "male",
+    "tags": [
+      "pov",
+      "male",
+      "hands",
+      "insert"
+    ]
+  },
+  {
+    "file": "generic_hq_031.png",
+    "thumbnail": "thumbs/generic_hq_031.webp",
+    "title": "Female POV Reach Shot",
+    "gender": "female",
+    "tags": [
+      "pov",
+      "female",
+      "hands",
+      "insert"
+    ]
+  },
+  {
+    "file": "generic_hq_032.png",
+    "thumbnail": "thumbs/generic_hq_032.webp",
+    "title": "Male Silhouette Backlight Shot",
+    "gender": "male",
+    "tags": [
+      "silhouette",
+      "male",
+      "backlight",
+      "wide"
+    ]
+  },
+  {
+    "file": "generic_hq_033.png",
+    "thumbnail": "thumbs/generic_hq_033.webp",
+    "title": "Female Silhouette Backlight Shot",
+    "gender": "female",
+    "tags": [
+      "silhouette",
+      "female",
+      "backlight",
+      "wide"
+    ]
+  },
+  {
+    "file": "generic_hq_034.png",
+    "thumbnail": "thumbs/generic_hq_034.webp",
+    "title": "Male Reverse Dialogue Shot",
+    "gender": "male",
+    "tags": [
+      "reverse",
+      "male",
+      "dialogue",
+      "coverage"
+    ]
+  },
+  {
+    "file": "generic_hq_035.png",
+    "thumbnail": "thumbs/generic_hq_035.webp",
+    "title": "Female Reverse Dialogue Shot",
+    "gender": "female",
+    "tags": [
+      "reverse",
+      "female",
+      "dialogue",
+      "coverage"
+    ]
+  },
+  {
+    "file": "generic_hq_036.png",
+    "thumbnail": "thumbs/generic_hq_036.webp",
+    "title": "Male Handheld Street Follow Shot",
+    "gender": "male",
+    "tags": [
+      "follow",
+      "male",
+      "handheld",
+      "street"
+    ]
+  },
+  {
+    "file": "generic_hq_037.png",
+    "thumbnail": "thumbs/generic_hq_037.webp",
+    "title": "Female Handheld Street Follow Shot",
+    "gender": "female",
+    "tags": [
+      "follow",
+      "female",
+      "handheld",
+      "street"
+    ]
+  },
+  {
+    "file": "generic_hq_038.png",
+    "thumbnail": "thumbs/generic_hq_038.webp",
+    "title": "Male Audience Reaction Cutaway",
+    "gender": "male",
+    "tags": [
+      "reaction",
+      "male",
+      "audience",
+      "event"
+    ]
+  },
+  {
+    "file": "generic_hq_039.png",
+    "thumbnail": "thumbs/generic_hq_039.webp",
+    "title": "Female Audience Reaction Cutaway",
+    "gender": "female",
+    "tags": [
+      "reaction",
+      "female",
+      "audience",
+      "event"
+    ]
+  },
+  {
+    "file": "generic_hq_040.png",
+    "thumbnail": "thumbs/generic_hq_040.webp",
+    "title": "Male Profile Close-Up With Negative Space",
+    "gender": "male",
+    "tags": [
+      "profile",
+      "male",
+      "close-up",
+      "negative-space"
+    ]
+  },
+  {
+    "file": "generic_hq_041.png",
+    "thumbnail": "thumbs/generic_hq_041.webp",
+    "title": "Female Profile Close-Up With Negative Space",
+    "gender": "female",
+    "tags": [
+      "profile",
+      "female",
+      "close-up",
+      "negative-space"
+    ]
+  },
+  {
+    "file": "generic_hq_042.png",
+    "thumbnail": "thumbs/generic_hq_042.webp",
+    "title": "Male Mirror Reflection Shot",
+    "gender": "male",
+    "tags": [
+      "mirror",
+      "male",
+      "reflection",
+      "interior"
+    ]
+  },
+  {
+    "file": "generic_hq_043.png",
+    "thumbnail": "thumbs/generic_hq_043.webp",
+    "title": "Female Mirror Reflection Shot",
+    "gender": "female",
+    "tags": [
+      "mirror",
+      "female",
+      "reflection",
+      "interior"
+    ]
+  },
+  {
+    "file": "generic_hq_044.png",
+    "thumbnail": "thumbs/generic_hq_044.webp",
+    "title": "Male Product Hand Insert",
+    "gender": "male",
+    "tags": [
+      "product",
+      "male",
+      "hands",
+      "insert"
+    ]
+  },
+  {
+    "file": "generic_hq_045.png",
+    "thumbnail": "thumbs/generic_hq_045.webp",
+    "title": "Female Product Hand Insert",
+    "gender": "female",
+    "tags": [
+      "product",
+      "female",
+      "hands",
+      "insert"
+    ]
+  },
+  {
+    "file": "generic_hq_046.png",
+    "thumbnail": "thumbs/generic_hq_046.webp",
+    "title": "Male Performance Center Frame",
+    "gender": "male",
+    "tags": [
+      "performance",
+      "male",
+      "dance",
+      "full-shot"
+    ]
+  },
+  {
+    "file": "generic_hq_047.png",
+    "thumbnail": "thumbs/generic_hq_047.webp",
+    "title": "Female Performance Center Frame",
+    "gender": "female",
+    "tags": [
+      "performance",
+      "female",
+      "dance",
+      "full-shot"
+    ]
+  },
+  {
+    "file": "generic_hq_048.png",
+    "thumbnail": "thumbs/generic_hq_048.webp",
+    "title": "Male Night Streetlight Silhouette",
+    "gender": "male",
+    "tags": [
+      "night",
+      "male",
+      "silhouette",
+      "streetlight"
+    ]
+  },
+  {
+    "file": "generic_hq_049.png",
+    "thumbnail": "thumbs/generic_hq_049.webp",
+    "title": "Female Night Streetlight Silhouette",
+    "gender": "female",
+    "tags": [
+      "night",
+      "female",
+      "silhouette",
+      "streetlight"
+    ]
+  },
+  {
+    "file": "generic_hq_050.png",
+    "thumbnail": "thumbs/generic_hq_050.webp",
+    "title": "Male Vehicle Window Reflection",
+    "gender": "male",
+    "tags": [
+      "vehicle",
+      "male",
+      "reflection",
+      "travel"
+    ]
+  },
+  {
+    "file": "generic_hq_051.png",
+    "thumbnail": "thumbs/generic_hq_051.webp",
+    "title": "Female Vehicle Window Reflection",
+    "gender": "female",
+    "tags": [
+      "vehicle",
+      "female",
+      "reflection",
+      "travel"
+    ]
+  },
+  {
+    "file": "generic_hq_052.png",
+    "thumbnail": "thumbs/generic_hq_052.webp",
+    "title": "Male Crowd Isolation Wide Shot",
+    "gender": "male",
+    "tags": [
+      "crowd",
+      "male",
+      "isolation",
+      "wide"
+    ]
+  },
+  {
+    "file": "generic_hq_053.png",
+    "thumbnail": "thumbs/generic_hq_053.webp",
+    "title": "Female Crowd Isolation Wide Shot",
+    "gender": "female",
+    "tags": [
+      "crowd",
+      "female",
+      "isolation",
+      "wide"
+    ]
+  },
+  {
+    "file": "generic_hq_054.png",
+    "thumbnail": "thumbs/generic_hq_054.webp",
+    "title": "Male Top-Down Planning Desk",
+    "gender": "male",
+    "tags": [
+      "top-shot",
+      "male",
+      "planning",
+      "desk"
+    ]
+  },
+  {
+    "file": "generic_hq_055.png",
+    "thumbnail": "thumbs/generic_hq_055.webp",
+    "title": "Female Top-Down Planning Desk",
+    "gender": "female",
+    "tags": [
+      "top-shot",
+      "female",
+      "planning",
+      "desk"
+    ]
+  },
+  {
+    "file": "generic_hq_056.png",
+    "thumbnail": "thumbs/generic_hq_056.webp",
+    "title": "Male Documentary Interview Medium Shot",
+    "gender": "male",
+    "tags": [
+      "interview",
+      "male",
+      "medium-shot",
+      "documentary"
+    ]
+  },
+  {
+    "file": "generic_hq_057.png",
+    "thumbnail": "thumbs/generic_hq_057.webp",
+    "title": "Female Documentary Interview Medium Shot",
+    "gender": "female",
+    "tags": [
+      "interview",
+      "female",
+      "medium-shot",
+      "documentary"
+    ]
+  },
+  {
+    "file": "generic_hq_058.png",
+    "thumbnail": "thumbs/generic_hq_058.webp",
+    "title": "Male and Female Window Medium Close-Up Pair",
+    "gender": "mixed",
+    "tags": [
+      "medium-close-up",
+      "male",
+      "female",
+      "window",
+      "morning-light",
+      "paired-reference"
+    ]
+  },
+  {
+    "file": "generic_hq_059.png",
+    "thumbnail": "thumbs/generic_hq_059.webp",
+    "title": "Male Night Hallway Follow Shot",
+    "gender": "male",
+    "tags": [
+      "follow-shot",
+      "male",
+      "hallway",
+      "night",
+      "dutch-angle",
+      "tension"
+    ]
+  },
+  {
+    "file": "generic_hq_060.png",
+    "thumbnail": "thumbs/generic_hq_060.webp",
+    "title": "Female Night Hallway Follow Shot",
+    "gender": "female",
+    "tags": [
+      "follow-shot",
+      "female",
+      "hallway",
+      "night",
+      "dutch-angle",
+      "tension"
+    ]
+  },
+  {
+    "file": "generic_hq_061.png",
+    "thumbnail": "thumbs/generic_hq_061.webp",
+    "title": "Male Night Phone Call Medium Close-Up",
+    "gender": "male",
+    "tags": [
+      "phone-call",
+      "male",
+      "medium-close-up",
+      "bedroom",
+      "night",
+      "emotion"
+    ]
+  },
+  {
+    "file": "generic_hq_062.png",
+    "thumbnail": "thumbs/generic_hq_062.webp",
+    "title": "Female Night Phone Call Medium Close-Up",
+    "gender": "female",
+    "tags": [
+      "phone-call",
+      "female",
+      "medium-close-up",
+      "bedroom",
+      "night",
+      "emotion"
+    ]
+  },
+  {
+    "file": "generic_hq_063.png",
+    "thumbnail": "thumbs/generic_hq_063.webp",
+    "title": "Male Bathroom Mirror Reflection Close-Up",
+    "gender": "male",
+    "tags": [
+      "mirror",
+      "reflection",
+      "male",
+      "close-up",
+      "bathroom",
+      "introspection"
+    ]
+  },
+  {
+    "file": "generic_hq_064.png",
+    "thumbnail": "thumbs/generic_hq_064.webp",
+    "title": "Female Bathroom Mirror Reflection Close-Up",
+    "gender": "female",
+    "tags": [
+      "mirror",
+      "reflection",
+      "female",
+      "close-up",
+      "bathroom",
+      "introspection"
+    ]
+  },
+  {
+    "file": "generic_hq_065.png",
+    "thumbnail": "thumbs/generic_hq_065.webp",
+    "title": "Male Crosswalk Sprint Wide Shot",
+    "gender": "male",
+    "tags": [
+      "crosswalk",
+      "sprint",
+      "male",
+      "wide",
+      "street",
+      "urgency"
+    ]
+  },
+  {
+    "file": "generic_hq_066.png",
+    "thumbnail": "thumbs/generic_hq_066.webp",
+    "title": "Female Crosswalk Sprint Wide Shot",
+    "gender": "female",
+    "tags": [
+      "crosswalk",
+      "sprint",
+      "female",
+      "wide",
+      "street",
+      "urgency"
+    ]
+  },
+  {
+    "file": "generic_hq_067.png",
+    "thumbnail": "thumbs/generic_hq_067.webp",
+    "title": "Male Subway Platform Waiting Medium Wide",
+    "gender": "male",
+    "tags": [
+      "subway-platform",
+      "waiting",
+      "male",
+      "medium-wide",
+      "leading-lines",
+      "transit"
+    ]
+  },
+  {
+    "file": "generic_hq_068.png",
+    "thumbnail": "thumbs/generic_hq_068.webp",
+    "title": "Female Subway Platform Waiting Medium Wide",
+    "gender": "female",
+    "tags": [
+      "subway-platform",
+      "waiting",
+      "female",
+      "medium-wide",
+      "leading-lines",
+      "transit"
+    ]
+  },
+  {
+    "file": "generic_hq_069.png",
+    "thumbnail": "thumbs/generic_hq_069.webp",
+    "title": "Male Convenience Store Shelf Action Medium Shot",
+    "gender": "male",
+    "tags": [
+      "convenience-store",
+      "shelf-action",
+      "male",
+      "medium-shot",
+      "hand-action",
+      "props"
+    ]
+  },
+  {
+    "file": "generic_hq_070.png",
+    "thumbnail": "thumbs/generic_hq_070.webp",
+    "title": "Female Convenience Store Shelf Action Medium Shot",
+    "gender": "female",
+    "tags": [
+      "convenience-store",
+      "shelf-action",
+      "female",
+      "medium-shot",
+      "hand-action",
+      "props"
+    ]
+  },
+  {
+    "file": "generic_hq_071.png",
+    "thumbnail": "thumbs/generic_hq_071.webp",
+    "title": "Male Stairwell Rush Low Angle",
+    "gender": "male",
+    "tags": [
+      "stairwell",
+      "rush",
+      "male",
+      "low-angle",
+      "wide-angle",
+      "urgency"
+    ]
+  },
+  {
+    "file": "generic_hq_072.png",
+    "thumbnail": "thumbs/generic_hq_072.webp",
+    "title": "Female Stairwell Rush Low Angle",
+    "gender": "female",
+    "tags": [
+      "stairwell",
+      "rush",
+      "female",
+      "low-angle",
+      "wide-angle",
+      "urgency"
+    ]
+  },
+  {
+    "file": "generic_hq_073.png",
+    "thumbnail": "thumbs/generic_hq_073.webp",
+    "title": "Male Night Bridge Contemplation Wide",
+    "gender": "male",
+    "tags": [
+      "night-bridge",
+      "contemplation",
+      "male",
+      "wide-establishing",
+      "river",
+      "city-lights"
+    ]
+  },
+  {
+    "file": "generic_hq_074.png",
+    "thumbnail": "thumbs/generic_hq_074.webp",
+    "title": "Female Night Bridge Contemplation Wide",
+    "gender": "female",
+    "tags": [
+      "night-bridge",
+      "contemplation",
+      "female",
+      "wide-establishing",
+      "river",
+      "city-lights"
+    ]
+  },
+  {
+    "file": "generic_hq_075.png",
+    "thumbnail": "thumbs/generic_hq_075.webp",
+    "title": "Male Doorway Threshold Pause Medium Wide",
+    "gender": "male",
+    "tags": [
+      "doorway",
+      "threshold",
+      "male",
+      "medium-wide",
+      "hallway",
+      "pause"
+    ]
+  },
+  {
+    "file": "generic_hq_076.png",
+    "thumbnail": "thumbs/generic_hq_076.webp",
+    "title": "Female Doorway Threshold Pause Medium Wide",
+    "gender": "female",
+    "tags": [
+      "doorway",
+      "threshold",
+      "female",
+      "medium-wide",
+      "hallway",
+      "pause"
+    ]
+  },
+  {
+    "file": "generic_hq_077.png",
+    "thumbnail": "thumbs/generic_hq_077.webp",
+    "title": "Male Desk Paper Review Over Shoulder",
+    "gender": "male",
+    "tags": [
+      "desk",
+      "paper-review",
+      "male",
+      "over-shoulder",
+      "hand-action",
+      "planning"
+    ]
+  },
+  {
+    "file": "generic_hq_078.png",
+    "thumbnail": "thumbs/generic_hq_078.webp",
+    "title": "Female Desk Paper Review Over Shoulder",
+    "gender": "female",
+    "tags": [
+      "desk",
+      "paper-review",
+      "female",
+      "over-shoulder",
+      "hand-action",
+      "planning"
+    ]
+  },
+  {
+    "file": "generic_hq_079.png",
+    "thumbnail": "thumbs/generic_hq_079.webp",
+    "title": "Male Elevator Lobby Waiting Medium Wide",
+    "gender": "male",
+    "tags": [
+      "elevator-lobby",
+      "waiting",
+      "male",
+      "medium-wide",
+      "button-action",
+      "interior"
+    ]
+  },
+  {
+    "file": "generic_hq_080.png",
+    "thumbnail": "thumbs/generic_hq_080.webp",
+    "title": "Female Elevator Lobby Waiting Medium Wide",
+    "gender": "female",
+    "tags": [
+      "elevator-lobby",
+      "waiting",
+      "female",
+      "medium-wide",
+      "button-action",
+      "interior"
+    ]
+  },
+  {
+    "file": "generic_hq_081.png",
+    "thumbnail": "thumbs/generic_hq_081.webp",
+    "title": "Male Empty Classroom Entry Medium Wide",
+    "gender": "male",
+    "tags": [
+      "classroom",
+      "entry",
+      "male",
+      "medium-wide",
+      "empty-room",
+      "threshold"
+    ]
+  },
+  {
+    "file": "generic_hq_082.png",
+    "thumbnail": "thumbs/generic_hq_082.webp",
+    "title": "Female Empty Classroom Entry Medium Wide",
+    "gender": "female",
+    "tags": [
+      "classroom",
+      "entry",
+      "female",
+      "medium-wide",
+      "empty-room",
+      "threshold"
+    ]
+  }
+]
