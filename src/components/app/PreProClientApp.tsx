@@ -4054,6 +4054,7 @@ export default function PreProClientApp({ initialWorkspace = 'shoot' }: PreProCl
               currentTemplate={template}
               gettingStartedCards={gettingStartedCards}
               workspaceLanguage={workspaceLanguage}
+              onSelectTemplate={handleTemplateChange}
             />
           )}
 

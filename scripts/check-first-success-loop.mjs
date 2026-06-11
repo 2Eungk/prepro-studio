@@ -8,6 +8,7 @@ const read = (path) => readFileSync(join(root, path), 'utf8');
 const page = `${read('src/app/page.tsx')}\n${read('src/components/app/PreProClientApp.tsx')}`;
 const appHeader = read('src/components/header/AppHeader.tsx');
 const workspaceOnboarding = read('src/components/layout/WorkspaceOnboarding.tsx');
+const firstRunPanel = read('src/components/layout/FirstRunPanel.tsx');
 const sceneLocationField = read('src/components/sections/schedule/SceneLocationField.tsx');
 const mobileScheduleList = read('src/components/sections/schedule/MobileScheduleList.tsx');
 const mobileTimelineCards = read('src/components/sections/schedule/MobileTimelineCards.tsx');
@@ -65,23 +66,21 @@ const checks = [
   },
   {
     name: 'first-run landing uses template-specific promise headline',
-    ok: workspaceOnboarding.includes('{workspaceLanguage.firstRunTitle}')
-      && !workspaceOnboarding.includes('뭐 만들 건지 고르면 바로 데려다줄게요')
+    ok: firstRunPanel.includes('{workspaceLanguage.firstRunTitle}')
+      && !firstRunPanel.includes('뭐 만들 건지 고르면 바로 데려다줄게요')
       && page.includes('firstRunTitle:')
       && page.includes('workspaceLanguage={workspaceLanguage}'),
   },
   {
-    name: 'first-run onboarding does not duplicate the top production-type selector',
-    ok: workspaceOnboarding.includes('현재 제작 분야 확인')
-      && workspaceOnboarding.includes('제작 분야는 상단 설정 바에서 바꿀 수 있습니다.')
-      && workspaceOnboarding.includes('자료 상태 고르기')
-      && workspaceOnboarding.includes('분야 변경은 상단 설정')
-      && workspaceOnboarding.includes('현재 분야 보기')
-      && !workspaceOnboarding.includes('어떤 제작물인가요?')
-      && !workspaceOnboarding.includes('분야 다시 선택')
-      && !workspaceOnboarding.includes('onSelectTemplate')
-      && !workspaceOnboarding.includes('cards.map((item)')
-      && !page.includes('onSelectTemplate={handleTemplateChange}'),
+    name: 'first-run onboarding starts with selectable production type cards',
+    ok: firstRunPanel.includes('어떤 제작물인가요?')
+      && firstRunPanel.includes('cards.map((item)')
+      && firstRunPanel.includes('onSelectTemplate(item.template)')
+      && firstRunPanel.includes('aria-pressed={isSelected}')
+      && firstRunPanel.includes('선택됨')
+      && firstRunPanel.includes("card.template === 'dance' ? '유튜브/숏폼' : card.title")
+      && firstRunPanel.includes('자료 상태 고르기')
+      && page.includes('onSelectTemplate={handleTemplateChange}'),
   },
   {
     name: 'first-run setup drawer hides duplicate start actions',
@@ -121,12 +120,12 @@ const checks = [
       && page.includes("label: '직접 입력하기'")
       && page.includes("label: '샘플로 둘러보기'")
       && page.includes("label: '기획부터 정리하기'")
-      && workspaceOnboarding.includes('sm:col-span-2')
-      && workspaceOnboarding.includes("'시나리오로 시작하기'")
-      && workspaceOnboarding.includes('{isRecommended ? recommendedActionLabel : item.label}')
-      && workspaceOnboarding.includes('aria-hidden="true"')
-      && workspaceOnboarding.includes('바로 시작하기')
-      && workspaceOnboarding.includes('border-teal-200/70 bg-teal-300')
+      && firstRunPanel.includes('sm:col-span-2')
+      && firstRunPanel.includes("'시나리오로 시작하기'")
+      && firstRunPanel.includes('recommendedActionLabel(currentTemplate)')
+      && firstRunPanel.includes('aria-hidden="true"')
+      && firstRunPanel.includes('바로 시작하기')
+      && firstRunPanel.includes('border-teal-200/70 bg-teal-300')
       && emptyScheduleGuide.includes('aria-hidden="true"')
       && emptyScheduleGuide.includes('바로 시작하기')
       && emptyScheduleGuide.includes('border border-black/15 bg-black')
